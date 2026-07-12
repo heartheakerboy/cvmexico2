@@ -30,7 +30,7 @@ function AuthPage() {
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <FileText className="h-5 w-5" />
         </span>
-        CV<span className="text-primary">México</span>
+        CV<span className="text-primary">AI</span>
       </Link>
 
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-sm">
