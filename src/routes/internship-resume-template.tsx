@@ -5,12 +5,12 @@ import { internshipSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/internship-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Prácticas Profesionales | CVMéxico" },
+      { title: "Plantilla de Currículum para Prácticas Profesionales || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum para postularte a programas de becarios o prácticas profesionales. Diseño limpio de una columna para estudiantes. Empieza gratis.",
       },
-      { property: "og:title", content: "Plantilla de CV para Prácticas Profesionales | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Prácticas Profesionales || CVAI" },
       { property: "og:url", content: "/internship-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/internship-resume-template" }],

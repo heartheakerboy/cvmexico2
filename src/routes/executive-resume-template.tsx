@@ -5,12 +5,12 @@ import { executiveSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/executive-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Dirección Ejecutiva y VPs | CVMéxico" },
+      { title: "Plantilla de Currículum para Dirección Ejecutiva y VPs || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum ejecutivo de lujo. Ideal para directores financieros, operativos, VPs y consejeros de administración en México.",
       },
-      { property: "og:title", content: "Plantilla de CV para Dirección Ejecutiva y VPs | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Dirección Ejecutiva y VPs || CVAI" },
       { property: "og:url", content: "/executive-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/executive-resume-template" }],

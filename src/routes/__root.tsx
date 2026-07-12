@@ -100,8 +100,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "description",
         content: getMetaTranslation("root.metaDesc"),
       },
-      { name: "author", content: "CVMéxico" },
-      { property: "og:site_name", content: "CVMéxico" },
+      { name: "author", content: "CVAI" },
+      { property: "og:site_name", content: "CVAI" },
       { property: "og:title", content: getMetaTranslation("root.metaTitle") },
       {
         property: "og:description",

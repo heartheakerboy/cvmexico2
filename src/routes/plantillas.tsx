@@ -11,13 +11,13 @@ import { ResumeThumb } from "@/components/resume/resume-thumb";
 export const Route = createFileRoute("/plantillas")({
   head: () => ({
     meta: [
-      { title: "Plantillas de CV ATS Gratis | CVMéxico" },
+      { title: "Plantillas de CV ATS Gratis || CVAI" },
       {
         name: "description",
         content:
           "Plantillas de currículum profesionales y compatibles con ATS, optimizadas para el mercado laboral mexicano. Elige la tuya y empieza gratis.",
       },
-      { property: "og:title", content: "Plantillas de CV ATS Gratis | CVMéxico" },
+      { property: "og:title", content: "Plantillas de CV ATS Gratis || CVAI" },
       { property: "og:url", content: "/plantillas" },
     ],
     links: [{ rel: "canonical", href: "/plantillas" }],

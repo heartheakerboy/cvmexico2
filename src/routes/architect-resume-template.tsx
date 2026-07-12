@@ -5,12 +5,12 @@ import { architectSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/architect-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Arquitectos y BIM Leads | CVMéxico" },
+      { title: "Plantilla de Currículum para Arquitectos y BIM Leads || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de arquitecto con un diseño estructural moderno. Ideal para portafolios, modelado 3D Revit, AutoCAD y supervisión de obra.",
       },
-      { property: "og:title", content: "Plantilla de CV para Arquitectos y BIM Leads | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Arquitectos y BIM Leads || CVAI" },
       { property: "og:url", content: "/architect-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/architect-resume-template" }],

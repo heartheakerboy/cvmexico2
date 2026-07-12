@@ -5,12 +5,12 @@ import { seniorSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/senior-professional-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Especialistas Senior | CVMéxico" },
+      { title: "Plantilla de Currículum para Especialistas Senior || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de nivel senior. Diseño premium asimétrico para gerentes, directores y jefes de área de más de 7 años de experiencia.",
       },
-      { property: "og:title", content: "Plantilla de CV para Especialistas Senior | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Especialistas Senior || CVAI" },
       { property: "og:url", content: "/senior-professional-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/senior-professional-resume-template" }],

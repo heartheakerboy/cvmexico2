@@ -73,7 +73,7 @@ const es = {
   "site.footer.contact": "Contacto",
   "site.footer.privacy": "Aviso de privacidad",
   "site.footer.terms": "Términos",
-  "site.footer.copyright": "© {{year}} CVMéxico. Hecho en México 🇲🇽 · Datos protegidos conforme a la LFPDPPP.",
+  "site.footer.copyright": "© {{year}} CVAI. Hecho en México 🇲🇽 · Datos protegidos conforme a la LFPDPPP.",
 
   // Página principal
   "home.hero.badge": "+50,000 CVs creados en México",
@@ -109,7 +109,7 @@ const es = {
   "home.features.export.title": "Exporta sin límites",
   "home.features.export.desc": "PDF profesional, DOCX editable y enlace público con código QR para compartir.",
   "home.cta.title": "Tu próximo empleo empieza con un buen CV",
-  "home.cta.subtitle": "Únete a miles de profesionales mexicanos que ya crearon su currículum con CVMéxico.",
+  "home.cta.subtitle": "Únete a miles de profesionales que ya impulsaron su carrera con CVAI.",
   "home.cta.button": "Empezar gratis",
   "home.faq.title": "Preguntas frecuentes",
   "home.faq.free.q": "¿Es realmente gratis crear mi CV?",
@@ -271,7 +271,7 @@ const es = {
   // Landing — comparison
   "home.compare.tag": "Por qué elegirnos",
   "home.compare.title": "La comparación habla por sí sola",
-  "home.compare.us": "CVMéxico",
+  "home.compare.us": "CVAI",
   "home.compare.others": "Otros",
   "home.compare.f1": "IA en español mexicano",
   "home.compare.f2": "Optimizado para ATS local",
@@ -617,7 +617,7 @@ const es = {
   "tools.bg.error": "No se pudo procesar la imagen.",
 
   // Auth
-  "auth.title": "Iniciar sesión o registrarte | CVMéxico",
+  "auth.title": "Iniciar sesión o registrarte | CVAI",
   "auth.registerTab": "Crear cuenta",
   "auth.loginTab": "Iniciar sesión",
   "auth.registerCta": "Crear mi cuenta gratis",
@@ -641,7 +641,7 @@ const es = {
   "auth.passwordPlaceholder": "••••••••",
 
   // Contacto
-  "contact.metaTitle": "Contacto | CVMéxico",
+  "contact.metaTitle": "Contacto | CVAI",
   "contact.metaDesc": "¿Tienes dudas o comentarios? Escríbenos y te responderemos pronto.",
   "contact.title": "Contacto",
   "contact.subtitle": "¿Tienes dudas o comentarios? Escríbenos.",
@@ -654,15 +654,15 @@ const es = {
   "contact.submit": "Enviar mensaje",
 
   // Sobre nosotros
-  "about.metaTitle": "Sobre nosotros | CVMéxico",
+  "about.metaTitle": "Sobre nosotros | CVAI",
   "about.metaDesc": "Somos un equipo mexicano que quiere ayudar a más personas a conseguir mejores empleos con un currículum profesional.",
   "about.title": "Sobre nosotros",
   "about.subtitle": "Ayudamos a los profesionales de México a conseguir mejores empleos.",
-  "about.p1": "CVMéxico nació con una idea simple: crear un currículum no debería ser complicado, caro ni estar pensado para otro país. Construimos una herramienta 100% en español y adaptada al mercado laboral mexicano.",
+  "about.p1": "CVAI nació con una idea simple: crear un currículum no debería ser complicado, caro ni estar pensado para otro país. Construimos una herramienta 100% en español y adaptada al mercado laboral mexicano.",
   "about.p2": "Combinamos plantillas compatibles con ATS, inteligencia artificial que redacta en español profesional y funciones diseñadas para las necesidades reales de quienes buscan empleo en México.",
 
   // Blog
-  "blog.metaTitle": "Blog de empleo y CV | CVMéxico",
+  "blog.metaTitle": "Blog de empleo y CV | CVAI",
   "blog.metaDesc": "Consejos de currículum, entrevistas y búsqueda de empleo en México. Guías prácticas para conseguir el trabajo que quieres.",
   "blog.title": "Blog",
   "blog.subtitle": "Consejos de currículum, entrevistas y búsqueda de empleo en México.",
@@ -670,7 +670,7 @@ const es = {
   "blog.guidesLink": "guías",
 
   // Ejemplos
-  "examples.metaTitle": "Ejemplos de CV por profesión | CVMéxico",
+  "examples.metaTitle": "Ejemplos de CV por profesión | CVAI",
   "examples.metaDesc": "Ejemplos reales de currículum por profesión para el mercado mexicano: contador, desarrollador, ventas, enfermería y más. Úsalos como base gratis.",
   "examples.title": "Ejemplos de CV por profesión",
   "examples.subtitle": "Inspírate con currículums reales adaptados a cada profesión en México y úsalos como punto de partida.",
@@ -691,8 +691,8 @@ const es = {
   "examples.role.Diseñador gráfico": "Diseñador gráfico",
 
   // Guias
-  "guides.metaTitleNotFound": "Guía no encontrada | CVMéxico",
-  "guides.suffix": " | CVMéxico",
+  "guides.metaTitleNotFound": "Guía no encontrada | CVAI",
+  "guides.suffix": " | CVAI",
   "guides.articleCtaTitle": "Aplica lo que aprendiste",
   "guides.articleCtaDesc": "Crea tu CV con estas buenas prácticas ya incorporadas.",
   "guides.articleCtaButton": "Crear mi CV gratis",
@@ -701,7 +701,7 @@ const es = {
   "guides.notFoundBtn": "Ver la guía principal",
 
   // Precios
-  "pricing.metaTitle": "Precios: CV Gratis y Plan Pro | CVMéxico",
+  "pricing.metaTitle": "Precios: CV Gratis y Plan Pro | CVAI",
   "pricing.metaDesc": "Planes en pesos mexicanos (MXN) con pago por tarjeta, OXXO y SPEI. Empieza gratis o desbloquea funciones Pro para conseguir empleo más rápido.",
   "pricing.title": "Precios simples, en pesos",
   "pricing.subtitle": "Empieza gratis. Mejora a Pro cuando quieras. Paga con tarjeta, OXXO o SPEI.",
@@ -737,23 +737,23 @@ const es = {
   "pricing.features.pro.6": "Enlace público y código QR",
 
   // Legal
-  "legal.metaTitleTerms": "Términos y condiciones | CVMéxico",
-  "legal.metaDescTerms": "Términos y condiciones de uso de CVMéxico.",
-  "legal.metaTitlePrivacy": "Aviso de privacidad | CVMéxico",
-  "legal.metaDescPrivacy": "Aviso de privacidad de CVMéxico conforme a la LFPDPPP.",
+  "legal.metaTitleTerms": "Términos y condiciones | CVAI",
+  "legal.metaDescTerms": "Términos y condiciones de uso de CVAI.",
+  "legal.metaTitlePrivacy": "Aviso de privacidad | CVAI",
+  "legal.metaDescPrivacy": "Aviso de privacidad de CVAI conforme a la LFPDPPP.",
   "legal.termsTitle": "Términos y condiciones",
   "legal.termsSubtitle": "Reglas de uso del servicio.",
-  "legal.termsContent": "Al usar CVMéxico aceptas estos términos. El servicio se ofrece para crear currículums de uso personal y profesional. No está permitido el uso indebido de la plataforma ni la generación de contenido falso o fraudulento.\n\nLos planes de pago se rigen por los precios vigentes en pesos mexicanos (MXN) publicados en la página de precios. Puedes cancelar tu suscripción en cualquier momento.",
+  "legal.termsContent": "Al usar CVAI aceptas estos términos. El servicio se ofrece para crear currículums de uso personal y profesional. No está permitido el uso indebido de la plataforma ni la generación de contenido falso o fraudulento.\n\nLos planes de pago se rigen por los precios vigentes en pesos mexicanos (MXN) publicados en la página de precios. Puedes cancelar tu suscripción en cualquier momento.",
   "legal.privacyTitle": "Aviso de privacidad",
   "legal.privacySubtitle": "Conforme a la LFPDPPP.",
-  "legal.privacyContent": "CVMéxico protege tus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Solo recopilamos la información necesaria para crear y gestionar tu currículum.\n\nPuedes ejercer tus derechos ARCO (acceso, rectificación, cancelación y oposición) y solicitar la eliminación de tu cuenta y datos en cualquier momento desde tu panel o escribiéndonos a través de la página de contacto.",
+  "legal.privacyContent": "CVAI protege tus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Solo recopilamos la información necesaria para crear y gestionar tu currículum.\n\nPuedes ejercer tus derechos ARCO (acceso, rectificación, cancelación y oposición) y solicitar la eliminación de tu cuenta y datos en cualquier momento desde tu panel o escribiéndonos a través de la página de contacto.",
   "legal.loading": "Cargando...",
   "legal.notFound.title": "Página no encontrada",
   "legal.notFound.desc": "La página que buscas no existe o no está publicada.",
   "legal.notFound.btn": "Volver al inicio",
 
   // Root
-  "root.metaTitle": "CVMéxico — Crea tu CV profesional gratis",
+  "root.metaTitle": "CVAI — Crea tu CV profesional gratis",
   "root.metaDesc": "Constructor de currículum optimizado para el mercado laboral mexicano. Plantillas ATS, IA en español y exportación en PDF. Empieza gratis.",
   "root.metaOgDesc": "Plantillas ATS, IA en español y exportación PDF, diseñado para México. Empieza gratis.",
   "root.notFound.title": "404",
@@ -798,7 +798,7 @@ const es = {
   "guides.cv-ats.s3.p": "Evita tablas complejas, imágenes y fuentes raras. Una plantilla ATS-friendly asegura que el sistema lea todo tu contenido.",
 
   // Public tools
-  "publicTools.metaTitle": "Herramientas gratis para tu CV | CVMéxico",
+  "publicTools.metaTitle": "Herramientas gratis para tu CV | CVAI",
   "publicTools.metaDesc": "Verificador ATS, generador de resumen profesional, corrector de logros y más. Herramientas de IA gratuitas para mejorar tu currículum.",
   "publicTools.title": "Herramientas gratis",
   "publicTools.subtitle": "Prueba nuestras herramientas de IA sin registrarte. Un uso gratis por herramienta.",

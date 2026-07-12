@@ -39,11 +39,13 @@ export function SiteFooter() {
     <footer className="border-t border-border/60 bg-secondary/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <FileText className="h-5 w-5" />
+          <Link to="/" className="flex flex-col gap-0.5 font-display">
+            <span className="text-xl font-bold tracking-tight">
+              CV<span className="text-primary">AI</span>
             </span>
-            CV<span className="text-primary">México</span>
+            <span className="text-[10px] text-muted-foreground/60 uppercase tracking-widest font-semibold">
+              Curriculum Vitae AI
+            </span>
           </Link>
           <p className="mt-4 max-w-xs text-sm text-muted-foreground">
             {t("site.footer.description")}

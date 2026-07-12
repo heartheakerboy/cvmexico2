@@ -27,7 +27,7 @@ import { useSettings } from "@/lib/settings";
 import { exportToPdf, exportToDocx } from "@/lib/cv-export";
 
 export const Route = createFileRoute("/_authenticated/cv/$id")({
-  head: () => ({ meta: [{ title: "Editar CV | CurriculumPerfecto" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Editar CV | CVAI" }, { name: "robots", content: "noindex" }] }),
   component: EditorPage,
 });
 

@@ -12,7 +12,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Panel | CVMéxico" },
+      { title: "Admin Panel | CVAI" },
       { name: "robots", content: "noindex" },
     ],
   }),

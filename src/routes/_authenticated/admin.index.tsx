@@ -86,7 +86,7 @@ function DashboardPage() {
         <div>
           <h1 className="font-display text-xl font-bold">Dashboard</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Real-time overview of CVMéxico.
+            Real-time overview of CVAI.
           </p>
         </div>
         <span className="rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">

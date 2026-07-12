@@ -22,8 +22,8 @@ BEFORE UPDATE ON public.system_settings
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 INSERT INTO public.system_settings (key, value) VALUES
-('general', '{"siteName":"CVMéxico","tagline":"Crea tu currículum profesional con IA","supportEmail":"soporte@cvmexico.com","contactPhone":"+52 55 0000 0000"}'::jsonb),
-('branding', '{"primaryColor":"#2563eb","logoUrl":"","faviconUrl":"","footerText":"© CVMéxico. Todos los derechos reservados."}'::jsonb),
+('general', '{"siteName":"CVAI","tagline":"Crea tu currículum profesional con IA","supportEmail":"soporte@cvai.com.mx","contactPhone":"+52 55 0000 0000"}'::jsonb),
+('branding', '{"primaryColor":"#2563eb","logoUrl":"","faviconUrl":"","footerText":"© CVAI. Todos los derechos reservados."}'::jsonb),
 ('languages', '{"default":"es","enabled":["es","en"]}'::jsonb),
 ('currency', '{"default":"MXN","symbol":"$","position":"before"}'::jsonb),
 ('flags', '{"aiTools":true,"blog":true,"affiliates":true,"jobs":true,"interviews":true,"registration":true}'::jsonb),

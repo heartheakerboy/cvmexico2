@@ -5,12 +5,12 @@ import { projectManagerSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/project-manager-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Project Managers PMP | CVMéxico" },
+      { title: "Plantilla de Currículum para Project Managers PMP || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de gerente de proyectos. Formato de línea de tiempo royal blue ideal para certificados PMP, Scrum Master y metodologías ágiles.",
       },
-      { property: "og:title", content: "Plantilla de CV para Project Managers PMP | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Project Managers PMP || CVAI" },
       { property: "og:url", content: "/project-manager-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/project-manager-resume-template" }],

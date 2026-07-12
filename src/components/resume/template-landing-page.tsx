@@ -39,10 +39,10 @@ export function TemplateLandingPage({
     "@type": "Product",
     "name": title,
     "description": schemaDescription,
-    "image": "https://curriculumvitaeai.com.mx/og-image.png",
+    "image": "https://cvai.com.mx/og-image.png",
     "brand": {
       "@type": "Brand",
-      "name": "CVMéxico"
+      "name": "CVAI"
     },
     "offers": {
       "@type": "Offer",

@@ -12,12 +12,9 @@ export function PanelSidebar({ onNavigate }: { onNavigate?: () => void }) {
     <aside className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       <Link
         to="/"
-        className="flex h-16 items-center gap-2 border-b border-sidebar-border px-5 font-display text-lg font-bold"
+        className="flex h-16 items-center gap-1.5 border-b border-sidebar-border px-5 font-display text-xl font-bold tracking-tight"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-          <FileText className="h-5 w-5" />
-        </span>
-        CV<span className="text-sidebar-primary">México</span>
+        CV<span className="text-sidebar-primary">AI</span>
       </Link>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">

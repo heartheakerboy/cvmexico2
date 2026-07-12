@@ -8,11 +8,10 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <aside className="flex h-full w-64 flex-col border-r border-border bg-sidebar">
-      <div className="flex h-14 items-center gap-2 border-b border-border px-5">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <FileText className="h-4 w-4" />
+      <div className="flex h-14 items-center gap-1.5 border-b border-border px-5">
+        <span className="font-display text-base font-bold tracking-tight">
+          CV<span className="text-primary">AI</span>
         </span>
-        <span className="font-display text-sm font-bold">CVMéxico</span>
         <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
           Admin
         </span>

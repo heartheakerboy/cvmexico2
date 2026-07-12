@@ -406,7 +406,7 @@ export function LegalPagesAdmin() {
               <Label htmlFor="subtitle">Subtítulo o Descripción corta</Label>
               <Input
                 id="subtitle"
-                placeholder="Ej. Información sobre cómo utilizamos las cookies en CVMéxico."
+                placeholder="Ej. Información sobre cómo utilizamos las cookies en CVAI."
                 value={form.subtitle}
                 onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
               />

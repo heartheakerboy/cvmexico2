@@ -44,11 +44,11 @@ CREATE TRIGGER update_api_keys_updated_at BEFORE UPDATE ON public.api_keys
 
 INSERT INTO public.audit_logs (action, actor_name, actor_email, entity, ip_address, severity, details) VALUES
 ('user.login', 'Ana López', 'ana@example.com', 'auth', '187.190.12.4', 'info', 'Inicio de sesión exitoso'),
-('role.granted', 'Admin', 'admin@cvmexico.mx', 'user_roles', '187.190.12.4', 'warning', 'Rol admin asignado a carlos@example.com'),
+('role.granted', 'Admin', 'admin@cvai.com.mx', 'user_roles', '187.190.12.4', 'warning', 'Rol admin asignado a carlos@example.com'),
 ('plan.upgraded', 'Carlos Ruiz', 'carlos@example.com', 'subscriptions', '201.145.9.88', 'info', 'Actualizó a plan Premium'),
 ('login.failed', 'Desconocido', 'attacker@example.com', 'auth', '45.9.148.11', 'critical', '5 intentos fallidos de inicio de sesión');
 
 INSERT INTO public.api_keys (name, key_prefix, scopes, active) VALUES
-('Integración Zapier', 'cvmx_live_a1b2', 'read', true),
-('Exportación de datos', 'cvmx_live_c3d4', 'read,write', true),
-('Clave de pruebas', 'cvmx_test_e5f6', 'read', false);
+('Integración Zapier', 'cvai_live_a1b2', 'read', true),
+('Exportación de datos', 'cvai_live_c3d4', 'read,write', true),
+('Clave de pruebas', 'cvai_test_e5f6', 'read', false);

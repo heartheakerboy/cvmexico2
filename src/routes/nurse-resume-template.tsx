@@ -5,12 +5,12 @@ import { nurseSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/nurse-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Enfermera Profesional | CVMéxico" },
+      { title: "Plantilla de Currículum para Enfermera Profesional || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de enfermería con una plantilla estructurada para el sector salud. Incluye licencias, soporte vital (ACLS) y habilidades clínicas.",
       },
-      { property: "og:title", content: "Plantilla de CV para Enfermera Profesional | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Enfermera Profesional || CVAI" },
       { property: "og:url", content: "/nurse-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/nurse-resume-template" }],

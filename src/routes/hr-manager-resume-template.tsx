@@ -5,12 +5,12 @@ import { hrManagerSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/hr-manager-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Recursos Humanos | CVMéxico" },
+      { title: "Plantilla de Currículum para Recursos Humanos || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de recursos humanos y reclutamiento. Plantilla formal con enfoque en NOM-035, Ley Federal del Trabajo y clima laboral.",
       },
-      { property: "og:title", content: "Plantilla de CV para Recursos Humanos | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Recursos Humanos || CVAI" },
       { property: "og:url", content: "/hr-manager-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/hr-manager-resume-template" }],

@@ -5,12 +5,12 @@ import { midLevelSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/mid-level-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Analistas y Especialistas Mid-Level | CVMéxico" },
+      { title: "Plantilla de Currículum para Analistas y Especialistas Mid-Level || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum profesional de nivel medio. Diseño estructurado de dos columnas equilibrado para coordinadores y analistas de 3 a 7 años de experiencia.",
       },
-      { property: "og:title", content: "Plantilla de CV para Analistas y Especialistas Mid-Level | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Analistas y Especialistas Mid-Level || CVAI" },
       { property: "og:url", content: "/mid-level-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/mid-level-resume-template" }],

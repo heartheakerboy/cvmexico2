@@ -13,7 +13,7 @@ import { useSettings } from "@/lib/settings";
 export const Route = createFileRoute("/_authenticated/panel")({
   head: () => ({
     meta: [
-      { title: "Mi panel | CVMéxico" },
+      { title: "Mi panel | CVAI" },
       { name: "robots", content: "noindex" },
     ],
   }),

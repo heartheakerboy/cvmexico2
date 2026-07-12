@@ -5,12 +5,12 @@ import { graphicDesignerSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/graphic-designer-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Diseñadores Gráficos | CVMéxico" },
+      { title: "Plantilla de Currículum para Diseñadores Gráficos || CVAI" },
       {
         name: "description",
         content: "Crea un currículum creativo e impactante. Con fucsia premium y enlaces a Behance/Dribbble. Ideal para branding y dirección de arte.",
       },
-      { property: "og:title", content: "Plantilla de CV para Diseñadores Gráficos | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Diseñadores Gráficos || CVAI" },
       { property: "og:url", content: "/graphic-designer-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/graphic-designer-resume-template" }],

@@ -52,18 +52,21 @@ import { TEMPLATES } from "@/lib/resume/registry";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CVMéxico — Creador de CV con IA para México" },
+      { title: "CVAI – AI Resume Builder for Mexico" },
       {
         name: "description",
         content:
-          "Crea un currículum profesional y compatible con ATS en minutos. IA en español mexicano, 10 plantillas premium, verificador ATS y exportación en PDF.",
+          "Crea tu currículum profesional con inteligencia artificial. Plantillas premium y optimización ATS instantánea con CVAI (Curriculum Vitae AI) en México.",
       },
-      { property: "og:title", content: "CVMéxico — Creador de CV con IA para México" },
+      { property: "og:title", content: "CVAI – AI Resume Builder for Mexico" },
       {
         property: "og:description",
-        content: "El creador de currículum con IA diseñado para el mercado laboral mexicano.",
+        content: "Diseña un currículum ganador y compatible con filtros ATS en minutos usando la IA avanzada de CVAI.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "CVAI – AI Resume Builder for Mexico" },
+      { name: "twitter:description", content: "Crea tu currículum profesional con inteligencia artificial de CVAI." },
     ],
     scripts: [
       {
@@ -71,7 +74,7 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
-          name: "CVMéxico",
+          name: "CVAI",
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },

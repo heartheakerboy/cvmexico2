@@ -5,12 +5,12 @@ import { entryLevelSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/entry-level-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Profesional Junior | CVMéxico" },
+      { title: "Plantilla de Currículum para Profesional Junior || CVAI" },
       {
         name: "description",
         content: "Crea tu currículum para puestos junior o de nivel de entrada. Estructura corporativa que destaca habilidades tempranas y experiencia inicial.",
       },
-      { property: "og:title", content: "Plantilla de CV para Profesional Junior | CVMéxico" },
+      { property: "og:title", content: "Plantilla de CV para Profesional Junior || CVAI" },
       { property: "og:url", content: "/entry-level-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/entry-level-resume-template" }],

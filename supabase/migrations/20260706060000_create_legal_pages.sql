@@ -33,7 +33,7 @@ INSERT INTO public.legal_pages (slug, title, subtitle, content, published) VALUE
     'terminos',
     'Términos y condiciones',
     'Reglas de uso del servicio.',
-    'Al usar CVMéxico aceptas estos términos. El servicio se ofrece para crear currículums de uso personal y profesional. No está permitido el uso indebido de la plataforma ni la generación de contenido falso o fraudulento.
+    'Al usar CVAI aceptas estos términos. El servicio se ofrece para crear currículums de uso personal y profesional. No está permitido el uso indebido de la plataforma ni la generación de contenido falso o fraudulento.
 
 Los planes de pago se rigen por los precios vigentes en pesos mexicanos (MXN) publicados en la página de precios. Puedes cancelar tu suscripción en cualquier momento.',
     true
@@ -42,7 +42,7 @@ Los planes de pago se rigen por los precios vigentes en pesos mexicanos (MXN) pu
     'privacidad',
     'Aviso de privacidad',
     'Conforme a la LFPDPPP.',
-    'CVMéxico protege tus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Solo recopilamos la información necesaria para crear y gestionar tu currículum.
+    'CVAI protege tus datos personales conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Solo recopilamos la información necesaria para crear y gestionar tu currículum.
 
 Puedes ejercer tus derechos ARCO (acceso, rectificación, cancelación y oposición) y solicitar la eliminación de tu cuenta y datos en cualquier momento desde tu panel o escribiéndonos a través de la página de contacto.',
     true

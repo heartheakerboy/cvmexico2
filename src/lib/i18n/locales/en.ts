@@ -73,7 +73,7 @@ const en = {
   "site.footer.contact": "Contact",
   "site.footer.privacy": "Privacy notice",
   "site.footer.terms": "Terms",
-  "site.footer.copyright": "© {{year}} CVMéxico. Made in Mexico 🇲🇽 · Data protected under the LFPDPPP.",
+  "site.footer.copyright": "© {{year}} CVAI. Made in Mexico 🇲🇽 · Data protected under the LFPDPPP.",
 
   // Home page
   "home.hero.badge": "+50,000 resumes created in Mexico",
@@ -109,7 +109,7 @@ const en = {
   "home.features.export.title": "Unlimited export",
   "home.features.export.desc": "Professional PDF, editable DOCX and a public link with QR code for sharing.",
   "home.cta.title": "Your next job starts with a great resume",
-  "home.cta.subtitle": "Join thousands of Mexican professionals who already created their resume with CVMéxico.",
+  "home.cta.subtitle": "Join thousands of professionals who already boosted their career with CVAI.",
   "home.cta.button": "Start free",
   "home.faq.title": "Frequently asked questions",
   "home.faq.free.q": "Is it really free to create my resume?",
@@ -271,7 +271,7 @@ const en = {
   // Landing — comparison
   "home.compare.tag": "Why choose us",
   "home.compare.title": "The comparison speaks for itself",
-  "home.compare.us": "CVMéxico",
+  "home.compare.us": "CVAI",
   "home.compare.others": "Others",
   "home.compare.f1": "AI in Mexican Spanish",
   "home.compare.f2": "Optimized for local ATS",
@@ -617,7 +617,7 @@ const en = {
   "tools.bg.error": "Could not process the image.",
 
   // Auth
-  "auth.title": "Sign in or register | CVMéxico",
+  "auth.title": "Sign in or register | CVAI",
   "auth.registerTab": "Create account",
   "auth.loginTab": "Sign in",
   "auth.registerCta": "Create my account free",
@@ -641,7 +641,7 @@ const en = {
   "auth.passwordPlaceholder": "••••••••",
 
   // Contacto
-  "contact.metaTitle": "Contact | CVMéxico",
+  "contact.metaTitle": "Contact | CVAI",
   "contact.metaDesc": "Have questions or comments? Write to us and we'll reply soon.",
   "contact.title": "Contact",
   "contact.subtitle": "Have questions or comments? Write to us.",
@@ -654,15 +654,15 @@ const en = {
   "contact.submit": "Send message",
 
   // Sobre nosotros
-  "about.metaTitle": "About us | CVMéxico",
+  "about.metaTitle": "About us | CVAI",
   "about.metaDesc": "We are a Mexican team that wants to help more people get better jobs with a professional resume.",
   "about.title": "About us",
   "about.subtitle": "We help professionals in Mexico get better jobs.",
-  "about.p1": "CVMéxico was born with a simple idea: creating a resume shouldn't be complicated, expensive, or designed for another country. We built a tool 100% in Spanish and adapted to the Mexican job market.",
+  "about.p1": "CVAI was born with a simple idea: creating a resume shouldn't be complicated, expensive, or designed for another country. We built a tool 100% in Spanish and adapted to the Mexican job market.",
   "about.p2": "We combine ATS-compatible templates, artificial intelligence that writes in professional Spanish, and features designed for the real needs of those looking for a job in Mexico.",
 
   // Blog
-  "blog.metaTitle": "Employment and CV Blog | CVMéxico",
+  "blog.metaTitle": "Employment and CV Blog | CVAI",
   "blog.metaDesc": "Resume, interview and job search tips in Mexico. Practical guides to get the job you want.",
   "blog.title": "Blog",
   "blog.subtitle": "Resume, interview and job search tips in Mexico.",
@@ -670,7 +670,7 @@ const en = {
   "blog.guidesLink": "guides",
 
   // Ejemplos
-  "examples.metaTitle": "Resume Examples by Profession | CVMéxico",
+  "examples.metaTitle": "Resume Examples by Profession | CVAI",
   "examples.metaDesc": "Real resume examples by profession for the Mexican market: accountant, developer, sales, nursing and more. Use them as a free base.",
   "examples.title": "Resume Examples by Profession",
   "examples.subtitle": "Get inspired by real resumes adapted to each profession in Mexico and use them as a starting point.",
@@ -691,8 +691,8 @@ const en = {
   "examples.role.Diseñador gráfico": "Graphic designer",
 
   // Guias
-  "guides.metaTitleNotFound": "Guide not found | CVMéxico",
-  "guides.suffix": " | CVMéxico",
+  "guides.metaTitleNotFound": "Guide not found | CVAI",
+  "guides.suffix": " | CVAI",
   "guides.articleCtaTitle": "Apply what you learned",
   "guides.articleCtaDesc": "Create your resume with these best practices already built-in.",
   "guides.articleCtaButton": "Create my CV free",
@@ -701,7 +701,7 @@ const en = {
   "guides.notFoundBtn": "View the main guide",
 
   // Precios
-  "pricing.metaTitle": "Pricing: Free CV and Pro Plan | CVMéxico",
+  "pricing.metaTitle": "Pricing: Free CV and Pro Plan | CVAI",
   "pricing.metaDesc": "Plans in Mexican Pesos (MXN) with payment by card, OXXO and SPEI. Start for free or unlock Pro features to get a job faster.",
   "pricing.title": "Simple pricing, in pesos",
   "pricing.subtitle": "Start for free. Upgrade to Pro whenever you want. Pay with card, OXXO or SPEI.",
@@ -737,23 +737,23 @@ const en = {
   "pricing.features.pro.6": "Public link and QR code",
 
   // Legal
-  "legal.metaTitleTerms": "Terms and conditions | CVMéxico",
-  "legal.metaDescTerms": "Terms and conditions of use of CVMéxico.",
-  "legal.metaTitlePrivacy": "Privacy notice | CVMéxico",
-  "legal.metaDescPrivacy": "Privacy notice of CVMéxico under the LFPDPPP.",
+  "legal.metaTitleTerms": "Terms and conditions | CVAI",
+  "legal.metaDescTerms": "Terms and conditions of use of CVAI.",
+  "legal.metaTitlePrivacy": "Privacy notice | CVAI",
+  "legal.metaDescPrivacy": "Privacy notice of CVAI under the LFPDPPP.",
   "legal.termsTitle": "Terms and conditions",
   "legal.termsSubtitle": "Rules of use of the service.",
-  "legal.termsContent": "By using CVMéxico you accept these terms. The service is offered to create resumes for personal and professional use. Misuse of the platform or the generation of false or fraudulent content is not allowed.\n\nPayment plans are governed by the current prices in Mexican Pesos (MXN) published on the pricing page. You can cancel your subscription at any time.",
+  "legal.termsContent": "By using CVAI you accept these terms. The service is offered to create resumes for personal and professional use. Misuse of the platform or the generation of false or fraudulent content is not allowed.\n\nPayment plans are governed by the current prices in Mexican Pesos (MXN) published on the pricing page. You can cancel your subscription at any time.",
   "legal.privacyTitle": "Privacy notice",
   "legal.privacySubtitle": "Under the LFPDPPP.",
-  "legal.privacyContent": "CVMéxico protects your personal data under the Federal Law on Protection of Personal Data Held by Private Parties (LFPDPPP). We only collect the information necessary to create and manage your resume.\n\nYou can exercise your ARCO rights (access, rectification, cancellation and opposition) and request the deletion of your account and data at any time from your dashboard or by writing to us through the contact page.",
+  "legal.privacyContent": "CVAI protects your personal data under the Federal Law on Protection of Personal Data Held by Private Parties (LFPDPPP). We only collect the information necessary to create and manage your resume.\n\nYou can exercise your ARCO rights (access, rectification, cancellation and opposition) and request the deletion of your account and data at any time from your dashboard or by writing to us through the contact page.",
   "legal.loading": "Loading...",
   "legal.notFound.title": "Page not found",
   "legal.notFound.desc": "The page you are looking for does not exist or is not published.",
   "legal.notFound.btn": "Go home",
 
   // Root
-  "root.metaTitle": "CVMéxico — Create your professional resume for free",
+  "root.metaTitle": "CVAI — Create your professional resume for free",
   "root.metaDesc": "Resume builder optimized for the Mexican job market. ATS templates, AI in Spanish and PDF export. Start for free.",
   "root.metaOgDesc": "ATS templates, AI in Spanish and PDF export, designed for Mexico. Start for free.",
   "root.notFound.title": "404",
@@ -798,7 +798,7 @@ const en = {
   "guides.cv-ats.s3.p": "Avoid complex tables, images, and weird fonts. An ATS-friendly template ensures the system reads all your content.",
 
   // Public tools
-  "publicTools.metaTitle": "Free tools for your resume | CVMéxico",
+  "publicTools.metaTitle": "Free tools for your resume | CVAI",
   "publicTools.metaDesc": "ATS checker, professional summary generator, achievement corrector and more. Free AI tools to improve your resume.",
   "publicTools.title": "Free tools",
   "publicTools.subtitle": "Try our AI tools without registering. One free use per tool.",
