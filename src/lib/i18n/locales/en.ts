@@ -246,7 +246,7 @@ const en = {
   "home.steps.fill.desc": "Guided forms with examples for every resume section.",
 
   // Landing — templates showcase
-  "home.templates.tag": "10 premium templates",
+  "home.templates.tag": "50 premium templates",
   "home.templates.title": "Templates that look professionally designed",
   "home.templates.subtitle": "ATS-friendly, customizable and ready for the Mexican market.",
   "home.templates.viewAll": "View all templates",

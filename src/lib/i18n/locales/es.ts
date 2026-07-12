@@ -246,7 +246,7 @@ const es = {
   "home.steps.fill.desc": "Formularios guiados con ejemplos para cada sección de tu CV.",
 
   // Landing — templates showcase
-  "home.templates.tag": "10 plantillas premium",
+  "home.templates.tag": "50 plantillas premium",
   "home.templates.title": "Plantillas que parecen diseñadas por un profesional",
   "home.templates.subtitle": "Compatibles con ATS, personalizables y listas para el mercado mexicano.",
   "home.templates.viewAll": "Ver todas las plantillas",
