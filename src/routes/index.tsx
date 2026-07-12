@@ -381,7 +381,7 @@ function Index() {
           <p className="mt-3 text-muted-foreground">{t("home.templates.subtitle")}</p>
         </Reveal>
         <Stagger className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {TEMPLATES.map((tpl) => (
+          {TEMPLATES.slice(0, 10).map((tpl) => (
             <motion.div key={tpl.id} variants={staggerItem}>
               <Link
                 to="/plantillas"
