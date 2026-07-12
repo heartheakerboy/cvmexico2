@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, Suspense } from "react";
 import type { Design, Layout, ResumeDoc } from "@/lib/resume/types";
 import { FONT_STACKS } from "@/lib/resume/types";
 import { getTemplate } from "@/lib/resume/registry";
@@ -52,7 +52,9 @@ export const ResumePaper = forwardRef<HTMLDivElement, Props>(function ResumePape
         overflow: "hidden",
       }}
     >
-      <Comp doc={doc} design={design} layout={layout} />
+      <Suspense fallback={<div className="h-full w-full bg-white animate-pulse" style={{ minHeight: `${paper.h}mm` }} />}>
+        <Comp doc={doc} design={design} layout={layout} />
+      </Suspense>
     </div>
   );
 });
