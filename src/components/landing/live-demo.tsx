@@ -104,7 +104,7 @@ export function LiveDemo() {
       </div>
 
       {/* Live preview */}
-      <div className="relative">
+      <div className="relative min-w-0 w-full overflow-hidden">
         <span className="absolute left-3 top-3 z-10 rounded-full bg-foreground/80 px-2.5 py-1 text-[11px] font-medium text-background">
           {t("home.demo.livePreview")}
         </span>
