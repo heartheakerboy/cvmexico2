@@ -128,6 +128,16 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="es-MX" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="BIxEuOxqf1totEv-lplFhAlfqzig9UaM7Wjo9fxKOck" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3TF52JE73H"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3TF52JE73H');
+          `
+        }} />
         <meta name="google" content="notranslate" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
