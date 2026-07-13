@@ -29,6 +29,7 @@ export type ResumeAiContext = {
   headline: string;
   industry: string;
   targetCountry: string;
+  city?: string;
   skills: string[];
   experience: { role: string; company: string; description: string }[];
   education: { degree: string; school: string }[];

@@ -25,9 +25,25 @@ import { TextField, AreaField, ArrayEditor, TagEditor } from "@/components/resum
 import { AiProvider, AiField, AiSuggestButton, type ResumeAiContext } from "@/components/resume/ai-field";
 import { useSettings } from "@/lib/settings";
 import { exportToPdf, exportToDocx } from "@/lib/cv-export";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getStaticCityBySlug, getStaticCities } from "@/lib/cities-data";
+import { localizeResumeDoc } from "@/lib/cities-helper";
+import { JOB_SAMPLES } from "@/lib/resume/job-samples";
+import { softwareEngineerSample, nurseSample } from "@/lib/resume/industry-samples";
+
+function getSampleForTemplate(templateId: string): ResumeDoc {
+  if (templateId in JOB_SAMPLES) return JOB_SAMPLES[templateId];
+  if (templateId === "tech-software-engineer") return softwareEngineerSample;
+  if (templateId === "health-nurse") return nurseSample;
+  return softwareEngineerSample;
+}
 
 export const Route = createFileRoute("/_authenticated/cv/$id")({
   head: () => ({ meta: [{ title: "Editar CV | CVAI" }, { name: "robots", content: "noindex" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    template: (search.template as string) || undefined,
+    city: (search.city as string) || undefined,
+  }),
   component: EditorPage,
 });
 
@@ -52,6 +68,10 @@ function EditorPage() {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [, force] = useState(0);
 
+  const search = Route.useSearch() as { template?: string; city?: string };
+  const paramTemplate = search.template;
+  const paramCity = search.city;
+
   // Load
   useEffect(() => {
     (async () => {
@@ -61,30 +81,91 @@ function EditorPage() {
         navigate({ to: "/panel/curriculums" });
         return;
       }
-      const doc = normalizeDoc({
-        full_name: cv.full_name ?? "",
-        headline: cv.headline ?? "",
-        photo_url: cv.photo_url ?? "",
-        email: cv.email ?? "",
-        phone: cv.phone ?? "",
-        location: cv.location ?? "",
-        website: cv.website ?? "",
-        summary: cv.summary ?? "",
-        experience: (cv.experience as ResumeDoc["experience"]) ?? [],
-        education: (cv.education as ResumeDoc["education"]) ?? [],
-        skills: (cv.skills as string[]) ?? [],
-        ...((cv.extras as Partial<ResumeDoc>) ?? {}),
-      });
-      const tpl = getTemplate(cv.template);
+
+      // Check if CV is new and empty (default values)
+      const isEmpty = !cv.full_name && !cv.summary && (!cv.experience || (cv.experience as any).length === 0);
+
+      let doc: ResumeDoc;
+      let tplId = cv.template;
+
+      if (isEmpty && (paramTemplate || paramCity)) {
+        tplId = paramTemplate || cv.template;
+        const baseSample = getSampleForTemplate(tplId);
+        let localized = baseSample;
+        if (paramCity) {
+          const cityObj = getStaticCityBySlug(paramCity);
+          if (cityObj) {
+            localized = localizeResumeDoc(baseSample, cityObj);
+          }
+        }
+        doc = normalizeDoc({
+          ...localized,
+          photo_url: cv.photo_url ?? "",
+          email: cv.email ?? localized.email ?? "",
+          phone: cv.phone ?? localized.phone ?? "",
+          ...({ citySlug: paramCity } as any)
+        });
+      } else {
+        doc = normalizeDoc({
+          full_name: cv.full_name ?? "",
+          headline: cv.headline ?? "",
+          photo_url: cv.photo_url ?? "",
+          email: cv.email ?? "",
+          phone: cv.phone ?? "",
+          location: cv.location ?? "",
+          website: cv.website ?? "",
+          summary: cv.summary ?? "",
+          experience: (cv.experience as ResumeDoc["experience"]) ?? [],
+          education: (cv.education as ResumeDoc["education"]) ?? [],
+          skills: (cv.skills as string[]) ?? [],
+          ...((cv.extras as Partial<ResumeDoc>) ?? {}),
+        });
+      }
+
+      const tpl = getTemplate(tplId);
       const savedDesign = cv.design as Partial<Design>;
       const design: Design = { ...makeDefaultDesign(tpl.accent), ...savedDesign };
       const layout = normalizeLayout(cv.layout as Partial<Layout>);
-      const init: State = { title: cv.title ?? "Mi CV", template: tpl.id, doc, design, layout };
+      
+      const init: State = { 
+        title: cv.title ?? (paramTemplate ? `CV - ${tpl.name}` : "Mi CV"), 
+        template: tpl.id, 
+        doc, 
+        design, 
+        layout 
+      };
+
+      // Persist the pre-populated values immediately
+      if (isEmpty && (paramTemplate || paramCity)) {
+        const extras = {
+          projects: doc.projects, languages: doc.languages, certifications: doc.certifications,
+          awards: doc.awards, references: doc.references, interests: doc.interests, socials: doc.socials,
+          citySlug: paramCity
+        };
+        await supabase.from("resumes").update({
+          title: init.title,
+          template: init.template,
+          full_name: doc.full_name,
+          headline: doc.headline,
+          email: doc.email,
+          phone: doc.phone,
+          location: doc.location,
+          website: doc.website,
+          summary: doc.summary,
+          experience: doc.experience,
+          education: doc.education,
+          skills: doc.skills,
+          extras: extras as never,
+          design: design as never,
+          layout: layout as never,
+        }).eq("id", id);
+      }
+
       stateRef.current = init;
       history.current = { stack: [init], index: 0 };
       setState(init);
     })();
-  }, [id, navigate]);
+  }, [id, navigate, paramTemplate, paramCity]);
 
   const persist = useCallback(async (s: State) => {
     setStatus("saving");
@@ -300,12 +381,24 @@ function ContentTab({ doc, setDoc, templateId }: { doc: ResumeDoc; setDoc: (p: P
   docRef.current = doc;
   const getContext = useCallback((): ResumeAiContext => {
     const d = docRef.current;
+    const cslug = (stateRef.current?.doc as any)?.citySlug || (d as any)?.citySlug || "";
+    let cityName = "";
+    if (cslug && cslug !== "none") {
+      const c = getStaticCityBySlug(cslug);
+      if (c) cityName = c.name;
+    } else if (d.location) {
+      const loc = d.location.toLowerCase();
+      const match = getStaticCities().find((c) => loc.includes(c.name.toLowerCase()));
+      if (match) cityName = match.name;
+    }
+
     return {
       templateId,
       jobTitle: d.headline || d.experience[0]?.role || "",
       headline: d.headline,
       industry: "",
       targetCountry: "México",
+      city: cityName,
       skills: d.skills,
       experience: d.experience.map((e) => ({ role: e.role, company: e.company, description: e.description })),
       education: d.education.map((e) => ({ degree: e.degree, school: e.school })),
@@ -323,7 +416,40 @@ function ContentTab({ doc, setDoc, templateId }: { doc: ResumeDoc; setDoc: (p: P
             <TextField label="Teléfono" value={doc.phone} onChange={(v) => setDoc({ phone: v })} />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <TextField label="Ubicación" value={doc.location} onChange={(v) => setDoc({ location: v })} placeholder="CDMX, MX" />
+            <div className="space-y-1.5">
+              <Label className="text-xs">Ciudad optimización IA</Label>
+              <Select
+                value={(doc as any).citySlug || "none"}
+                onValueChange={(val) => {
+                  const selected = getStaticCityBySlug(val);
+                  if (selected) {
+                    setDoc({
+                      location: `${selected.name}, ${selected.stateCode}`,
+                      citySlug: val
+                    } as any);
+                  } else {
+                    setDoc({
+                      citySlug: "none"
+                    } as any);
+                  }
+                }}
+              >
+                <SelectTrigger className="h-9 w-full bg-background border border-input rounded-md px-3 py-1 text-sm shadow-sm">
+                  <SelectValue placeholder="Ninguna / Otra" />
+                </SelectTrigger>
+                <SelectContent className="max-h-56">
+                  <SelectItem value="none">Ninguna / Otra</SelectItem>
+                  {getStaticCities().map((c) => (
+                    <SelectItem key={c.slug} value={c.slug}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <TextField label="Ubicación" value={doc.location} onChange={(v) => setDoc({ location: v })} placeholder="Ej. Monterrey, N.L." />
+          </div>
+          <div className="space-y-1.5">
             <TextField label="Sitio / Portafolio" value={doc.website} onChange={(v) => setDoc({ website: v })} />
           </div>
         </div>

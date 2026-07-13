@@ -37,6 +37,7 @@ const ContextSchema = z.object({
   headline: z.string().optional().default(""),
   industry: z.string().optional().default(""),
   targetCountry: z.string().optional().default("México"),
+  city: z.string().optional().default(""),
   skills: z.array(z.string()).optional().default([]),
   experience: z
     .array(
@@ -156,6 +157,7 @@ export const assistWrite = createServerFn({ method: "POST" })
       c.headline && `Titular: ${c.headline}`,
       c.industry && `Industria: ${c.industry}`,
       c.targetCountry && `País objetivo: ${c.targetCountry}`,
+      c.city && `Ciudad objetivo: ${c.city}`,
       c.skills.length && `Habilidades: ${c.skills.slice(0, 15).join(", ")}`,
       c.experience.length &&
         `Experiencia: ${c.experience
@@ -168,12 +170,18 @@ export const assistWrite = createServerFn({ method: "POST" })
       .filter(Boolean)
       .join("\n");
 
+    let cityLine = "";
+    if (c.city) {
+      cityLine = `El candidato busca trabajo en la ciudad de: ${c.city}, México. Si es relevante para el campo, adapta el lenguaje, los logros y las palabras clave del currículum a los sectores industriales predominantes o prácticas comerciales comunes de ${c.city}.`;
+    }
+
     const prompt = `Eres un redactor experto de currículums para el mercado laboral (por defecto México). Trabajas dentro de un editor de CV, sobre el campo "${data.field}" de la sección "${data.section}".
 
 CONTEXTO DEL CURRÍCULUM:
 ${contextBlock || "(sin contexto adicional)"}
 
 ${roleLine}
+${cityLine}
 
 TAREA: ${instruction}
 El contenido debe ser específico al puesto/industria del contexto — NUNCA genérico.

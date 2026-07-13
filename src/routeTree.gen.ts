@@ -16,6 +16,7 @@ import { Route as SoftwareEngineerResumeTemplateRouteImport } from './routes/sof
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as SeniorProfessionalResumeTemplateRouteImport } from './routes/senior-professional-resume-template'
 import { Route as SalesExecutiveResumeTemplateRouteImport } from './routes/sales-executive-resume-template'
+import { Route as ResumeCitySlugRouteImport } from './routes/resume-$citySlug'
 import { Route as ProjectManagerResumeTemplateRouteImport } from './routes/project-manager-resume-template'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PreciosRouteImport } from './routes/precios'
@@ -79,6 +80,7 @@ import { Route as AuthenticatedAdminExportacionesRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminEmpleosRouteImport } from './routes/_authenticated/admin.empleos'
 import { Route as AuthenticatedAdminEmailsRouteImport } from './routes/_authenticated/admin.emails'
 import { Route as AuthenticatedAdminConfiguracionRouteImport } from './routes/_authenticated/admin.configuracion'
+import { Route as AuthenticatedAdminCiudadesRouteImport } from './routes/_authenticated/admin.ciudades'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
 import { Route as AuthenticatedAdminAnaliticaRouteImport } from './routes/_authenticated/admin.analitica'
 import { Route as AuthenticatedAdminAlmacenamientoRouteImport } from './routes/_authenticated/admin.almacenamiento'
@@ -122,6 +124,11 @@ const SalesExecutiveResumeTemplateRoute =
     path: '/sales-executive-resume-template',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ResumeCitySlugRoute = ResumeCitySlugRouteImport.update({
+  id: '/resume-$citySlug',
+  path: '/resume-$citySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectManagerResumeTemplateRoute =
   ProjectManagerResumeTemplateRouteImport.update({
     id: '/project-manager-resume-template',
@@ -467,6 +474,12 @@ const AuthenticatedAdminConfiguracionRoute =
     path: '/configuracion',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCiudadesRoute =
+  AuthenticatedAdminCiudadesRouteImport.update({
+    id: '/ciudades',
+    path: '/ciudades',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   id: '/blog',
   path: '/blog',
@@ -516,6 +529,7 @@ export interface FileRoutesByFullPath {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -531,6 +545,7 @@ export interface FileRoutesByFullPath {
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/ciudades': typeof AuthenticatedAdminCiudadesRoute
   '/admin/configuracion': typeof AuthenticatedAdminConfiguracionRoute
   '/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/admin/empleos': typeof AuthenticatedAdminEmpleosRoute
@@ -591,6 +606,7 @@ export interface FileRoutesByTo {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -604,6 +620,7 @@ export interface FileRoutesByTo {
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/ciudades': typeof AuthenticatedAdminCiudadesRoute
   '/admin/configuracion': typeof AuthenticatedAdminConfiguracionRoute
   '/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/admin/empleos': typeof AuthenticatedAdminEmpleosRoute
@@ -666,6 +683,7 @@ export interface FileRoutesById {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -681,6 +699,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/_authenticated/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/_authenticated/admin/ciudades': typeof AuthenticatedAdminCiudadesRoute
   '/_authenticated/admin/configuracion': typeof AuthenticatedAdminConfiguracionRoute
   '/_authenticated/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/_authenticated/admin/empleos': typeof AuthenticatedAdminEmpleosRoute
@@ -743,6 +762,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -758,6 +778,7 @@ export interface FileRouteTypes {
     | '/admin/almacenamiento'
     | '/admin/analitica'
     | '/admin/blog'
+    | '/admin/ciudades'
     | '/admin/configuracion'
     | '/admin/emails'
     | '/admin/empleos'
@@ -818,6 +839,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -831,6 +853,7 @@ export interface FileRouteTypes {
     | '/admin/almacenamiento'
     | '/admin/analitica'
     | '/admin/blog'
+    | '/admin/ciudades'
     | '/admin/configuracion'
     | '/admin/emails'
     | '/admin/empleos'
@@ -892,6 +915,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -907,6 +931,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/almacenamiento'
     | '/_authenticated/admin/analitica'
     | '/_authenticated/admin/blog'
+    | '/_authenticated/admin/ciudades'
     | '/_authenticated/admin/configuracion'
     | '/_authenticated/admin/emails'
     | '/_authenticated/admin/empleos'
@@ -969,6 +994,7 @@ export interface RootRouteChildren {
   PreciosRoute: typeof PreciosRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ProjectManagerResumeTemplateRoute: typeof ProjectManagerResumeTemplateRoute
+  ResumeCitySlugRoute: typeof ResumeCitySlugRoute
   SalesExecutiveResumeTemplateRoute: typeof SalesExecutiveResumeTemplateRoute
   SeniorProfessionalResumeTemplateRoute: typeof SeniorProfessionalResumeTemplateRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
@@ -1029,6 +1055,13 @@ declare module '@tanstack/react-router' {
       path: '/sales-executive-resume-template'
       fullPath: '/sales-executive-resume-template'
       preLoaderRoute: typeof SalesExecutiveResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-$citySlug': {
+      id: '/resume-$citySlug'
+      path: '/resume-$citySlug'
+      fullPath: '/resume-$citySlug'
+      preLoaderRoute: typeof ResumeCitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/project-manager-resume-template': {
@@ -1472,6 +1505,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracionRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/ciudades': {
+      id: '/_authenticated/admin/ciudades'
+      path: '/ciudades'
+      fullPath: '/admin/ciudades'
+      preLoaderRoute: typeof AuthenticatedAdminCiudadesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/blog': {
       id: '/_authenticated/admin/blog'
       path: '/blog'
@@ -1508,6 +1548,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAlmacenamientoRoute: typeof AuthenticatedAdminAlmacenamientoRoute
   AuthenticatedAdminAnaliticaRoute: typeof AuthenticatedAdminAnaliticaRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminCiudadesRoute: typeof AuthenticatedAdminCiudadesRoute
   AuthenticatedAdminConfiguracionRoute: typeof AuthenticatedAdminConfiguracionRoute
   AuthenticatedAdminEmailsRoute: typeof AuthenticatedAdminEmailsRoute
   AuthenticatedAdminEmpleosRoute: typeof AuthenticatedAdminEmpleosRoute
@@ -1534,6 +1575,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAlmacenamientoRoute: AuthenticatedAdminAlmacenamientoRoute,
   AuthenticatedAdminAnaliticaRoute: AuthenticatedAdminAnaliticaRoute,
   AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+  AuthenticatedAdminCiudadesRoute: AuthenticatedAdminCiudadesRoute,
   AuthenticatedAdminConfiguracionRoute: AuthenticatedAdminConfiguracionRoute,
   AuthenticatedAdminEmailsRoute: AuthenticatedAdminEmailsRoute,
   AuthenticatedAdminEmpleosRoute: AuthenticatedAdminEmpleosRoute,
@@ -1636,6 +1678,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreciosRoute: PreciosRoute,
   PrivacidadRoute: PrivacidadRoute,
   ProjectManagerResumeTemplateRoute: ProjectManagerResumeTemplateRoute,
+  ResumeCitySlugRoute: ResumeCitySlugRoute,
   SalesExecutiveResumeTemplateRoute: SalesExecutiveResumeTemplateRoute,
   SeniorProfessionalResumeTemplateRoute: SeniorProfessionalResumeTemplateRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,

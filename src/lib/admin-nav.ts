@@ -22,6 +22,7 @@ import {
   Activity,
   Scale,
   HardDrive,
+  MapPin,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,6 +57,7 @@ export const adminNav: NavGroup[] = [
       { label: "SEO", to: "/admin/seo", icon: Search, keywords: "meta sitemap redirects" },
       { label: "Media", to: "/admin/media", icon: Image, keywords: "imagenes archivos biblioteca" },
       { label: "Jobs", to: "/admin/empleos", icon: Briefcase, keywords: "ocupaciones skills salarios empleos" },
+      { label: "Cities", to: "/admin/ciudades", icon: MapPin, keywords: "cities ciudades localizacion mexico seo" },
     ],
   },
   {
