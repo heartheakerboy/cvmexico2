@@ -28,6 +28,7 @@ const columns = [
       { to: "/contacto", labelKey: "site.footer.contact" },
       { to: "/privacidad", labelKey: "site.footer.privacy" },
       { to: "/terminos", labelKey: "site.footer.terms" },
+      { to: "/reembolso", labelKey: "site.footer.refunds" },
     ],
   },
 ] as const;

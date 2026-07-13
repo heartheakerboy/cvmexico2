@@ -73,6 +73,7 @@ const en = {
   "site.footer.contact": "Contact",
   "site.footer.privacy": "Privacy notice",
   "site.footer.terms": "Terms",
+  "site.footer.refunds": "Refund policy",
   "site.footer.copyright": "© {{year}} CVAI. Made in Mexico 🇲🇽 · Data protected under the LFPDPPP.",
 
   // Home page

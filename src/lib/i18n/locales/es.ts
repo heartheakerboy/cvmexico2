@@ -73,6 +73,7 @@ const es = {
   "site.footer.contact": "Contacto",
   "site.footer.privacy": "Aviso de privacidad",
   "site.footer.terms": "Términos",
+  "site.footer.refunds": "Política de reembolso",
   "site.footer.copyright": "© {{year}} CVAI. Hecho en México 🇲🇽 · Datos protegidos conforme a la LFPDPPP.",
 
   // Página principal

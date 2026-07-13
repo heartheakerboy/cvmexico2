@@ -16,6 +16,7 @@ import { Route as SoftwareEngineerResumeTemplateRouteImport } from './routes/sof
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as SeniorProfessionalResumeTemplateRouteImport } from './routes/senior-professional-resume-template'
 import { Route as SalesExecutiveResumeTemplateRouteImport } from './routes/sales-executive-resume-template'
+import { Route as ReembolsoRouteImport } from './routes/reembolso'
 import { Route as ProjectManagerResumeTemplateRouteImport } from './routes/project-manager-resume-template'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PreciosRouteImport } from './routes/precios'
@@ -124,6 +125,11 @@ const SalesExecutiveResumeTemplateRoute =
     path: '/sales-executive-resume-template',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ReembolsoRoute = ReembolsoRouteImport.update({
+  id: '/reembolso',
+  path: '/reembolso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectManagerResumeTemplateRoute =
   ProjectManagerResumeTemplateRouteImport.update({
     id: '/project-manager-resume-template',
@@ -529,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -606,6 +613,7 @@ export interface FileRoutesByTo {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -683,6 +691,7 @@ export interface FileRoutesById {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -762,6 +771,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/reembolso'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -839,6 +849,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/reembolso'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -915,6 +926,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
+    | '/reembolso'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -994,6 +1006,7 @@ export interface RootRouteChildren {
   PreciosRoute: typeof PreciosRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ProjectManagerResumeTemplateRoute: typeof ProjectManagerResumeTemplateRoute
+  ReembolsoRoute: typeof ReembolsoRoute
   SalesExecutiveResumeTemplateRoute: typeof SalesExecutiveResumeTemplateRoute
   SeniorProfessionalResumeTemplateRoute: typeof SeniorProfessionalResumeTemplateRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
@@ -1055,6 +1068,13 @@ declare module '@tanstack/react-router' {
       path: '/sales-executive-resume-template'
       fullPath: '/sales-executive-resume-template'
       preLoaderRoute: typeof SalesExecutiveResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reembolso': {
+      id: '/reembolso'
+      path: '/reembolso'
+      fullPath: '/reembolso'
+      preLoaderRoute: typeof ReembolsoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/project-manager-resume-template': {
@@ -1678,6 +1698,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreciosRoute: PreciosRoute,
   PrivacidadRoute: PrivacidadRoute,
   ProjectManagerResumeTemplateRoute: ProjectManagerResumeTemplateRoute,
+  ReembolsoRoute: ReembolsoRoute,
   SalesExecutiveResumeTemplateRoute: SalesExecutiveResumeTemplateRoute,
   SeniorProfessionalResumeTemplateRoute: SeniorProfessionalResumeTemplateRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
