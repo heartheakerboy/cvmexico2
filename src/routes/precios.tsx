@@ -167,7 +167,7 @@ function PreciosPage() {
               <Button
                 className="w-full"
                 onClick={() => {
-                  const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://curriculum-vitae-ai.lemonsqueezy.com/checkout/buy/pro-monthly";
+                  const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://curriculum-vitae-ai.lemonsqueezy.com/checkout/buy/1902372";
                   const checkoutUrl = `${baseCheckoutUrl}?checkout[custom][user_id]=${user.id}&checkout[email]=${encodeURIComponent(user.email || "")}`;
                   window.location.href = checkoutUrl;
                 }}

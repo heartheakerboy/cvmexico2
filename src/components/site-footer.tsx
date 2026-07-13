@@ -57,7 +57,7 @@ export function SiteFooter() {
             <h4 className="font-display text-sm font-semibold text-foreground">{t(col.titleKey)}</h4>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
-                <li key={l.to}>
+                <li key={l.labelKey}>
                   <Link
                     to={l.to}
                     className="text-sm text-muted-foreground transition-colors hover:text-primary"
