@@ -16,7 +16,6 @@ import { Route as SoftwareEngineerResumeTemplateRouteImport } from './routes/sof
 import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
 import { Route as SeniorProfessionalResumeTemplateRouteImport } from './routes/senior-professional-resume-template'
 import { Route as SalesExecutiveResumeTemplateRouteImport } from './routes/sales-executive-resume-template'
-import { Route as ResumeCitySlugRouteImport } from './routes/resume-$citySlug'
 import { Route as ProjectManagerResumeTemplateRouteImport } from './routes/project-manager-resume-template'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PreciosRouteImport } from './routes/precios'
@@ -42,6 +41,7 @@ import { Route as ArchitectResumeTemplateRouteImport } from './routes/architect-
 import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResumeCitySlugRouteImport } from './routes/resume.$citySlug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
@@ -124,11 +124,6 @@ const SalesExecutiveResumeTemplateRoute =
     path: '/sales-executive-resume-template',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ResumeCitySlugRoute = ResumeCitySlugRouteImport.update({
-  id: '/resume-$citySlug',
-  path: '/resume-$citySlug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProjectManagerResumeTemplateRoute =
   ProjectManagerResumeTemplateRouteImport.update({
     id: '/project-manager-resume-template',
@@ -258,6 +253,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeCitySlugRoute = ResumeCitySlugRouteImport.update({
+  id: '/resume/$citySlug',
+  path: '/resume/$citySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalSlugRoute = LegalSlugRouteImport.update({
@@ -529,7 +529,6 @@ export interface FileRoutesByFullPath {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
-  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -541,6 +540,7 @@ export interface FileRoutesByFullPath {
   '/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/resume/$citySlug': typeof ResumeCitySlugRoute
   '/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -606,7 +606,6 @@ export interface FileRoutesByTo {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
-  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -616,6 +615,7 @@ export interface FileRoutesByTo {
   '/terminos': typeof TerminosRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/resume/$citySlug': typeof ResumeCitySlugRoute
   '/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -683,7 +683,6 @@ export interface FileRoutesById {
   '/precios': typeof PreciosRoute
   '/privacidad': typeof PrivacidadRoute
   '/project-manager-resume-template': typeof ProjectManagerResumeTemplateRoute
-  '/resume-$citySlug': typeof ResumeCitySlugRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
@@ -695,6 +694,7 @@ export interface FileRoutesById {
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/resume/$citySlug': typeof ResumeCitySlugRoute
   '/_authenticated/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/_authenticated/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/_authenticated/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -762,7 +762,6 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
-    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -774,6 +773,7 @@ export interface FileRouteTypes {
     | '/panel'
     | '/guias/$slug'
     | '/legal/$slug'
+    | '/resume/$citySlug'
     | '/admin/afiliados'
     | '/admin/almacenamiento'
     | '/admin/analitica'
@@ -839,7 +839,6 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
-    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -849,6 +848,7 @@ export interface FileRouteTypes {
     | '/terminos'
     | '/guias/$slug'
     | '/legal/$slug'
+    | '/resume/$citySlug'
     | '/admin/afiliados'
     | '/admin/almacenamiento'
     | '/admin/analitica'
@@ -915,7 +915,6 @@ export interface FileRouteTypes {
     | '/precios'
     | '/privacidad'
     | '/project-manager-resume-template'
-    | '/resume-$citySlug'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
     | '/sobre-nosotros'
@@ -927,6 +926,7 @@ export interface FileRouteTypes {
     | '/_authenticated/panel'
     | '/guias/$slug'
     | '/legal/$slug'
+    | '/resume/$citySlug'
     | '/_authenticated/admin/afiliados'
     | '/_authenticated/admin/almacenamiento'
     | '/_authenticated/admin/analitica'
@@ -994,7 +994,6 @@ export interface RootRouteChildren {
   PreciosRoute: typeof PreciosRoute
   PrivacidadRoute: typeof PrivacidadRoute
   ProjectManagerResumeTemplateRoute: typeof ProjectManagerResumeTemplateRoute
-  ResumeCitySlugRoute: typeof ResumeCitySlugRoute
   SalesExecutiveResumeTemplateRoute: typeof SalesExecutiveResumeTemplateRoute
   SeniorProfessionalResumeTemplateRoute: typeof SeniorProfessionalResumeTemplateRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
@@ -1004,6 +1003,7 @@ export interface RootRouteChildren {
   TerminosRoute: typeof TerminosRoute
   GuiasSlugRoute: typeof GuiasSlugRoute
   LegalSlugRoute: typeof LegalSlugRoute
+  ResumeCitySlugRoute: typeof ResumeCitySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1055,13 +1055,6 @@ declare module '@tanstack/react-router' {
       path: '/sales-executive-resume-template'
       fullPath: '/sales-executive-resume-template'
       preLoaderRoute: typeof SalesExecutiveResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resume-$citySlug': {
-      id: '/resume-$citySlug'
-      path: '/resume-$citySlug'
-      fullPath: '/resume-$citySlug'
-      preLoaderRoute: typeof ResumeCitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/project-manager-resume-template': {
@@ -1237,6 +1230,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume/$citySlug': {
+      id: '/resume/$citySlug'
+      path: '/resume/$citySlug'
+      fullPath: '/resume/$citySlug'
+      preLoaderRoute: typeof ResumeCitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/$slug': {
@@ -1678,7 +1678,6 @@ const rootRouteChildren: RootRouteChildren = {
   PreciosRoute: PreciosRoute,
   PrivacidadRoute: PrivacidadRoute,
   ProjectManagerResumeTemplateRoute: ProjectManagerResumeTemplateRoute,
-  ResumeCitySlugRoute: ResumeCitySlugRoute,
   SalesExecutiveResumeTemplateRoute: SalesExecutiveResumeTemplateRoute,
   SeniorProfessionalResumeTemplateRoute: SeniorProfessionalResumeTemplateRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
@@ -1688,6 +1687,7 @@ const rootRouteChildren: RootRouteChildren = {
   TerminosRoute: TerminosRoute,
   GuiasSlugRoute: GuiasSlugRoute,
   LegalSlugRoute: LegalSlugRoute,
+  ResumeCitySlugRoute: ResumeCitySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

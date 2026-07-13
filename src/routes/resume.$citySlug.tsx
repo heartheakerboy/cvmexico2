@@ -26,7 +26,7 @@ import { getStaticCityBySlug, getStaticCities, type City } from "@/lib/cities-da
 import { localizeResumeDoc } from "@/lib/cities-helper";
 import { softwareEngineerSample } from "@/lib/resume/industry-samples";
 
-export const Route = createFileRoute("/resume-$citySlug")({
+export const Route = createFileRoute("/resume/$citySlug")({
   head: ({ params }) => {
     const city = getStaticCityBySlug(params.citySlug);
     const title = city ? city.seoTitle : "Plantillas de Currículum por Ciudad | CVAI";
@@ -37,11 +37,11 @@ export const Route = createFileRoute("/resume-$citySlug")({
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
-        { property: "og:url", content: `https://www.cvai.com.mx/resume-${params.citySlug}` },
+        { property: "og:url", content: `https://www.cvai.com.mx/resume/${params.citySlug}` },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: desc }
       ],
-      links: [{ rel: "canonical", href: `https://www.cvai.com.mx/resume-${params.citySlug}` }]
+      links: [{ rel: "canonical", href: `https://www.cvai.com.mx/resume/${params.citySlug}` }]
     };
   },
   component: CityLandingPage,
@@ -489,7 +489,7 @@ function CityLandingPage() {
             {activeCities.map((c) => (
               <Link
                 key={c.slug}
-                to={`/resume-${c.slug}`}
+                to={`/resume/${c.slug}`}
                 className="bg-card hover:bg-primary/5 hover:border-primary/40 border text-center p-3 rounded-lg text-[11px] font-semibold text-muted-foreground hover:text-primary transition-all truncate"
               >
                 {c.name}
