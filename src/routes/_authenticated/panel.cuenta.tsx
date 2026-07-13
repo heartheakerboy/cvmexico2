@@ -89,7 +89,7 @@ function CuentaPage() {
   async function changePlan(next: Plan) {
     if (!uid) return;
     if (next === "pro") {
-      const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://cvai.lemonsqueezy.com/checkout/buy/pro-monthly";
+      const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://curriculum-vitae-ai.lemonsqueezy.com/checkout/buy/pro-monthly";
       const emailParam = billing.email ? `&checkout[email]=${encodeURIComponent(billing.email)}` : "";
       const checkoutUrl = `${baseCheckoutUrl}?checkout[custom][user_id]=${uid}${emailParam}`;
       
