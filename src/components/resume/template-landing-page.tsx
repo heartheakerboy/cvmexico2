@@ -39,7 +39,7 @@ export function TemplateLandingPage({
     "@type": "Product",
     "name": title,
     "description": schemaDescription,
-    "image": "https://cvai.com.mx/og-image.png",
+    "image": "https://www.cvai.com.mx/og-image.png",
     "brand": {
       "@type": "Brand",
       "name": "CVAI"

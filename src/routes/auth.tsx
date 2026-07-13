@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSettings } from "@/lib/settings";
 import { getMetaTranslation } from "@/lib/i18n/config";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -23,6 +24,14 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const [tab, setTab] = useState("registro");
   const { t } = useSettings();
+  const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate({ to: "/panel" });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 px-4 py-12">

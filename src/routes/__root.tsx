@@ -162,11 +162,37 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash.includes("access_token=")) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          window.location.replace("/panel");
+        }
+      });
+    }
+  }, [router]);
+
+  useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED")
         return;
       router.invalidate();
-      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      if (event !== "SIGNED_OUT") {
+        queryClient.invalidateQueries();
+      }
+
+      if (event === "SIGNED_IN") {
+        if (typeof window !== "undefined") {
+          const path = window.location.pathname;
+          const hasHashToken = window.location.hash.includes("access_token=");
+          if (path === "/auth" || hasHashToken) {
+            if (hasHashToken) {
+              window.location.replace("/panel");
+            } else {
+              router.navigate({ to: "/panel" });
+            }
+          }
+        }
+      }
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
