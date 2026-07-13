@@ -116,12 +116,143 @@ async function serveSitemap(): Promise<Response> {
   });
 }
 
+async function verifyLemonSqueezySignature(
+  secret: string,
+  signature: string,
+  payloadText: string
+): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+  const signatureBytes = new Uint8Array(
+    signature.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []
+  );
+  return await crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes,
+    encoder.encode(payloadText)
+  );
+}
+
+async function handleLemonSqueezyWebhook(request: Request): Promise<Response> {
+  const signature = request.headers.get("x-signature") || request.headers.get("X-Signature") || "";
+  const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || "";
+  const bodyText = await request.text();
+
+  if (secret) {
+    const verified = await verifyLemonSqueezySignature(secret, signature, bodyText);
+    if (!verified) {
+      console.warn("[LemonSqueezy Webhook] Invalid signature");
+      return new Response("Invalid signature", { status: 401 });
+    }
+  }
+
+  let payload: any;
+  try {
+    payload = JSON.parse(bodyText);
+  } catch (e) {
+    return new Response("Invalid JSON payload", { status: 400 });
+  }
+
+  const eventName = payload.meta?.event_name;
+  const customData = payload.meta?.custom_data || {};
+  let userId = customData.user_id || customData.userId;
+  
+  const attr = payload.data?.attributes || {};
+  const email = attr.user_email || attr.customer_email;
+
+  console.log(`[LemonSqueezy Webhook] Event: ${eventName}, User ID: ${userId}, Email: ${email}`);
+
+  // Resolve user if not provided in customData
+  if (!userId && email) {
+    const { data: userProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+    if (userProfile) {
+      userId = userProfile.id;
+    }
+  }
+
+  if (!userId) {
+    console.error("[LemonSqueezy Webhook] User could not be identified");
+    return new Response("User not found", { status: 400 });
+  }
+
+  // Handle subscription/order upgrades and demotions
+  if (
+    eventName === "subscription_created" ||
+    eventName === "subscription_updated" ||
+    eventName === "order_created"
+  ) {
+    const status = attr.status;
+    const isUpgrade = !status || status === "active" || status === "on_trial";
+
+    if (isUpgrade) {
+      // 1. Update user profile to pro
+      await supabase
+        .from("profiles")
+        .update({ plan: "pro" })
+        .eq("id", userId);
+
+      // 2. Log invoice
+      const amount = typeof attr.total === "number" ? attr.total / 100 : (attr.price / 100 || 149);
+      const currency = attr.currency || "MXN";
+      const number = `LS-${payload.data?.id || Date.now()}`;
+      
+      const { data: existing } = await supabase
+        .from("invoices")
+        .select("id")
+        .eq("number", number)
+        .maybeSingle();
+
+      if (!existing) {
+        await supabase.from("invoices").insert({
+          user_id: userId,
+          number,
+          concept: eventName.startsWith("subscription") ? "Suscripción Pro (LemonSqueezy)" : "Compra Pro (LemonSqueezy)",
+          amount,
+          currency,
+          status: "pagado",
+          method: attr.card_brand ? `Tarjeta (${attr.card_brand})` : "LemonSqueezy",
+          period: eventName.startsWith("subscription") ? "Mensual" : "Pago único",
+        });
+      }
+    } else if (status === "expired" || status === "unpaid") {
+      // Demote to free if unpaid or expired
+      await supabase
+        .from("profiles")
+        .update({ plan: "free" })
+        .eq("id", userId);
+    }
+  } else if (eventName === "subscription_expired" || eventName === "subscription_unpaid") {
+    // Demote to free
+    await supabase
+      .from("profiles")
+      .update({ plan: "free" })
+      .eq("id", userId);
+  }
+
+  return new Response("Webhook processed", { status: 200 });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const url = new URL(request.url);
       if (url.pathname === "/sitemap.xml") {
         return await serveSitemap();
+      }
+
+      if (url.pathname === "/api/lemonsqueezy-webhook" && request.method === "POST") {
+        return await handleLemonSqueezyWebhook(request);
       }
 
       const handler = await getServerEntry();

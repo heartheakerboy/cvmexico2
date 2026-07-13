@@ -48,6 +48,14 @@ function PreciosPage() {
   const [monthlyPrice, setMonthlyPrice] = useState(139);
   const [annualPrice, setAnnualPrice] = useState(99);
 
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setUser(data.user);
+    });
+  }, []);
+
   useEffect(() => {
     async function fetchPlans() {
       try {
@@ -154,9 +162,24 @@ function PreciosPage() {
               ? t("pricing.billingAnnualFactured").replace(/\$[\d,]+(\.\d+)?\s*(MXN)?/g, `$${annualPrice * 12} MXN`)
               : t("pricing.billingMonthlyFactured")}
           </p>
-          <Link to="/auth" className="mt-6 block">
-            <Button className="w-full">{t("pricing.proCta")}</Button>
-          </Link>
+          {user ? (
+            <div className="mt-6">
+              <Button
+                className="w-full"
+                onClick={() => {
+                  const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://cvai.lemonsqueezy.com/checkout/buy/pro-monthly";
+                  const checkoutUrl = `${baseCheckoutUrl}?checkout[custom][user_id]=${user.id}&checkout[email]=${encodeURIComponent(user.email || "")}`;
+                  window.location.href = checkoutUrl;
+                }}
+              >
+                {t("pricing.proCta")}
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth" search={{ redirect: "/precios" }} className="mt-6 block">
+              <Button className="w-full">{t("pricing.proCta")}</Button>
+            </Link>
+          )}
           <ul className="mt-8 space-y-3">
             {proFeaturesKeys.map((k) => (
               <li key={k} className="flex items-start gap-2 text-sm">

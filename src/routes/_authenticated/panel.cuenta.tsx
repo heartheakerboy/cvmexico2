@@ -88,22 +88,21 @@ function CuentaPage() {
 
   async function changePlan(next: Plan) {
     if (!uid) return;
+    if (next === "pro") {
+      const baseCheckoutUrl = import.meta.env.VITE_LEMONSQUEEZY_CHECKOUT_URL || "https://cvai.lemonsqueezy.com/checkout/buy/pro-monthly";
+      const emailParam = billing.email ? `&checkout[email]=${encodeURIComponent(billing.email)}` : "";
+      const checkoutUrl = `${baseCheckoutUrl}?checkout[custom][user_id]=${uid}${emailParam}`;
+      
+      toast.loading("Redirigiendo al pago seguro...");
+      window.location.href = checkoutUrl;
+      return;
+    }
+
     const { error } = await supabase.from("profiles").update({ plan: next }).eq("id", uid);
     if (error) return toast.error("No se pudo actualizar el plan");
-    if (next === "pro") {
-      const number = `FAC-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(4, "0")}`;
-      const proPlan = dbPlans.find((p) => p.name.toLowerCase() === "pro");
-      const base = proPlan ? proPlan.price : 149;
-      const amount = discount ? base * (1 - discount.percent / 100) : base;
-      const { data: newInv } = await supabase.from("invoices").insert({
-        user_id: uid, number, concept: "Suscripción Pro", amount, currency: "MXN",
-        status: "pagado", method: "Tarjeta", period: "Mensual",
-      }).select("*").single();
-      if (newInv) setInvoices((l) => [newInv as Invoice, ...l]);
-    }
     setPlan(next);
     setUpgradeOpen(false); setCancelOpen(false);
-    toast.success(next === "pro" ? "¡Bienvenido a Pro!" : "Plan cancelado. Ahora estás en Free.");
+    toast.success("Plan cancelado. Ahora estás en Free.");
   }
 
   async function saveBilling() {
