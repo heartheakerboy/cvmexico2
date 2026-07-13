@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Check, CreditCard, Store, Landmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +45,52 @@ const proFeaturesKeys = [
 function PreciosPage() {
   const [annual, setAnnual] = useState(true);
   const { t } = useSettings();
+  const [monthlyPrice, setMonthlyPrice] = useState(139);
+  const [annualPrice, setAnnualPrice] = useState(99);
+
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        const { data } = await supabase
+          .from("plans")
+          .select("*")
+          .eq("active", true);
+        if (data) {
+          const proMonthly = data.find(
+            (p) =>
+              p.name.toLowerCase() === "pro" &&
+              (p.interval.toLowerCase().includes("mensual") ||
+                p.interval.toLowerCase().includes("month"))
+          );
+          const proAnnual = data.find(
+            (p) =>
+              p.name.toLowerCase() === "pro" &&
+              (p.interval.toLowerCase().includes("anual") ||
+                p.interval.toLowerCase().includes("year"))
+          );
+
+          if (proMonthly) {
+            setMonthlyPrice(proMonthly.price);
+            if (proAnnual) {
+              const rate = proAnnual.price > 300 ? Math.round(proAnnual.price / 12) : proAnnual.price;
+              setAnnualPrice(rate);
+            } else {
+              setAnnualPrice(Math.round(proMonthly.price * 0.7));
+            }
+          } else {
+            const generalPro = data.find((p) => p.name.toLowerCase() === "pro");
+            if (generalPro) {
+              setMonthlyPrice(generalPro.price);
+              setAnnualPrice(Math.round(generalPro.price * 0.7));
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching plans:", err);
+      }
+    }
+    fetchPlans();
+  }, []);
 
   return (
     <PageShell
@@ -98,12 +145,14 @@ function PreciosPage() {
           </Badge>
           <h2 className="font-display text-xl font-bold">{t("pricing.proTitle")}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{t("pricing.proDesc")}</p>
-          <div className="mt-6">
-            <span className="text-4xl font-bold">${annual ? "99" : "139"}</span>
+           <div className="mt-6">
+            <span className="text-4xl font-bold">${annual ? annualPrice : monthlyPrice}</span>
             <span className="text-muted-foreground">{t("pricing.billingSuffix")}</span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {annual ? t("pricing.billingAnnualFactured") : t("pricing.billingMonthlyFactured")}
+            {annual
+              ? t("pricing.billingAnnualFactured").replace(/\$[\d,]+(\.\d+)?\s*(MXN)?/g, `$${annualPrice * 12} MXN`)
+              : t("pricing.billingMonthlyFactured")}
           </p>
           <Link to="/auth" className="mt-6 block">
             <Button className="w-full">{t("pricing.proCta")}</Button>

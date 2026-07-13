@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import {
   Sparkles,
@@ -201,6 +203,27 @@ const posts = [
 
 function Index() {
   const { t } = useSettings();
+  const [proPrice, setProPrice] = useState(149);
+
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        const { data } = await supabase
+          .from("plans")
+          .select("*")
+          .eq("active", true);
+        if (data) {
+          const proPlan = data.find((p) => p.name.toLowerCase() === "pro");
+          if (proPlan) {
+            setProPrice(proPlan.price);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching plans:", err);
+      }
+    }
+    fetchPlans();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -667,7 +690,7 @@ function Index() {
             </span>
             <h3 className="text-lg font-bold">{t("home.pricing.pro")}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{t("home.pricing.proDesc")}</p>
-            <div className="mt-5 text-4xl font-bold">$149 <span className="text-base font-normal text-muted-foreground">{t("home.pricing.month")}</span></div>
+            <div className="mt-5 text-4xl font-bold">${proPrice} <span className="text-base font-normal text-muted-foreground">{t("home.pricing.month")}</span></div>
             <ul className="mt-6 flex-1 space-y-3 text-sm">
               {["home.pricing.proF1", "home.pricing.proF2", "home.pricing.proF3", "home.pricing.proF4"].map((f) => (
                 <li key={f} className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> {t(f)}</li>

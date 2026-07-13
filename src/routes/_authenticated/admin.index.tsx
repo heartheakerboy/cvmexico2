@@ -37,19 +37,27 @@ function DashboardPage() {
   const [invoices, setInvoices] = useState<any[] | null>(null);
   const [resumesCount, setResumesCount] = useState<number>(0);
   const [aiUsageCount, setAiUsageCount] = useState<number>(0);
+  const [proPrice, setProPrice] = useState<number>(149);
 
   useEffect(() => {
     (async () => {
-      const [{ data: prof }, { data: invs }, { count: resCount }, { count: usageCount }] = await Promise.all([
+      const [{ data: prof }, { data: invs }, { count: resCount }, { count: usageCount }, { data: plans }] = await Promise.all([
         supabase.from("profiles").select("plan, created_at"),
         supabase.from("invoices").select("amount, status, issued_at, currency"),
         supabase.from("resumes").select("*", { count: "exact", head: true }),
         supabase.from("ai_usage_logs").select("*", { count: "exact", head: true }),
+        supabase.from("plans").select("price, name").eq("active", true),
       ]);
       setRows(prof ?? []);
       setInvoices(invs ?? []);
       setResumesCount(resCount ?? 0);
       setAiUsageCount(usageCount ?? 0);
+      if (plans) {
+        const proPlan = plans.find((p) => p.name.toLowerCase() === "pro");
+        if (proPlan) {
+          setProPrice(proPlan.price);
+        }
+      }
     })();
   }, []);
 
@@ -65,7 +73,7 @@ function DashboardPage() {
       .filter((i) => i.status === "pagado" && i.issued_at.slice(0, 7) === currentMonth)
       .reduce((sum, i) => sum + Number(i.amount), 0);
 
-    const mrr = pro * 149;
+    const mrr = pro * proPrice;
 
     const days: { label: string; value: number }[] = [];
     for (let i = 13; i >= 0; i--) {
@@ -78,7 +86,7 @@ function DashboardPage() {
       });
     }
     return { total, pro, free: total - pro, newToday, monthlyRevenue, mrr, days };
-  }, [rows, invoices]);
+  }, [rows, invoices, proPrice]);
 
   return (
     <div>

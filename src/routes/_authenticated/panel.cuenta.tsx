@@ -92,7 +92,8 @@ function CuentaPage() {
     if (error) return toast.error("No se pudo actualizar el plan");
     if (next === "pro") {
       const number = `FAC-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(4, "0")}`;
-      const base = 149;
+      const proPlan = dbPlans.find((p) => p.name.toLowerCase() === "pro");
+      const base = proPlan ? proPlan.price : 149;
       const amount = discount ? base * (1 - discount.percent / 100) : base;
       const { data: newInv } = await supabase.from("invoices").insert({
         user_id: uid, number, concept: "Suscripción Pro", amount, currency: "MXN",
