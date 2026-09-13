@@ -107,7 +107,7 @@ function AiAdmin() {
   const [versions, setVersions] = useState<Version[] | null>(null);
 
   const [saving, setSaving] = useState(false);
-  const [activeProvider, setActiveProvider] = useState<string>("gemini");
+  const [activeProvider, setActiveProvider] = useState<string>("deepseek");
   const [updatingProvider, setUpdatingProvider] = useState(false);
 
   async function load() {
@@ -119,7 +119,7 @@ function AiAdmin() {
     if (p.error) toast.error(p.error.message); else setPrompts(p.data as Prompt[]);
     if (m.error) toast.error(m.error.message); else setModels(m.data as Model[]);
     if (s.data?.value && typeof s.data.value === "object") {
-      setActiveProvider((s.data.value as any).provider || "gemini");
+      setActiveProvider((s.data.value as any).provider || "deepseek");
     }
   }
 
@@ -133,7 +133,7 @@ function AiAdmin() {
       toast.error(error.message);
     } else {
       setActiveProvider(val);
-      toast.success(`Proveedor activo cambiado a: ${val === "gemini" ? "Google Gemini" : "DeepSeek"}`);
+      toast.success("Proveedor DeepSeek activo configurado");
     }
   }
 
@@ -310,7 +310,6 @@ function AiAdmin() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="gemini">Google Gemini (Flash)</SelectItem>
               <SelectItem value="deepseek">DeepSeek AI (Chat)</SelectItem>
             </SelectContent>
           </Select>
@@ -545,7 +544,7 @@ function AiAdmin() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>ID del modelo</Label>
-                <Input value={modelForm.model_id} placeholder="google/gemini-3-flash-preview"
+                <Input value={modelForm.model_id} placeholder="deepseek-chat"
                   onChange={(e) => setModelForm((f) => ({ ...f, model_id: e.target.value }))} />
               </div>
               <div className="space-y-1.5">

@@ -381,7 +381,7 @@ function ContentTab({ doc, setDoc, templateId }: { doc: ResumeDoc; setDoc: (p: P
   docRef.current = doc;
   const getContext = useCallback((): ResumeAiContext => {
     const d = docRef.current;
-    const cslug = (stateRef.current?.doc as any)?.citySlug || (d as any)?.citySlug || "";
+    const cslug = (d as any)?.citySlug || "";
     let cityName = "";
     if (cslug && cslug !== "none") {
       const c = getStaticCityBySlug(cslug);
