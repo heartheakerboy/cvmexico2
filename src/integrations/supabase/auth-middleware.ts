@@ -3,8 +3,7 @@ import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './types'
-
-
+import { supabase as clientSupabase } from './client'
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith('sb_publishable_') || value.startsWith('sb_secret_');
@@ -30,11 +29,25 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
-export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
-  async ({ next }) => {
-    
-    const SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+export const requireSupabaseAuth = createMiddleware({ type: 'function' })
+  .client(async ({ next }) => {
+    let { data } = await clientSupabase.auth.getSession();
+    let token = data.session?.access_token;
+    if (data.session?.expires_at && data.session.expires_at * 1000 < Date.now() + 60000) {
+      try {
+        const refreshed = await clientSupabase.auth.refreshSession();
+        token = refreshed.data.session?.access_token || token;
+      } catch (err) {
+        console.warn("[requireSupabaseAuth] Could not refresh session:", err);
+      }
+    }
+    return next({
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+  })
+  .server(async ({ next }) => {
+    const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
       const missing = [

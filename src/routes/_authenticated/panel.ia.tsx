@@ -66,9 +66,16 @@ function IaPage() {
 
       toast.success(t("panelIa.success"));
       navigate({ to: "/cv/$id", params: { id: cv.id } });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error(t("panelIa.errGenerate"));
+      const msg = e?.message || "";
+      if (msg.includes("Unauthorized") || msg.includes("No authorization") || msg.includes("token")) {
+        toast.error("Sesión no válida o expirada. Por favor recarga la página o inicia sesión de nuevo.");
+      } else if (msg) {
+        toast.error(`No se pudo generar: ${msg}`);
+      } else {
+        toast.error(t("panelIa.errGenerate"));
+      }
     } finally {
       setLoading(false);
     }

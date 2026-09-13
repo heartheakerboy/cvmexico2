@@ -188,9 +188,16 @@ function AiToolPanel({ tool }: { tool: AiTool }) {
     try {
       const res = await run({ data: { tool, role, company, fullName, context, lang } });
       setResult(res);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error(t("tools.error.generate"));
+      const msg = e?.message || "";
+      if (msg.includes("Unauthorized") || msg.includes("No authorization") || msg.includes("token")) {
+        toast.error("Sesión no válida o expirada. Por favor recarga la página o inicia sesión de nuevo.");
+      } else if (msg) {
+        toast.error(`No se pudo generar: ${msg}`);
+      } else {
+        toast.error(t("tools.error.generate"));
+      }
     } finally {
       setLoading(false);
     }

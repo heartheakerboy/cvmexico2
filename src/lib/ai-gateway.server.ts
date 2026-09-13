@@ -23,7 +23,22 @@ export async function getAiProvider() {
     console.warn("[AI Gateway] Missing SUPABASE_SERVICE_ROLE_KEY, falling back to process.env.ACTIVE_AI_PROVIDER: " + activeProvider);
   }
 
-  if (activeProvider === "deepseek") {
+  const hasDeepseekKey = Boolean(process.env.DEEPSEEK_API_KEY);
+  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
+
+  // If requested provider has no key, intelligently fallback to the other provider if available
+  let resolvedProvider = activeProvider;
+  if (resolvedProvider === "deepseek" && !hasDeepseekKey && hasGeminiKey) {
+    console.warn("[AI Gateway] DEEPSEEK_API_KEY no encontrada, recurriendo a Gemini.");
+    resolvedProvider = "gemini";
+  } else if (resolvedProvider === "gemini" && !hasGeminiKey && hasDeepseekKey) {
+    console.warn("[AI Gateway] GEMINI_API_KEY no encontrada, recurriendo a DeepSeek.");
+    resolvedProvider = "deepseek";
+  } else if (!hasDeepseekKey && !hasGeminiKey) {
+    throw new Error("No se ha configurado ninguna clave de API para la IA. Por favor agrega DEEPSEEK_API_KEY o GEMINI_API_KEY en la configuración del entorno.");
+  }
+
+  if (resolvedProvider === "deepseek") {
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) throw new Error("Falta DEEPSEEK_API_KEY en la configuración");
 
@@ -41,7 +56,7 @@ export async function getAiProvider() {
     };
   }
 
-  if (activeProvider === "gemini") {
+  if (resolvedProvider === "gemini") {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Falta GEMINI_API_KEY en la configuración");
 
@@ -59,5 +74,5 @@ export async function getAiProvider() {
     };
   }
 
-  throw new Error("No se ha configurado ningún proveedor de IA activo (ACTIVE_AI_PROVIDER debe ser 'gemini' o 'deepseek' en las variables de entorno).");
+  throw new Error("No se ha configurado ningún proveedor de IA activo.");
 }

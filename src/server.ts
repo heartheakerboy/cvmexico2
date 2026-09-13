@@ -245,6 +245,13 @@ async function handleLemonSqueezyWebhook(request: Request): Promise<Response> {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    if (env && typeof env === "object") {
+      for (const [key, value] of Object.entries(env)) {
+        if (typeof value === "string" && !process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    }
     try {
       const url = new URL(request.url);
       if (url.pathname === "/sitemap.xml") {

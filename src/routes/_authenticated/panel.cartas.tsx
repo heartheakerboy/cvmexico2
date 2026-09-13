@@ -179,9 +179,16 @@ function CartaEditor({
       const res = await generate({ data: { company, role, fullName, highlights } });
       setContent(res.content);
       toast.success("¡Carta generada!");
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("No se pudo generar la carta. Inténtalo de nuevo.");
+      const msg = e?.message || "";
+      if (msg.includes("Unauthorized") || msg.includes("No authorization") || msg.includes("token")) {
+        toast.error("Sesión no válida o expirada. Por favor recarga la página o inicia sesión de nuevo.");
+      } else if (msg) {
+        toast.error(`No se pudo generar: ${msg}`);
+      } else {
+        toast.error("No se pudo generar la carta. Inténtalo de nuevo.");
+      }
     } finally {
       setGenerating(false);
     }

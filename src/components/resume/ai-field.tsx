@@ -186,9 +186,16 @@ export function AiField({
         },
       });
       setResult(res.text);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("No se pudo generar. Inténtalo de nuevo.");
+      const msg = e?.message || "";
+      if (msg.includes("Unauthorized") || msg.includes("No authorization") || msg.includes("token")) {
+        toast.error("Sesión no válida o expirada. Por favor recarga la página o inicia sesión de nuevo.");
+      } else if (msg) {
+        toast.error(`No se pudo generar: ${msg}`);
+      } else {
+        toast.error("No se pudo generar. Inténtalo de nuevo.");
+      }
     } finally {
       setLoading(false);
     }
@@ -442,9 +449,16 @@ export function AiSuggestButton({
       if (!items.length) return toast.info("Sin nuevas sugerencias");
       onAdd(items.slice(0, 12));
       toast.success(`${Math.min(items.length, 12)} sugerencias añadidas`);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("No se pudo generar");
+      const msg = e?.message || "";
+      if (msg.includes("Unauthorized") || msg.includes("No authorization") || msg.includes("token")) {
+        toast.error("Sesión no válida o expirada. Por favor recarga la página o inicia sesión de nuevo.");
+      } else if (msg) {
+        toast.error(`No se pudo generar: ${msg}`);
+      } else {
+        toast.error("No se pudo generar");
+      }
     } finally {
       setLoading(false);
     }
