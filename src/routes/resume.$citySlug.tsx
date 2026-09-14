@@ -26,6 +26,7 @@ import { getStaticCityBySlug, getStaticCities, type City } from "@/lib/cities-da
 import { getTemplateUrl } from "@/lib/resume/template-routes";
 import { localizeResumeDoc } from "@/lib/cities-helper";
 import { softwareEngineerSample } from "@/lib/resume/industry-samples";
+import { getRecommendedArticlesForCity } from "@/lib/blog-posts";
 
 export const Route = createFileRoute("/resume/$citySlug")({
   head: ({ params }) => {
@@ -452,24 +453,37 @@ function CityLandingPage() {
       {/* Suggested Articles */}
       <section className="bg-secondary/20 border-t py-14">
         <div className="mx-auto max-w-6xl px-4 space-y-8">
-          <h3 className="text-lg font-bold text-foreground">
-            Artículos recomendados para tu carrera:
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[
-              { title: `Cómo conseguir trabajo en ${city.name} en 2026`, link: "/blog" },
-              { title: `El formato de currículum ideal para empresas en ${city.name}`, link: "/blog" },
-              { title: `Sueldos promedio y negociación salarial en ${city.name}`, link: "/blog" },
-              { title: "Habilidades más demandadas en el mercado mexicano", link: "/blog" }
-            ].map((art, i) => (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">
+                Artículos recomendados para tu carrera en México:
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Guías profesionales y consejos editoriales para potenciar tu currículum
+              </p>
+            </div>
+            <Link
+              to="/blog"
+              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1 w-fit"
+            >
+              Ver todos los artículos <ChevronRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {getRecommendedArticlesForCity(city.slug).map((art) => (
               <Link
-                key={i}
-                to={art.link}
-                className="bg-card border hover:border-primary/40 p-4 rounded-xl flex items-center justify-between group transition-colors shadow-sm"
+                key={art.slug}
+                to={art.url}
+                className="bg-card border hover:border-primary/40 p-4 rounded-xl flex items-center justify-between group transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Blog de Carreras</span>
-                  <h4 className="font-semibold text-xs leading-snug text-foreground group-hover:text-primary transition-colors">
+                <div className="space-y-1.5 pr-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      {art.category}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">• {art.readTime}</span>
+                  </div>
+                  <h4 className="font-semibold text-xs leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2">
                     {art.title}
                   </h4>
                 </div>
