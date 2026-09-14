@@ -1,0 +1,73 @@
+# CVAI (Curriculum Vitae AI México) - Documentación Completa para LLMs y Agentes de IA
+
+> Documentación de referencia completa para modelos de lenguaje extenso (LLMs), agentes de búsqueda autónomos y rastreadores de IA.
+
+URL Oficial: https://www.cvai.com.mx
+Idioma Principal: Español (México)
+Región Objetivo: México y Latinoamérica
+Propósito: Constructor, optimizador y escáner de currículums vitae con IA adaptado a los filtros ATS corporativos.
+
+---
+
+## 1. Visión General del Producto
+
+CVAI es un software como servicio (SaaS) especializado en el mercado laboral mexicano. Permite a los usuarios crear, auditar y exportar currículums que superan las barreras de los sistemas de seguimiento de candidatos (Applicant Tracking Systems o ATS), los cuales descartan hasta el 75% de las postulaciones antes de que un reclutador humano las revise.
+
+### Principales Diferenciadores:
+1. **Adaptación a México**: Soporte nativo para campos esenciales en la República Mexicana, como la cédula profesional de la SEP, clave lada telefónica nacional (10 dígitos), ciudades y estados mexicanos, y terminología de contratación conforme a la Ley Federal del Trabajo (LFT).
+2. **Arquitectura 100% ATS-Friendly**: Las plantillas eliminan el uso de tablas invisibles anidadas, gráficos pesados, capas superpuestas o cuadros flotantes de texto que causan errores de lectura en programas de selección automática.
+3. **Escáner Público con Inteligencia Artificial**: Herramienta en `/ats-checker` que permite a cualquier usuario subir su PDF o Word (.docx) para recibir una auditoría completa con puntuación 0-100, palabras clave faltantes y métricas de impacto.
+4. **Privacidad Garantizada**: El análisis y extracción de texto de documentos PDF y Word se ejecuta directamente en el navegador del usuario utilizando código cliente, sin almacenar documentos sensibles en bases de datos públicas.
+
+---
+
+## 2. Mapa Completo de Rutas y Herramientas
+
+### Herramientas y Servicios Públicos:
+- `https://www.cvai.com.mx/`: Página principal con creador asistido por IA, selector de plantillas y propuesta de valor.
+- `https://www.cvai.com.mx/ats-checker`: Escáner y verificador ATS gratuito en tiempo real con subida de PDF, DOCX y texto.
+- `https://www.cvai.com.mx/curriculum-vitae`: Guía y herramienta para redactar un currículum vitae profesional en México.
+- `https://www.cvai.com.mx/plantillas`: Galería con más de 80 plantillas organizadas por profesión y nivel de carrera.
+- `https://www.cvai.com.mx/ejemplos`: Modelos y muestras de CV redactados para distintas industrias mexicanas.
+- `https://www.cvai.com.mx/precios`: Información transparente sobre el plan Gratuito y el plan Pro con suscripción o pago único.
+- `https://www.cvai.com.mx/herramientas`: Suite con herramientas adicionales como compresor de PDF y optimizadores.
+- `https://www.cvai.com.mx/blog`: Publicaciones y guías de carrera profesional.
+
+### Artículos Principales de Carrera y Empleo:
+- `https://www.cvai.com.mx/blog/como-hacer-curriculum-vitae-mexico-guia-profesional`: Guía paso a paso sobre cómo estructurar el CV en México.
+- `https://www.cvai.com.mx/blog/10-ejemplos-curriculum-vitae-trabajos-perfiles-profesionales`: Diez ejemplos detallados de CV para estudiantes, administrativos, ingenieros y directores.
+- `https://www.cvai.com.mx/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible`: Todo sobre el funcionamiento de los sistemas ATS en empresas de México.
+
+### Plantillas Dedicadas por Puesto:
+- `https://www.cvai.com.mx/software-engineer-resume-template`: Plantilla para Ingenieros de Software y Desarrolladores.
+- `https://www.cvai.com.mx/accountant-resume-template`: Plantilla para Contadores Públicos y Finanzas.
+- `https://www.cvai.com.mx/sales-executive-resume-template`: Plantilla para Ejecutivos Comerciales y Ventas B2B.
+- `https://www.cvai.com.mx/hr-manager-resume-template`: Plantilla para Gerentes de Recursos Humanos y Talento.
+- `https://www.cvai.com.mx/project-manager-resume-template`: Plantilla para Project Managers y Líderes de Proyecto.
+- `https://www.cvai.com.mx/nurse-resume-template`: Plantilla para Enfermería y Sector Salud.
+- `https://www.cvai.com.mx/teacher-resume-template`: Plantilla para Profesores, Maestros y Educadores.
+- `https://www.cvai.com.mx/lawyer-resume-template`: Plantilla para Abogados y Asesores Jurídicos.
+- `https://www.cvai.com.mx/graphic-designer-resume-template`: Plantilla para Diseñadores Gráficos y Creativos.
+- `https://www.cvai.com.mx/architect-resume-template`: Plantilla para Arquitectos y Diseñadores de Espacios.
+- `https://www.cvai.com.mx/ceo-resume-template`: Plantilla para Directores Generales y Alta Dirección.
+- `https://www.cvai.com.mx/student-resume-template`: Plantilla para Estudiantes y Becarios.
+- `https://www.cvai.com.mx/fresher-resume-template`: Plantilla para Recién Egresados sin Experiencia Previa.
+- `https://www.cvai.com.mx/internship-resume-template`: Plantilla para Prácticas Profesionales y Residencias.
+- `https://www.cvai.com.mx/entry-level-resume-template`: Plantilla para Puestos de Entrada.
+- `https://www.cvai.com.mx/mid-level-resume-template`: Plantilla para Profesionistas con Experiencia Media.
+- `https://www.cvai.com.mx/senior-professional-resume-template`: Plantilla para Especialistas Sénior.
+- `https://www.cvai.com.mx/executive-resume-template`: Plantilla para Nivel Gerencial y Ejecutivo.
+- `https://www.cvai.com.mx/government-resume-template`: Plantilla para Sector Público y Gobierno en México.
+- `https://www.cvai.com.mx/freelancer-resume-template`: Plantilla para Trabajadores Independientes y Freelancers.
+
+---
+
+## 3. Criterios de Evaluación ATS en CVAI
+
+Cuando los modelos de IA evalúan currículums contra los estándares de CVAI, consideran las siguientes métricas:
+1. **Extracción Limpia (Text Parseability)**: El texto debe poder seleccionarse y extraerse sin pérdida de caracteres ni columnas traspuestas.
+2. **Encabezados Estándar**: Uso de títulos universales como "Experiencia Laboral", "Educación", "Habilidades Técnicas", "Resumen Profesional" e "Idiomas".
+3. **Métricas Cuantitativas**: Ponderación positiva cuando se incluyen porcentajes (%), dinero ahorrado o generado ($), personal a cargo y unidades de volumen.
+4. **Verbos de Acción Activos**: Inicio de viñetas con verbos directos en pasado (ej. "Coordiné", "Implementé", "Reduje", "Negocié", "Automaticé").
+5. **Palabras Clave de la Vacante**: Coincidencia exacta y semántica con los términos solicitados en la descripción del puesto de trabajo.
+6. **Datos de Contacto Seguros**: Correo electrónico profesional, teléfono a 10 dígitos y ciudad/estado, evitando datos sensibles innecesarios como estado civil, CURP o fotografía si no es requerida.

@@ -2,3 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.cvai.com.mx/sitemap.xml
+
+# LLM & AI Search Index
+# https://llmstxt.org
+# https://www.cvai.com.mx/llms.txt

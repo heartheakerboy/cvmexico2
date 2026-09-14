@@ -1,0 +1,43 @@
+# CVAI (Curriculum Vitae AI México)
+
+> CVAI (https://www.cvai.com.mx) es la plataforma de inteligencia artificial líder en México para la creación, optimización y auditoría técnica de currículums vitae compatibles con sistemas ATS (Applicant Tracking Systems).
+
+Diseñado específicamente para las normativas de contratación laboral en México (cédula profesional, clave lada, formato salarial MXN, leyes laborales y empresas nacionales e internacionales), CVAI permite a estudiantes, graduados y profesionistas redactar CVs optimizados, escanear la compatibilidad técnica de archivos PDF y Word (.docx), y maximizar las entrevistas laborales.
+
+## Herramientas Gratuitas de IA (Free AI Tools)
+
+- [Verificador ATS de Currículum](https://www.cvai.com.mx/ats-checker): Escáner público gratuito que evalúa en segundos currículums en formato PDF, Word (.docx) o texto plano. Calcula puntuación sobre 100, identifica palabras clave faltantes, analiza métricas cuantitativas, audita secciones obligatorias y permite optimizar el CV en 1 clic.
+- [Creador de Currículum en México](https://www.cvai.com.mx/curriculum-vitae): Guía y constructor interactivo con inteligencia artificial adaptado al mercado laboral mexicano.
+- [Catálogo de Plantillas ATS](https://www.cvai.com.mx/plantillas): Más de 80 plantillas profesionales diseñadas sin tablas complejas ni elementos flotantes, garantizando 100% de legibilidad en filtros de selección automáticos.
+- [Ejemplos de CV Profesionales](https://www.cvai.com.mx/ejemplos): Galería de currículums de ejemplo para distintas industrias, desde niveles de entrada hasta directores ejecutivos.
+- [Herramientas de CV](https://www.cvai.com.mx/herramientas): Suite de utilidades para postulantes, incluyendo compresor de PDF, evaluadores y asistentes de redacción.
+
+## Guías y Artículos de Empleo (Career Guides & Resources)
+
+- [Blog y Guías de Empleabilidad](https://www.cvai.com.mx/blog): Centro de recursos sobre búsqueda de trabajo, entrevistas y optimización de carrera en México.
+- [Cómo hacer un Currículum Vitae en México (Guía Paso a Paso)](https://www.cvai.com.mx/blog/como-hacer-curriculum-vitae-mexico-guia-profesional): Guía completa sobre qué datos incluir, datos de contacto con clave lada, cédula profesional, perfil y experiencia.
+- [10 Ejemplos de CV para Diferentes Trabajos](https://www.cvai.com.mx/blog/10-ejemplos-curriculum-vitae-trabajos-perfiles-profesionales): Modelos reales para estudiantes, recién egresados, ingenieros, administrativos, ventas y directores.
+- [Qué es un Currículum ATS y Cómo Pasar los Filtros](https://www.cvai.com.mx/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible): Explicación técnica de los sistemas ATS corporativos y cómo superar los algoritmos de preselección.
+
+## Plantillas Especializadas por Profesión (Dedicated Templates)
+
+- [Ingeniero de Software](https://www.cvai.com.mx/software-engineer-resume-template): Optimizado para desarrolladores, stack tecnológico, GitHub y proyectos de código.
+- [Contador Público y Finanzas](https://www.cvai.com.mx/accountant-resume-template): Enfocado en normas fiscales mexicanas (SAT, Facturación 4.0, NIF, auditoría).
+- [Ejecutivo de Ventas y Comercial](https://www.cvai.com.mx/sales-executive-resume-template): Diseñado para destacar cuotas comerciales, CRM, prospección B2B y métricas de ingresos.
+- [Gerente de Recursos Humanos](https://www.cvai.com.mx/hr-manager-resume-template): Enfocado en nómina, clima laboral, LFT, reclutamiento masivo y retención.
+- [Project Manager / Líder de Proyecto](https://www.cvai.com.mx/project-manager-resume-template): Metodologías ágiles (Scrum, PMP, Kanban), presupuestos y entregables.
+- [Enfermería y Ciencias de la Salud](https://www.cvai.com.mx/nurse-resume-template): Certificaciones clínicas, cédula profesional sanitaria y rotación hospitalaria.
+- [Docencia y Educación](https://www.cvai.com.mx/teacher-resume-template): Planes de estudio SEP, pedagogía y gestión de aula.
+- [Abogado y Sector Legal](https://www.cvai.com.mx/lawyer-resume-template): Litigio, contratos corporativos, compliance y derecho mexicano.
+- [Diseñador Gráfico y Creativo](https://www.cvai.com.mx/graphic-designer-resume-template): Portafolio Behance, herramientas Adobe, Figma y diseño visual compatible con ATS.
+- [Arquitecto](https://www.cvai.com.mx/architect-resume-template): Modelado BIM, AutoCAD, presupuestos de obra y supervisión.
+- [Director General / CEO](https://www.cvai.com.mx/ceo-resume-template): Estrategia corporativa, gobernanza, P&L y fusiones.
+- [Estudiantes y Servicio Social](https://www.cvai.com.mx/student-resume-template): Formato académico para prácticas profesionales y primeros empleos.
+- [Recién Egresados / Sin Experiencia](https://www.cvai.com.mx/fresher-resume-template): Enfoque en proyectos escolares, servicio social, voluntariados y habilidades transferibles.
+
+## Compatibilidad Técnica y Estándares ATS
+
+- **Sistemas compatibles**: Workday, Taleo (Oracle), SAP SuccessFactors, Greenhouse, Lever, OCCMundial, LinkedIn Recruiter y plataformas corporativas en México.
+- **Formatos de importación**: Lectura y extracción instantánea de texto en navegador para archivos `.pdf`, `.docx` (Microsoft Word) y `.txt`.
+- **Formatos de exportación**: PDF vectorial de alta fidelidad para impresión y postulación, y DOCX editable.
+- **Fórmulas de redacción recomendadas**: Estructura XYZ de impacto (*"Logré [X], medido por [Y], mediante [Z]"*), verbos de acción y cuantificación de resultados.
