@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { sendTemplateEmail } from "./lib/smtp.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -229,6 +230,25 @@ async function handleLemonSqueezyWebhook(request: Request): Promise<Response> {
           method: attr.card_brand ? `Tarjeta (${attr.card_brand})` : "LemonSqueezy",
           period: eventName.startsWith("subscription") ? "Mensual" : "Pago único",
         });
+      }
+
+      // Send Pro Activated transactional email
+      if (email) {
+        try {
+          await sendTemplateEmail({
+            to: email,
+            templateSlug: "pro-activated",
+            variables: {
+              name: attr.user_name || "Usuario",
+              planName: eventName.startsWith("subscription") ? "Suscripción Pro Mensual" : "Acceso Pro Vitalicio",
+              amount: `$${amount} ${currency}`,
+              link: "https://cvai.com.mx/panel",
+              year: new Date().getFullYear().toString(),
+            },
+          });
+        } catch (e) {
+          console.warn("[LemonSqueezy Webhook] Could not send confirmation email:", e);
+        }
       }
     } else if (status === "expired" || status === "unpaid") {
       // Demote to free if unpaid or expired

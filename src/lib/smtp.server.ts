@@ -152,3 +152,51 @@ export async function sendEmail({
     throw error;
   }
 }
+
+export async function sendTemplateEmail({
+  to,
+  templateSlug,
+  variables = {},
+  fallbackSubject,
+  fallbackHtml,
+}: {
+  to: string;
+  templateSlug: string;
+  variables?: Record<string, string>;
+  fallbackSubject?: string;
+  fallbackHtml?: string;
+}) {
+  let subject = fallbackSubject || "Notificación de CVAI";
+  let html = fallbackHtml || "<p>Hola</p>";
+
+  try {
+    const { data: tpl } = await supabaseAdmin
+      .from("email_templates" as any)
+      .select("*")
+      .eq("slug", templateSlug)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (tpl) {
+      subject = tpl.subject;
+      html = tpl.body;
+
+      // Replace variables like {{name}}, {{link}}, etc.
+      Object.entries(variables).forEach(([key, val]) => {
+        const regex = new RegExp(`{{${key}}}`, "g");
+        subject = subject.replace(regex, val);
+        html = html.replace(regex, val);
+      });
+    }
+  } catch (err) {
+    console.warn(`Could not load template '${templateSlug}', using fallback:`, err);
+  }
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+    templateSlug,
+  });
+}
+
