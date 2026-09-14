@@ -67,8 +67,8 @@ const emptyPrompt = {
 type PromptForm = typeof emptyPrompt;
 
 const emptyModel = {
-  name: "", model_id: "", provider: "Google",
-  cost_input: "0", cost_output: "0", monthly_credit_limit: "", enabled: true,
+  name: "DeepSeek V3 (Chat)", model_id: "deepseek-chat", provider: "DeepSeek",
+  cost_input: "0.14", cost_output: "0.28", monthly_credit_limit: "50000", enabled: true,
 };
 type ModelForm = typeof emptyModel;
 
