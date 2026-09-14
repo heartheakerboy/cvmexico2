@@ -67,13 +67,13 @@ const DEFAULT_POSTS: BlogPostItem[] = [
   },
   {
     id: "73382f83-c5d6-485b-8c6d-acdb5ed71241",
-    title: "Cómo crear un CV que pase los filtros ATS en empresas de México",
-    slug: "cv-filtros-ats",
-    excerpt: "Descubre los secretos que utilizan los sistemas ATS (Applicant Tracking Systems) y cómo estructurar tu CV para superar el filtro inicial.",
+    title: "¿Qué es un currículum ATS y cómo hacer un CV que pase los filtros de selección?",
+    slug: "que-es-un-curriculum-ats-como-hacer-cv-compatible",
+    excerpt: "Descubre qué es un sistema ATS en México, cómo analizan tu CV las empresas y cómo optimizar el formato, estructura y palabras clave para superar los filtros de contratación.",
     category: "ATS",
     author: "Equipo Editorial CVAI",
-    published_at: "2026-08-20T10:00:00.000Z",
-    read_time: "7 min de lectura",
+    published_at: "2026-09-14T07:15:00.000Z",
+    read_time: "11 min de lectura",
   },
   {
     id: "9ca27780-681d-4483-b516-14d790f1a31e",

@@ -4,7 +4,8 @@ import {
   Calendar, Clock, Share2, CheckCircle2, XCircle, Sparkles, Check,
   ChevronRight, HelpCircle, Lightbulb, Bookmark, ArrowRight, Briefcase,
   GraduationCap, Laptop, TrendingUp, Palette, Calculator, Users, Award,
-  Loader2,
+  Loader2, FileCheck, CheckSquare, Layers, AlertTriangle, ShieldCheck,
+  Cpu, Database, Search,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,48 +20,43 @@ import {
 export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => {
     const isEjemplos = params.slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos";
+    const isAts = params.slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" || params.slug === "cv-filtros-ats";
 
-    const title = isEjemplos
-      ? "10 ejemplos de currículum vitae para diferentes trabajos (Guía México 2026) | CVAI"
-      : "¿Cómo hacer un currículum vitae en México? Guía paso a paso (2026) | CVAI";
+    let title = "¿Cómo hacer un currículum vitae en México? Guía paso a paso (2026) | CVAI";
+    let description = "Aprende cómo hacer un currículum vitae profesional en México paso a paso. Conoce qué poner, ejemplos reales antes/después, optimización para filtros ATS y formatos recomendados.";
 
-    const description = isEjemplos
-      ? "Explora 10 ejemplos de currículum vitae reales adaptados a México: estudiantes, sin experiencia, recién egresados, ingenieros, ventas, directivos y trabajo remoto."
-      : "Aprende cómo hacer un currículum vitae profesional en México paso a paso. Conoce qué poner, ejemplos reales antes/después, optimización para filtros ATS y formatos recomendados.";
+    if (isEjemplos) {
+      title = "10 ejemplos de currículum vitae para diferentes trabajos (Guía México 2026) | CVAI";
+      description = "Explora 10 ejemplos de currículum vitae reales adaptados a México: estudiantes, sin experiencia, recién egresados, ingenieros, ventas, directivos y trabajo remoto.";
+    } else if (isAts) {
+      title = "¿Qué es un currículum ATS y cómo hacer un CV compatible? (México 2026) | CVAI";
+      description = "Descubre qué es un sistema ATS en México, cómo analizan tu CV las empresas y cómo optimizar el formato, estructura y palabras clave para superar los filtros de selección.";
+    }
 
     const canonicalUrl = `https://www.cvai.com.mx/blog/${params.slug}`;
 
-    const articleSchema = isEjemplos
-      ? {
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: "10 ejemplos de currículum vitae para diferentes trabajos y perfiles profesionales",
-          description: description,
-          inLanguage: "es-MX",
-          mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
-          author: { "@type": "Organization", name: "Equipo Editorial de CVAI México", url: "https://www.cvai.com.mx" },
-          publisher: { "@type": "Organization", name: "CVAI", logo: { "@type": "ImageObject", url: "https://www.cvai.com.mx/logo.png" } },
-          datePublished: "2026-09-14",
-          dateModified: "2026-09-14",
-        }
-      : {
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: "¿Cómo hacer un currículum vitae en México? Guía paso a paso para crear un CV profesional",
-          description: description,
-          inLanguage: "es-MX",
-          mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
-          author: { "@type": "Organization", name: "Equipo Editorial de CVAI México", url: "https://www.cvai.com.mx" },
-          publisher: { "@type": "Organization", name: "CVAI", logo: { "@type": "ImageObject", url: "https://www.cvai.com.mx/logo.png" } },
-          datePublished: "2026-09-14",
-          dateModified: "2026-09-14",
-        };
+    const articleSchema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: isEjemplos
+        ? "10 ejemplos de currículum vitae para diferentes trabajos y perfiles profesionales"
+        : isAts
+        ? "¿Qué es un currículum ATS y cómo hacer un CV que pase los filtros de selección?"
+        : "¿Cómo hacer un currículum vitae en México? Guía paso a paso para crear un CV profesional",
+      description: description,
+      inLanguage: "es-MX",
+      mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+      author: { "@type": "Organization", name: "Equipo Editorial de CVAI México", url: "https://www.cvai.com.mx" },
+      publisher: { "@type": "Organization", name: "CVAI", logo: { "@type": "ImageObject", url: "https://www.cvai.com.mx/logo.png" } },
+      datePublished: "2026-09-14",
+      dateModified: "2026-09-14",
+    };
 
-    const faqSchema = isEjemplos
-      ? {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: isEjemplos
+        ? [
             {
               "@type": "Question",
               name: "¿Cuál de estos 10 formatos de CV es mejor si quiero cambiar de carrera?",
@@ -93,12 +89,59 @@ export const Route = createFileRoute("/blog/$slug")({
                 text: "Debe indicar claramente tu zona horaria (ej. GMT-6), disponibilidad de equipo propio y herramientas de colaboración asíncrona como Slack, Notion, Jira o Zoom.",
               },
             },
-          ],
-        }
-      : {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
+          ]
+        : isAts
+        ? [
+            {
+              "@type": "Question",
+              name: "¿Qué es un ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Un ATS (Applicant Tracking System o Sistema de Seguimiento de Candidatos) es un software utilizado por departamentos de Recursos Humanos para centralizar, organizar y filtrar automáticamente las postulaciones a vacantes de empleo.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Cómo saber si mi CV es compatible con ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Haz la prueba del texto: selecciona y copia todo el texto de tu PDF y pégalo en el Bloc de Notas. Si el texto aparece claro y en orden cronológico, tu CV es técnicamente legible para un ATS. También puedes evaluarlo con el verificador ATS de CVAI.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Qué formato es mejor para un CV ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "El formato PDF con texto seleccionable es el estándar más recomendado en México porque preserva el diseño. Si la empresa solicita explícitamente archivo Word (.docx), utiliza .docx.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Un CV con diseño puede pasar un ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Sí, siempre que el diseño sea limpio y estructurado (márgenes normales, tipografía universal y sin columnas entrelazadas ni tablas complejas). Las plantillas de CVAI combinan estética profesional y legibilidad técnica ATS.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Qué palabras clave debo usar en mi currículum?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Debes incluir los términos técnicos exactos, herramientas de software y certificaciones que aparecen en la descripción de la vacante, combinando siglas con nombres completos (ej. CRM y Customer Relationship Management).",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Existe alguna plantilla con 100% de garantía para pasar un ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "No existe ninguna garantía del 100% porque cada empresa utiliza software diferente (Workday, Taleo, Greenhouse) con filtros y criterios humanos propios. Una buena plantilla elimina barreras técnicas para que tu perfil sea leído sin fallas.",
+              },
+            },
+          ]
+        : [
             {
               "@type": "Question",
               name: "¿Es obligatorio poner foto en el currículum vitae en México?",
@@ -124,7 +167,7 @@ export const Route = createFileRoute("/blog/$slug")({
               },
             },
           ],
-        };
+    };
 
     return {
       meta: [
@@ -171,7 +214,9 @@ function BlogPostDetail() {
   useEffect(() => {
     if (
       slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" ||
-      slug === "como-hacer-un-curriculum-vitae-mexico"
+      slug === "como-hacer-un-curriculum-vitae-mexico" ||
+      slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" ||
+      slug === "cv-filtros-ats"
     ) {
       return;
     }
@@ -201,6 +246,10 @@ function BlogPostDetail() {
 
   if (slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos") {
     return <DiezEjemplosArticle copyLink={copyLink} copied={copied} />;
+  }
+
+  if (slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" || slug === "cv-filtros-ats") {
+    return <CurriculumAtsArticle copyLink={copyLink} copied={copied} />;
   }
 
   if (slug === "como-hacer-un-curriculum-vitae-mexico") {
@@ -424,6 +473,604 @@ function DynamicArticleView({
                 <Link to="/plantillas" className="block text-muted-foreground hover:text-primary transition-colors">
                   → Plantillas de CV México
                 </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+/* =======================================================================
+   ARTICLE 3: GUÍA ATS - QUÉ ES Y CÓMO HACER UN CV COMPATIBLE
+   ======================================================================= */
+function CurriculumAtsArticle({ copyLink, copied }: { copyLink: () => void; copied: boolean }) {
+  const [activeTab, setActiveTab] = useState<"mal" | "optimizado">("optimizado");
+  const [checkedList, setCheckedList] = useState<Record<number, boolean>>({});
+
+  const checklistItems = [
+    "¿El texto de tu currículum se puede seleccionar y copiar en el Bloc de Notas sin errores?",
+    "¿Tus datos de contacto principales están dentro del cuerpo principal del documento (nunca en header/footer)?",
+    "¿Tus encabezados de sección son estándar (Experiencia laboral, Educación, Habilidades, Certificaciones)?",
+    "¿Cada empleo especifica: Cargo exacto, Empresa, Ciudad/Estado y Fechas en formato 'Mes Año – Mes Año'?",
+    "¿Incluiste las herramientas de software y requisitos clave mencionados en la vacante?",
+    "¿Evitaste gráficos de barras de porcentaje, tablas anidadas y cuadros de texto flotantes?",
+    "¿El documento tiene una extensión de 1 página (máximo 2 para más de 8-10 años de experiencia)?",
+    "¿El archivo tiene un nombre profesional claro (ej. CV_Nombre_Apellido_Cargo.pdf)?",
+  ];
+
+  function toggleCheck(index: number) {
+    setCheckedList((prev) => ({ ...prev, [index]: !prev[index] }));
+  }
+
+  const completedCount = Object.values(checkedList).filter(Boolean).length;
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteHeader />
+
+      {/* Breadcrumbs */}
+      <div className="border-b border-border/40 bg-secondary/20">
+        <div className="mx-auto max-w-4xl px-4 py-3 text-xs text-muted-foreground">
+          <nav className="flex items-center gap-1.5 flex-wrap">
+            <Link to="/" className="hover:text-foreground transition-colors">Inicio</Link>
+            <ChevronRight className="h-3 w-3" />
+            <Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-foreground font-medium truncate max-w-xs sm:max-w-md">
+              ¿Qué es un currículum ATS?
+            </span>
+          </nav>
+        </div>
+      </div>
+
+      {/* Article Header Hero */}
+      <header className="border-b border-border/50 bg-gradient-to-b from-secondary/40 to-background py-10 md:py-14">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <Badge variant="default" className="rounded-full px-3 py-0.5 text-xs font-semibold">
+              ATS y Empleabilidad
+            </Badge>
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" /> 11 min de lectura
+            </span>
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" /> Actualizado para 2026
+            </span>
+          </div>
+
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl leading-tight">
+            ¿Qué es un currículum ATS y cómo hacer un CV que pase los filtros de selección?
+          </h1>
+
+          <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">
+            Desmitificamos el software de selección utilizado por empresas en México: descubre cómo extrae tu información, qué detalles confunden al algoritmo y cómo optimizar tu CV para que sea valorado tanto por el sistema como por el reclutador humano.
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/50 pt-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                CV
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Equipo Editorial de CVAI México</p>
+                <p className="text-xs text-muted-foreground">Especialistas en Sistemas ATS y Reclutamiento</p>
+              </div>
+            </div>
+
+            <Button variant="outline" size="sm" onClick={copyLink} className="gap-1.5 text-xs">
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Share2 className="h-3.5 w-3.5" />}
+              {copied ? "Enlace copiado" : "Compartir guía"}
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-4xl px-4 py-12">
+        {/* Quick Jump Bar */}
+        <div className="rounded-2xl border border-border bg-card p-5 mb-10 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Bookmark className="h-3.5 w-3.5 text-primary" /> En esta guía aprenderás:
+          </p>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <a href="#que-es-ats" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              1. ¿Qué significa ATS?
+            </a>
+            <a href="#como-funciona" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              2. Cómo funciona el análisis
+            </a>
+            <a href="#formato-estructura" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              3. Formato y estructura
+            </a>
+            <a href="#palabras-clave" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              4. Palabras clave
+            </a>
+            <a href="#tablas-y-graficos" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              5. Tablas y gráficos
+            </a>
+            <a href="#comparativa-visual" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              6. Ejemplo Antes / Después
+            </a>
+            <a href="#checklist-ats" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              7. Checklist interactivo
+            </a>
+            <a href="#preguntas-frecuentes" className="rounded-full border border-border bg-background px-3 py-1 text-muted-foreground hover:border-primary hover:text-foreground">
+              8. Preguntas frecuentes
+            </a>
+          </div>
+        </div>
+
+        <div className="grid gap-12 lg:grid-cols-12">
+          {/* Article Core Body */}
+          <article className="lg:col-span-8 space-y-12 text-foreground/90 leading-relaxed text-sm sm:text-base">
+            {/* Section 1: Introduction */}
+            <section className="space-y-4">
+              <p className="text-lg font-medium text-foreground leading-relaxed">
+                Si te has postulado recientemente a vacantes en empresas medianas, corporativos o firmas multinacionales en México a través de LinkedIn, Computrabajo, OCCMundial o Indeed, tu currículum probablemente ha sido procesado por un <strong>sistema ATS</strong>.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Alrededor de este término abunda la desinformación: se afirma con frecuencia que los ATS son "robots crueles programados para descartar automáticamente al 75% de los candidatos por el menor detalle". La realidad es mucho más transparente: un ATS es simplemente un software de base de datos y organización que ayuda a los reclutadores a gestionar cientos de postulaciones de forma ordenada.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Comprender cómo opera este software te da una ventaja decisiva: te permite redactar un CV técnicamente impecable para el sistema extractor sin perder el toque humano que convence al seleccionador en la entrevista.
+              </p>
+            </section>
+
+            {/* Section 2: ¿Qué significa ATS? */}
+            <section id="que-es-ats" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <Cpu className="h-6 w-6 text-primary" /> ¿Qué significa ATS?
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Las siglas <strong>ATS</strong> provienen del inglés <strong>Applicant Tracking System</strong>, traducido al español como <strong>Sistema de Seguimiento de Candidatos</strong>. Es una herramienta tecnológica que permite recopilar, organizar, clasificar, evaluar y dar seguimiento al historial de postulaciones de los candidatos en un solo lugar.
+              </p>
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Plataformas ATS más comunes en empresas de México:
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2 text-xs">
+                  <div className="p-2.5 rounded-xl border border-border/70 bg-background/50">
+                    <strong className="text-foreground">Workday:</strong> Muy usado por corporativos globales en CDMX, Monterrey y Guadalajara.
+                  </div>
+                  <div className="p-2.5 rounded-xl border border-border/70 bg-background/50">
+                    <strong className="text-foreground">Taleo (Oracle):</strong> Frecuente en logística, finanzas y retail masivo.
+                  </div>
+                  <div className="p-2.5 rounded-xl border border-border/70 bg-background/50">
+                    <strong className="text-foreground">SAP SuccessFactors:</strong> Estándar en manufactura, química y automotriz.
+                  </div>
+                  <div className="p-2.5 rounded-xl border border-border/70 bg-background/50">
+                    <strong className="text-foreground">Greenhouse & Lever:</strong> Populares en startups tecnológicas y fintechs.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 3: How ATS works */}
+            <section id="como-funciona" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <Layers className="h-6 w-6 text-primary" /> ¿Cómo funciona un sistema ATS?
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                El sistema no toma decisiones discrecionales ni "juzga" a la persona: sigue un algoritmo sistemático de extracción de datos dividido en cuatro etapas:
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-2 pt-2">
+                <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                    1
+                  </div>
+                  <h3 className="font-display font-bold text-foreground">Extracción de texto (Parsing)</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    El software descompone el archivo PDF o Word, descarta elementos visuales complejos y extrae el texto puro para procesarlo línea por línea.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                    2
+                  </div>
+                  <h3 className="font-display font-bold text-foreground">Clasificación en campos</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Identifica bloques temáticos: nombres, teléfono, correo, escolaridad, empresas, cargos ocupados, fechas y habilidades técnicas.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                    3
+                  </div>
+                  <h3 className="font-display font-bold text-foreground">Indexación en base de datos</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Tu información se almacena en la base interna de la empresa, permitiendo búsquedas booleanas exactas realizadas por el equipo de RH.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                    4
+                  </div>
+                  <h3 className="font-display font-bold text-foreground">Puntuación y filtrado humano</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Calcula la afinidad de palabras clave con la vacante para ordenar los perfiles y presentárselos al reclutador para su evaluación final.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 4: Format and Structure */}
+            <section id="formato-estructura" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <FileCheck className="h-6 w-6 text-primary" /> Formato y Estructura Recomendada
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Para que la extracción de texto sea fluida, respeta estas tres reglas técnicas fundamentales:
+              </p>
+
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-border p-4 bg-muted/20 space-y-2">
+                  <h4 className="font-bold text-foreground text-sm flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" /> 1. Formato de archivo (.pdf vs .docx)
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Usa <strong>PDF nativo con texto seleccionable</strong> como primera opción. Asegúrate de que puedas arrastrar el ratón sobre el texto y copiarlo. Si un archivo fue escaneado como imagen o guardado como JPG enmascarado en PDF, el ATS no leerá ninguna palabra. Si la vacante pide explícitamente formato .docx, envíalo en Word.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border p-4 bg-muted/20 space-y-2">
+                  <h4 className="font-bold text-foreground text-sm flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" /> 2. Estructura Cronológica Inversa
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Es el diseño más confiable para cualquier analizador. Comienza con tus datos de contacto en el cuerpo superior, seguido de tu perfil profesional, tu historial laboral (del trabajo más reciente hacia atrás), educación, habilidades y certificaciones.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border p-4 bg-muted/20 space-y-2">
+                  <h4 className="font-bold text-foreground text-sm flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" /> 3. Tipografías Universales
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Elige fuentes preinstaladas en todos los sistemas operativos: <strong>Arial, Calibri, Helvetica, Roboto, Inter, Georgia o Verdana</strong>. Evita tipografías de diseño exóticas o caligráficas que puedan corromper caracteres al ser procesadas.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 5: Keywords Strategy */}
+            <section id="palabras-clave" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <Search className="h-6 w-6 text-primary" /> Uso Correcto de Palabras Clave
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Las palabras clave no son "trucos secretos"; son los términos profesionales específicos que el reclutador utiliza para buscar candidatos que cumplan con la vacante:
+              </p>
+
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2 text-xs">
+                  <div className="space-y-1 p-3 rounded-xl bg-muted/40">
+                    <p className="font-bold text-foreground">❌ Palabras vagas o genéricas:</p>
+                    <p className="text-muted-foreground">"Manejo de computadoras y paquetería de oficina."</p>
+                    <p className="text-muted-foreground">"Experiencia en trato con personas."</p>
+                  </div>
+                  <div className="space-y-1 p-3 rounded-xl bg-primary/10 border border-primary/20">
+                    <p className="font-bold text-primary">✅ Palabras clave precisas para ATS:</p>
+                    <p className="text-foreground">"Microsoft Excel (Tablas dinámicas, BuscarV, Macros)."</p>
+                    <p className="text-foreground">"Atención a clientes B2B y manejo de CRM Salesforce."</p>
+                  </div>
+                </div>
+
+                <div className="text-xs text-muted-foreground space-y-2 border-t border-border pt-3">
+                  <p>
+                    <strong className="text-foreground">Consejo de oro:</strong> Combina siglas con nombres completos (ej. <em>"Project Management Professional (PMP)"</em> o <em>"Customer Relationship Management (CRM)"</em>). Así garantizas que el sistema te localice sin importar cuál variante utilice el reclutador.
+                  </p>
+                  <p className="text-destructive font-medium">
+                    ⚠️ Nunca hagas "keyword stuffing" (repetir palabras forzadas o poner texto blanco invisible). Los sistemas ATS modernos detectan estas manipulaciones y descartan la postulación automáticamente.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 6: Tablas y Gráficos */}
+            <section id="tablas-y-graficos" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <AlertTriangle className="h-6 w-6 text-amber-500" /> ¿Se deben usar tablas, columnas o gráficos?
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Muchas plantillas descargadas de herramientas de diseño visual descuidan la lectura algorítmica. Toma en cuenta estos factores:
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-3 text-xs">
+                <div className="p-4 rounded-2xl border border-border bg-card space-y-2">
+                  <h4 className="font-bold text-foreground">Columnas complejas</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Muchos motores leen horizontalmente de izquierda a derecha. Tres columnas estrechas pueden entrelazar frases de diferentes secciones. Un diseño de 1 sola columna o 2 columnas limpias es mucho más seguro.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-border bg-card space-y-2">
+                  <h4 className="font-bold text-foreground">Barras de nivel (80%)</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Los gráficos de bolitas o barras de porcentaje son invisibles para los ATS y no aportan datos objetivos al reclutador. Sustitúyelos por certificaciones o niveles reales (ej. Inglés B2/C1).
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl border border-border bg-card space-y-2">
+                  <h4 className="font-bold text-foreground">Encabezados (Headers)</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Nunca coloques tu teléfono o correo dentro del área de encabezado/pie de página de Word, ya que muchos parsers ignoran estas zonas y registrarán tu perfil sin contacto.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 7: Comparativa Antes y Después */}
+            <section id="comparativa-visual" className="scroll-mt-24 space-y-4">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" /> Ejemplo Comparativo: Antes vs. Después
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Examina la diferencia entre una postulación con alto riesgo de falla técnica y una optimizada para lectura automática y humana:
+              </p>
+
+              {/* Tabs */}
+              <div className="flex gap-2 border-b border-border pb-2">
+                <button
+                  onClick={() => setActiveTab("optimizado")}
+                  className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all ${
+                    activeTab === "optimizado"
+                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  ✅ Estructura Optimizada para ATS
+                </button>
+                <button
+                  onClick={() => setActiveTab("mal")}
+                  className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all ${
+                    activeTab === "mal"
+                      ? "bg-destructive/10 text-destructive border border-destructive/30"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  ❌ Errores Comunes de Formato
+                </button>
+              </div>
+
+              {activeTab === "optimizado" ? (
+                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 space-y-4 text-xs font-mono">
+                  <div className="border-b border-emerald-500/20 pb-3">
+                    <p className="font-bold text-sm text-foreground">ROBERTO ALONSO SÁNCHEZ</p>
+                    <p className="text-muted-foreground">Ciudad de México, CDMX | Tel: 55-4321-9876 | roberto.alonso@email.com | linkedin.com/in/roberto-alonso</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground uppercase tracking-wider text-[11px]">RESUMEN PROFESIONAL</p>
+                    <p className="text-muted-foreground mt-1">Coordinador de Logística con 6 años de experiencia en gestión de inventarios y distribución regional en México. Especialista en implementación de SAP ERP (Módulos MM/SD) y metodologías Lean Manufacturing. Capacidad comprobada para reducir tiempos de entrega en un 18% y negociar con transportistas nacionales.</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground uppercase tracking-wider text-[11px]">EXPERIENCIA LABORAL</p>
+                    <p className="font-semibold text-foreground mt-2">Coordinador de Almacén y Distribución | Logística Express S.A. de C.V.</p>
+                    <p className="text-muted-foreground">Marzo 2022 – Presente | Cuautitlán Izcalli, Estado de México</p>
+                    <ul className="list-disc pl-4 mt-1 space-y-1 text-muted-foreground">
+                      <li>Supervisé la operación diaria de un almacén central de 4,500 m² con un equipo a cargo de 22 colaboradores operativos.</li>
+                      <li>Implementé el sistema de ruteo dinámico con software TMS, disminuyendo costos de combustible en 14% en el primer año.</li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 space-y-4 text-xs">
+                  <div className="border-b border-destructive/20 pb-3 space-y-1 text-destructive">
+                    <p className="font-bold">⚠️ Datos de contacto en el Footer de Word:</p>
+                    <p className="text-muted-foreground">(El ATS no extrajo el teléfono ni el correo porque estaban fuera del cuerpo principal)</p>
+                  </div>
+                  <div className="space-y-1 text-destructive">
+                    <p className="font-bold">⚠️ Título creativo no indexable:</p>
+                    <p className="text-muted-foreground">"Mi viaje y pasión por las operaciones logísticas"</p>
+                  </div>
+                  <div className="space-y-1 text-destructive">
+                    <p className="font-bold">⚠️ Habilidades en gráfico de bolitas:</p>
+                    <p className="text-muted-foreground">SAP: ●●●●○ | Excel: ●●●○○ (El sistema registró 0 habilidades técnicas)</p>
+                  </div>
+                  <div className="space-y-1 text-destructive">
+                    <p className="font-bold">⚠️ Fechas vagas sin meses:</p>
+                    <p className="text-muted-foreground">"2022 - 2024 en empresa de paquetería" (Imposible calcular meses exactos de experiencia)</p>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* Section 8: Checklist Interactivo */}
+            <section id="checklist-ats" className="scroll-mt-24 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                  <CheckSquare className="h-6 w-6 text-primary" /> Checklist de Verificación ATS
+                </h2>
+                <Badge variant="outline" className="text-xs font-semibold">
+                  {completedCount} de {checklistItems.length} completados
+                </Badge>
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Haz clic en cada casilla para verificar si tu currículum cumple con los estándares antes de enviarlo:
+              </p>
+
+              <div className="rounded-2xl border border-border bg-card divide-y divide-border">
+                {checklistItems.map((item, idx) => {
+                  const isChecked = !!checkedList[idx];
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => toggleCheck(idx)}
+                      className={`flex items-start gap-3 p-3.5 sm:p-4 cursor-pointer transition-colors ${
+                        isChecked ? "bg-primary/5 text-foreground" : "hover:bg-muted/30 text-muted-foreground"
+                      }`}
+                    >
+                      <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                        isChecked ? "bg-primary border-primary text-primary-foreground" : "border-border bg-background"
+                      }`}>
+                        {isChecked && <Check className="h-3 w-3" />}
+                      </div>
+                      <span className={`text-xs sm:text-sm select-none ${isChecked ? "font-medium text-foreground line-through opacity-80" : ""}`}>
+                        {item}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* Section 9: How to test your CV */}
+            <section className="space-y-4">
+              <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                Cómo revisar tu currículum antes de postularte
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2 text-xs">
+                <div className="p-4 rounded-2xl border border-border bg-card space-y-2">
+                  <h4 className="font-bold text-foreground">1. La prueba del Bloc de Notas</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Abre tu archivo PDF en la computadora, presiona <code className="px-1 py-0.5 bg-muted rounded">Ctrl + A</code> para seleccionar todo, copia con <code className="px-1 py-0.5 bg-muted rounded">Ctrl + C</code> y pégalo en el Bloc de Notas de Windows. Si el texto se lee ordenado, limpio y sin caracteres rotos, tu CV pasará la prueba técnica de extracción.
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl border border-primary/30 bg-primary/5 space-y-2">
+                  <h4 className="font-bold text-primary">2. Escaneo con el Verificador ATS de CVAI</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Sube tu archivo a nuestro <Link to="/ats-checker" className="text-primary underline font-medium">Verificador ATS Gratuito</Link> para recibir un análisis instantáneo de legibilidad tipográfica, balance de palabras clave y recomendaciones de ajuste para vacantes en México.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Section 10: FAQ Section */}
+            <section id="preguntas-frecuentes" className="scroll-mt-24 space-y-6 border-t border-border pt-10">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                <HelpCircle className="h-6 w-6 text-primary" /> Preguntas Frecuentes sobre Currículum ATS
+              </h2>
+
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="faq-1">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Qué es exactamente un sistema ATS?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    Un ATS (Applicant Tracking System o Sistema de Seguimiento de Candidatos) es un software informático utilizado por departamentos de Recursos Humanos y agencias de selección para recopilar, organizar, indexar y gestionar todas las solicitudes de empleo recibidas para sus vacantes activas.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-2">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Cómo saber si mi CV es compatible con ATS?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    La forma más rápida es la prueba de texto: abre tu PDF, selecciona todo el contenido, cópialo y pégalo en un editor de texto plano (como el Bloc de Notas). Si el texto mantiene su orden lógico y no se mezclan columnas ni desaparecen fechas, tu CV es técnicamente amigable con ATS. También puedes analizarlo con el verificador de CVAI.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-3">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Qué formato de archivo es mejor para un CV ATS?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    El formato PDF con texto seleccionable es la mejor alternativa para el 90% de las vacantes en México, ya que asegura que el reclutador humano vea el documento exactamente con la tipografía y orden deseados. Si la postulación pide explícitamente archivo Word (.docx), respeta esa solicitud.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-4">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Un CV con buen diseño visual puede pasar un ATS?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    Totalmente sí. Ser compatible con ATS no significa tener un archivo plano o aburrido. Significa tener una jerarquía tipográfica limpia, márgenes equilibrados y evitar elementos que confunden al algoritmo, como cuadros de texto flotantes, gráficos de barras de habilidad o tablas anidadas. Las plantillas de CVAI combinan diseño moderno con compatibilidad ATS.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-5">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Qué palabras clave debo incluir en mi currículum?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    Debes incluir los términos técnicos específicos, nombres de programas de software (como SAP, Excel, Python o CONTPAQi), metodologías de trabajo (Scrum, Lean, ISO) y certificaciones que aparezcan repetidamente en la oferta de trabajo a la que aspiras, siempre respaldados por tu experiencia verídica.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="faq-6">
+                  <AccordionTrigger className="text-left text-sm font-semibold">
+                    ¿Existe alguna garantía del 100% para superar un ATS?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                    Ninguna plataforma o plantilla puede prometer una garantía absoluta del 100%, ya que cada empresa configura su ATS (Workday, Taleo, Greenhouse) con filtros, ponderaciones y preguntas eliminatorias distintas, y la decisión final siempre corresponde al reclutador humano. Lo que hace una buena optimización es eliminar cualquier barrera técnica que impida que tu perfil sea evaluado con justicia.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </section>
+
+            {/* Bottom CTA Card */}
+            <div className="rounded-3xl border border-primary/30 bg-gradient-to-br from-primary/10 via-background to-secondary/30 p-6 sm:p-8 space-y-4 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+                Evalúa tu Currículum con el Verificador ATS de CVAI
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+                Detecta de inmediato si tu documento tiene problemas de legibilidad, tipografía o palabras clave antes de enviarlo a las empresas en México.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
+                <Link to="/ats-checker">
+                  <Button className="gap-2 shadow-sm">
+                    Escanear mi CV gratis <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link to="/curriculum-vitae">
+                  <Button variant="outline">
+                    Crear CV optimizado
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </article>
+
+          {/* Sidebar */}
+          <aside className="lg:col-span-4 space-y-6">
+            <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 space-y-4 shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Bookmark className="h-3.5 w-3.5 text-primary" /> Recursos para tu búsqueda
+              </h3>
+              <div className="space-y-3 text-xs">
+                <Link to="/ats-checker" className="block font-medium text-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted/40">
+                  ⚡ Verificador ATS Gratuito
+                </Link>
+                <Link to="/curriculum-vitae" className="block font-medium text-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted/40">
+                  ✨ Creador de Currículum con IA
+                </Link>
+                <Link to="/plantillas" className="block text-muted-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted/40">
+                  📄 Plantillas de CV para México
+                </Link>
+                <Link to="/blog/$slug" params={{ slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" }} className="block text-muted-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted/40">
+                  🎯 10 Ejemplos de CV por Industria
+                </Link>
+                <Link to="/blog/$slug" params={{ slug: "como-hacer-un-curriculum-vitae-mexico" }} className="block text-muted-foreground hover:text-primary transition-colors p-2 rounded-lg hover:bg-muted/40">
+                  📘 Guía paso a paso para hacer un CV
+                </Link>
+              </div>
+
+              <div className="border-t border-border pt-4 space-y-2">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Plantillas por profesión:
+                </p>
+                <div className="space-y-1.5 text-xs">
+                  <Link to="/software-engineer-resume-template" className="block text-muted-foreground hover:text-primary">
+                    → Ingeniero de Software
+                  </Link>
+                  <Link to="/accountant-resume-template" className="block text-muted-foreground hover:text-primary">
+                    → Contador Público
+                  </Link>
+                  <Link to="/sales-executive-resume-template" className="block text-muted-foreground hover:text-primary">
+                    → Ejecutivo de Ventas
+                  </Link>
+                </div>
               </div>
             </div>
           </aside>
