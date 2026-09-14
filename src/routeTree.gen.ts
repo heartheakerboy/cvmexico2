@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TransparenciaIaRouteImport } from './routes/transparencia-ia'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as TeacherResumeTemplateRouteImport } from './routes/teacher-resume-template'
@@ -54,6 +55,7 @@ import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedPanelPreferenciasEmailRouteImport } from './routes/_authenticated/panel.preferencias-email'
 import { Route as AuthenticatedPanelPlantillasRouteImport } from './routes/_authenticated/panel.plantillas'
 import { Route as AuthenticatedPanelPerfilRouteImport } from './routes/_authenticated/panel.perfil'
 import { Route as AuthenticatedPanelIaRouteImport } from './routes/_authenticated/panel.ia'
@@ -92,6 +94,11 @@ import { Route as AuthenticatedAdminAnaliticaRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminAlmacenamientoRouteImport } from './routes/_authenticated/admin.almacenamiento'
 import { Route as AuthenticatedAdminAfiliadosRouteImport } from './routes/_authenticated/admin.afiliados'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TransparenciaIaRoute = TransparenciaIaRouteImport.update({
   id: '/transparencia-ia',
   path: '/transparencia-ia',
@@ -326,6 +333,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedPanelPreferenciasEmailRoute =
+  AuthenticatedPanelPreferenciasEmailRouteImport.update({
+    id: '/preferencias-email',
+    path: '/preferencias-email',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 const AuthenticatedPanelPlantillasRoute =
   AuthenticatedPanelPlantillasRouteImport.update({
     id: '/plantillas',
@@ -578,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
   '/transparencia-ia': typeof TransparenciaIaRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
@@ -620,6 +634,7 @@ export interface FileRoutesByFullPath {
   '/panel/ia': typeof AuthenticatedPanelIaRoute
   '/panel/perfil': typeof AuthenticatedPanelPerfilRoute
   '/panel/plantillas': typeof AuthenticatedPanelPlantillasRoute
+  '/panel/preferencias-email': typeof AuthenticatedPanelPreferenciasEmailRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/panel/': typeof AuthenticatedPanelIndexRoute
 }
@@ -661,6 +676,7 @@ export interface FileRoutesByTo {
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
   '/transparencia-ia': typeof TransparenciaIaRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
@@ -701,6 +717,7 @@ export interface FileRoutesByTo {
   '/panel/ia': typeof AuthenticatedPanelIaRoute
   '/panel/perfil': typeof AuthenticatedPanelPerfilRoute
   '/panel/plantillas': typeof AuthenticatedPanelPlantillasRoute
+  '/panel/preferencias-email': typeof AuthenticatedPanelPreferenciasEmailRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/panel': typeof AuthenticatedPanelIndexRoute
 }
@@ -744,6 +761,7 @@ export interface FileRoutesById {
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
   '/transparencia-ia': typeof TransparenciaIaRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
@@ -786,6 +804,7 @@ export interface FileRoutesById {
   '/_authenticated/panel/ia': typeof AuthenticatedPanelIaRoute
   '/_authenticated/panel/perfil': typeof AuthenticatedPanelPerfilRoute
   '/_authenticated/panel/plantillas': typeof AuthenticatedPanelPlantillasRoute
+  '/_authenticated/panel/preferencias-email': typeof AuthenticatedPanelPreferenciasEmailRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/panel/': typeof AuthenticatedPanelIndexRoute
 }
@@ -829,6 +848,7 @@ export interface FileRouteTypes {
     | '/teacher-resume-template'
     | '/terminos'
     | '/transparencia-ia'
+    | '/unsubscribe'
     | '/admin'
     | '/panel'
     | '/guias/$slug'
@@ -871,6 +891,7 @@ export interface FileRouteTypes {
     | '/panel/ia'
     | '/panel/perfil'
     | '/panel/plantillas'
+    | '/panel/preferencias-email'
     | '/admin/'
     | '/panel/'
   fileRoutesByTo: FileRoutesByTo
@@ -912,6 +933,7 @@ export interface FileRouteTypes {
     | '/teacher-resume-template'
     | '/terminos'
     | '/transparencia-ia'
+    | '/unsubscribe'
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
@@ -952,6 +974,7 @@ export interface FileRouteTypes {
     | '/panel/ia'
     | '/panel/perfil'
     | '/panel/plantillas'
+    | '/panel/preferencias-email'
     | '/admin'
     | '/panel'
   id:
@@ -994,6 +1017,7 @@ export interface FileRouteTypes {
     | '/teacher-resume-template'
     | '/terminos'
     | '/transparencia-ia'
+    | '/unsubscribe'
     | '/_authenticated/admin'
     | '/_authenticated/panel'
     | '/guias/$slug'
@@ -1036,6 +1060,7 @@ export interface FileRouteTypes {
     | '/_authenticated/panel/ia'
     | '/_authenticated/panel/perfil'
     | '/_authenticated/panel/plantillas'
+    | '/_authenticated/panel/preferencias-email'
     | '/_authenticated/admin/'
     | '/_authenticated/panel/'
   fileRoutesById: FileRoutesById
@@ -1079,6 +1104,7 @@ export interface RootRouteChildren {
   TeacherResumeTemplateRoute: typeof TeacherResumeTemplateRoute
   TerminosRoute: typeof TerminosRoute
   TransparenciaIaRoute: typeof TransparenciaIaRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   GuiasSlugRoute: typeof GuiasSlugRoute
   LegalSlugRoute: typeof LegalSlugRoute
   ResumeCitySlugRoute: typeof ResumeCitySlugRoute
@@ -1086,6 +1112,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/transparencia-ia': {
       id: '/transparencia-ia'
       path: '/transparencia-ia'
@@ -1400,6 +1433,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/panel/preferencias-email': {
+      id: '/_authenticated/panel/preferencias-email'
+      path: '/preferencias-email'
+      fullPath: '/panel/preferencias-email'
+      preLoaderRoute: typeof AuthenticatedPanelPreferenciasEmailRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
     }
     '/_authenticated/panel/plantillas': {
       id: '/_authenticated/panel/plantillas'
@@ -1734,6 +1774,7 @@ interface AuthenticatedPanelRouteChildren {
   AuthenticatedPanelIaRoute: typeof AuthenticatedPanelIaRoute
   AuthenticatedPanelPerfilRoute: typeof AuthenticatedPanelPerfilRoute
   AuthenticatedPanelPlantillasRoute: typeof AuthenticatedPanelPlantillasRoute
+  AuthenticatedPanelPreferenciasEmailRoute: typeof AuthenticatedPanelPreferenciasEmailRoute
   AuthenticatedPanelIndexRoute: typeof AuthenticatedPanelIndexRoute
 }
 
@@ -1751,6 +1792,8 @@ const AuthenticatedPanelRouteChildren: AuthenticatedPanelRouteChildren = {
   AuthenticatedPanelIaRoute: AuthenticatedPanelIaRoute,
   AuthenticatedPanelPerfilRoute: AuthenticatedPanelPerfilRoute,
   AuthenticatedPanelPlantillasRoute: AuthenticatedPanelPlantillasRoute,
+  AuthenticatedPanelPreferenciasEmailRoute:
+    AuthenticatedPanelPreferenciasEmailRoute,
   AuthenticatedPanelIndexRoute: AuthenticatedPanelIndexRoute,
 }
 
@@ -1811,6 +1854,7 @@ const rootRouteChildren: RootRouteChildren = {
   TeacherResumeTemplateRoute: TeacherResumeTemplateRoute,
   TerminosRoute: TerminosRoute,
   TransparenciaIaRoute: TransparenciaIaRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   GuiasSlugRoute: GuiasSlugRoute,
   LegalSlugRoute: LegalSlugRoute,
   ResumeCitySlugRoute: ResumeCitySlugRoute,

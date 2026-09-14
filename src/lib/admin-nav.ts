@@ -65,7 +65,7 @@ export const adminNav: NavGroup[] = [
     items: [
       { label: "AI", to: "/admin/ia", icon: Sparkles, keywords: "prompts modelos creditos openai ia" },
       { label: "AI Usage", to: "/admin/ia-uso", icon: Activity, keywords: "consumo tokens creditos costo uso ia usuarios historial" },
-      { label: "Emails", to: "/admin/emails", icon: Mail, keywords: "smtp plantillas broadcast" },
+      { label: "Email Marketing", to: "/admin/emails", icon: Mail, keywords: "smtp plantillas broadcast campanas newsletter marketing suscriptores" },
       { label: "Notifications", to: "/admin/notificaciones", icon: Bell, keywords: "push announcements notificaciones" },
       { label: "Marketing", to: "/admin/marketing", icon: Megaphone, keywords: "landing testimonios campanas" },
       { label: "Affiliates", to: "/admin/afiliados", icon: Handshake, keywords: "comisiones referidos payouts afiliados" },

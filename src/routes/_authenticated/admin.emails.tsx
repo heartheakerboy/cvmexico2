@@ -4,7 +4,9 @@ import {
   Search, Plus, Trash2, Loader2, Pencil, Mail, Send, FileText,
   Server, CheckCircle2, XCircle, Megaphone, Eye, EyeOff, Key,
   ShieldCheck, AlertCircle, RefreshCw, Check, Globe, Sparkles,
-  HelpCircle, Info, ShieldAlert,
+  HelpCircle, Info, ShieldAlert, Users, BarChart3, Clock,
+  ArrowRight, Copy, Filter, Play, Pause, ChevronRight, Sliders,
+  ExternalLink, DownloadCloud, MousePointerClick
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +16,17 @@ import {
   sendTestSmtpEmail,
   lookupMxRecord,
 } from "@/lib/smtp.functions";
+import {
+  getBroadcastsData,
+  saveCampaign,
+  sendTestBroadcast,
+  launchCampaign,
+  deleteCampaign,
+  getSubscribersOverview,
+  toggleSuppression,
+  type CampaignData,
+  type AudienceFilters,
+} from "@/lib/broadcast.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,43 +40,13 @@ import {
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
+import { EmailVisualEditor } from "@/components/admin/email-marketing/EmailVisualEditor";
+import { AudienceFilterBuilder } from "@/components/admin/email-marketing/AudienceFilterBuilder";
+import { CampaignSafetyModal } from "@/components/admin/email-marketing/CampaignSafetyModal";
 
 export const Route = createFileRoute("/_authenticated/admin/emails")({
-  component: EmailsAdmin,
+  component: EmailMarketingAdmin,
 });
-
-type Template = {
-  id: string; name: string; slug: string; type: string;
-  subject: string; body: string; active: boolean;
-};
-type Broadcast = {
-  id: string; subject: string; body: string; audience: string;
-  status: string; scheduled_at: string | null; recipients_count: number; sent_count: number;
-};
-type EmailLog = {
-  id: string; recipient: string; template: string | null;
-  subject: string | null; status: string; error: string | null; created_at: string;
-};
-
-const emptyTemplate = { name: "", slug: "", type: "transactional", subject: "", body: "", active: true };
-type TemplateForm = typeof emptyTemplate;
-const emptyBroadcast = { subject: "", body: "", audience: "all", scheduled_at: "" };
-type BroadcastForm = typeof emptyBroadcast;
-
-interface SmtpFormState {
-  host: string;
-  port: number;
-  secure: boolean;
-  user: string;
-  pass: string;
-  fromEmail: string;
-  fromName: string;
-  replyTo: string;
-  ignoreTlsErrors: boolean;
-}
 
 export interface EmailProviderDef {
   id: string;
@@ -89,8 +72,8 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     port: 465,
     secure: true,
     userHint: "support@cvai.com.mx",
-    passHint: "Contraseña creada en tu panel de SiteCountry",
-    tip: "Servidor oficial de correo de SiteCountry para cvai.com.mx (mailadmin.sitecountry.net). Usa tu correo completo y la contraseña creada en tu panel DirectAdmin de SiteCountry.",
+    passHint: "Contraseña de la cuenta de correo en SiteCountry",
+    tip: "Servidor oficial de correo de SiteCountry para cvai.com.mx. Ingresa tu correo completo y su contraseña.",
     domains: ["sitecountry.net", "cvai.com.mx"],
   },
   {
@@ -103,138 +86,21 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     secure: true,
     userHint: "tu-correo@gmail.com",
     passHint: "Contraseña de aplicación de 16 letras",
-    tip: "En tu cuenta de Google activa la 'Verificación en 2 pasos' y luego genera una 'Contraseña de aplicación' de 16 letras (no uses tu contraseña normal).",
+    tip: "En tu cuenta de Google activa la 'Verificación en 2 pasos' y genera una 'Contraseña de aplicación'.",
     domains: ["gmail.com", "googlemail.com"],
   },
   {
-    id: "outlook",
-    name: "Microsoft 365 / Outlook / Hotmail",
-    badge: "Outlook / Hotmail",
-    category: "personal",
-    host: "smtp.office365.com",
-    port: 587,
-    secure: false,
-    userHint: "tu-correo@outlook.com o hotmail.com",
-    passHint: "Contraseña de cuenta o de aplicación Microsoft",
-    tip: "Compatible con @outlook.com, @hotmail.com, @live.com y Microsoft 365 empresarial. Si tienes 2FA, genera una contraseña de aplicación.",
-    domains: ["outlook.com", "hotmail.com", "live.com", "msn.com", "office365.com"],
-  },
-  {
-    id: "yahoo",
-    name: "Yahoo Mail",
-    badge: "Yahoo",
-    category: "personal",
-    host: "smtp.mail.yahoo.com",
-    port: 465,
-    secure: true,
-    userHint: "tu-usuario@yahoo.com",
-    passHint: "Contraseña de aplicación de Yahoo",
-    tip: "En la configuración de seguridad de Yahoo, ve a 'Generar contraseña de aplicación' e ingrésala aquí.",
-    domains: ["yahoo.com", "yahoo.com.mx", "ymail.com"],
-  },
-  {
-    id: "zoho",
-    name: "Zoho Mail",
-    badge: "Zoho Mail",
-    category: "personal",
-    host: "smtppro.zoho.com",
-    port: 465,
-    secure: true,
-    userHint: "tu-correo@tudominio.com",
-    passHint: "Contraseña de aplicación Zoho",
-    tip: "Válido para Zoho gratuito o empresarial. Genera una contraseña de aplicación desde Mi Cuenta > Seguridad de Zoho.",
-    domains: ["zoho.com", "zohomail.com"],
-  },
-  {
-    id: "icloud",
-    name: "Apple iCloud Mail",
-    badge: "iCloud",
-    category: "personal",
-    host: "smtp.mail.me.com",
-    port: 587,
-    secure: false,
-    userHint: "tu-correo@icloud.com",
-    passHint: "Contraseña específica de app de Apple",
-    tip: "Inicia sesión en appleid.apple.com > Seguridad > Contraseñas específicas de la app y genera una para CVAI.",
-    domains: ["icloud.com", "me.com", "mac.com"],
-  },
-  {
-    id: "hostinger",
-    name: "Hostinger Webmail",
-    badge: "Hostinger",
-    category: "personal",
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    userHint: "contacto@tudominio.com",
-    passHint: "Contraseña de tu buzón en Hostinger",
-    tip: "Usa el correo completo creado en el panel de Hostinger y la contraseña asignada a ese buzón.",
-    domains: ["hostinger.com", "titan.email"],
-  },
-  {
-    id: "cpanel",
-    name: "cPanel / Webmail / Dominio Propio",
-    badge: "cPanel / Webmail",
-    category: "personal",
-    host: "mail.tudominio.com",
-    port: 465,
-    secure: true,
-    userHint: "tu-correo@tudominio.com",
-    passHint: "Contraseña directa de tu correo en cPanel",
-    tip: "El servidor suele ser mail.tudominio.com. Si el certificado SSL de tu servidor es compartido, activa la opción 'Ignorar advertencias TLS'.",
-    domains: [],
-  },
-  {
     id: "resend",
-    name: "Resend (Transaccional)",
+    name: "Resend",
     badge: "Resend",
     category: "transactional",
     host: "smtp.resend.com",
     port: 465,
     secure: true,
     userHint: "resend",
-    passHint: "re_xxxxxxxxxxxxxxxxxxxx",
-    tip: "Crea tu clave en resend.com/api-keys. El usuario siempre es la palabra 'resend'.",
+    passHint: "re_123456789... (API Key de Resend)",
+    tip: "Usa 'resend' como usuario y tu API Key generada en resend.com como contraseña.",
     domains: ["resend.com"],
-  },
-  {
-    id: "sendgrid",
-    name: "SendGrid (Twilio)",
-    badge: "SendGrid",
-    category: "transactional",
-    host: "smtp.sendgrid.net",
-    port: 587,
-    secure: false,
-    userHint: "apikey",
-    passHint: "SG.xxxxxxxxxxxxxxxxxxxx",
-    tip: "El usuario siempre es 'apikey' y la contraseña es tu API Key creada en SendGrid.",
-    domains: ["sendgrid.com"],
-  },
-  {
-    id: "brevo",
-    name: "Brevo (Sendinblue)",
-    badge: "Brevo",
-    category: "transactional",
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    userHint: "tu-login-brevo@correo.com",
-    passHint: "Clave SMTP master de Brevo",
-    tip: "Consulta tus credenciales en el panel de Brevo en Configuración > SMTP & API.",
-    domains: ["brevo.com", "sendinblue.com"],
-  },
-  {
-    id: "mailgun",
-    name: "Mailgun",
-    badge: "Mailgun",
-    category: "transactional",
-    host: "smtp.mailgun.org",
-    port: 587,
-    secure: false,
-    userHint: "postmaster@mg.tudominio.com",
-    passHint: "Contraseña SMTP de Mailgun",
-    tip: "Obtenla en Sending > Domains > Domain Settings > SMTP Credentials.",
-    domains: ["mailgun.org", "mailgun.com"],
   },
   {
     id: "ses",
@@ -250,38 +116,37 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     domains: ["amazonaws.com"],
   },
   {
-    id: "postmark",
-    name: "Postmark",
-    badge: "Postmark",
-    category: "transactional",
-    host: "smtp.postmarkapp.com",
-    port: 587,
-    secure: false,
-    userHint: "Server API Token de Postmark",
-    passHint: "Server API Token de Postmark",
-    tip: "Tanto el usuario como la contraseña corresponden al Server API Token de tu servidor en Postmark.",
-    domains: ["postmarkapp.com"],
-  },
-  {
     id: "custom",
     name: "Servidor Personalizado / Cualquier otro SMTP",
     badge: "Personalizado",
     category: "custom",
     host: "",
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     userHint: "usuario@servidor.com",
     passHint: "Contraseña del servidor SMTP",
-    tip: "Compatible con cualquier servidor SMTP del mundo (Postfix, Exim, VPS privado, etc.).",
+    tip: "Compatible con cualquier servidor SMTP del mundo.",
     domains: [],
   },
 ];
+
+interface SmtpFormState {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+  fromEmail: string;
+  fromName: string;
+  replyTo: string;
+  ignoreTlsErrors: boolean;
+}
 
 const defaultSmtpForm: SmtpFormState = {
   host: "mailadmin.sitecountry.net",
   port: 465,
   secure: true,
-  user: "",
+  user: "support@cvai.com.mx",
   pass: "",
   fromEmail: "support@cvai.com.mx",
   fromName: "CVAI - Currículum Vitae AI",
@@ -289,78 +154,147 @@ const defaultSmtpForm: SmtpFormState = {
   ignoreTlsErrors: false,
 };
 
-function slugify(s: string) {
-  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-}
+const PREBUILT_TEMPLATES = [
+  {
+    id: "tpl-welcome",
+    name: "Bienvenida a CVAI",
+    slug: "welcome-email",
+    subject: "¡Bienvenido a CVAI! Comienza a crear tu currículum ganador 🚀",
+    body: `Hola {{first_name}},<br/><br/>¡Bienvenido a la plataforma más moderna de optimización curricular en México!<br/><br/>Con CVAI podrás crear currículums adaptados a los estándares ATS de las mejores empresas en México en cuestión de minutos.<br/><br/>Empieza seleccionando una plantilla profesional y deja que nuestra Inteligencia Artificial optimice tu experiencia.`,
+    ctaText: "Crear mi primer CV →",
+    ctaUrl: "https://cvai.com.mx/panel",
+  },
+  {
+    id: "tpl-offer",
+    name: "Oferta Especial / Descuento Pro",
+    slug: "special-offer",
+    subject: "Descuento Especial del 30% en tu suscripción CVAI Pro ✨",
+    body: `Hola {{first_name}},<br/><br/>Queremos ayudarte a acelerar tu próxima contratación. Por tiempo limitado, obtén un <strong>30% de descuento</strong> en el plan CVAI Pro.<br/><br/>• Descargas ilimitadas en PDF y DOCX sin marca de agua<br/>• Optimizador de palabras clave ATS<br/>• Creación de cartas de presentación y simulación de entrevistas con IA`,
+    ctaText: "Aprovechar Descuento Pro →",
+    ctaUrl: "https://cvai.com.mx/precios",
+  },
+  {
+    id: "tpl-ats-tips",
+    name: "Consejos ATS y Currículum",
+    slug: "resume-tips",
+    subject: "5 errores en tu CV que los reclutadores en México descartan de inmediato 📋",
+    body: `Hola {{first_name}},<br/><br/>¿Sabías que el 75% de los currículums nunca son leídos por una persona porque son filtrados previamente por un sistema ATS?<br/><br/>Para evitar ser descartado:<br/>1. Usa encabezados estándar como 'Experiencia Laboral' y 'Educación'.<br/>2. Añade métricas cuantificables a tus logros.<br/>3. Exporta siempre en formato PDF con texto seleccionable.<br/><br/>Pasa tu currículum por nuestro analizador ATS gratuito ahora.`,
+    ctaText: "Escanear mi CV ahora →",
+    ctaUrl: "https://cvai.com.mx/panel/ats",
+  },
+  {
+    id: "tpl-upgrade",
+    name: "Actualización a Plan Pro",
+    slug: "premium-upgrade",
+    subject: "Desbloquea todo el potencial de tu carrera con CVAI Pro 💼",
+    body: `Hola {{first_name}},<br/><br/>Tu cuenta actual cuenta con el plan Gratuito. Da el salto hacia vacantes de mayor nivel desbloqueando plantillas ejecutivas, exportación en Word editable y generación ilimitada con Inteligencia Artificial DeepSeek.`,
+    ctaText: "Ver Beneficios Pro →",
+    ctaUrl: "https://cvai.com.mx/precios",
+  },
+  {
+    id: "tpl-reengagement",
+    name: "Re-engagement (Te extrañamos)",
+    slug: "reengagement",
+    subject: "¿Sigues buscando empleo? Nuevas oportunidades te esperan en México 🎯",
+    body: `Hola {{first_name}},<br/><br/>Notamos que hace algún tiempo no actualizas tu currículum en CVAI.<br/><br/>El mercado laboral se mueve rápido y las empresas están buscando activamente talento como el tuyo. Hemos agregado nuevas plantillas modernas para ayudarte a destacar.`,
+    ctaText: "Actualizar mi CV →",
+    ctaUrl: "https://cvai.com.mx/panel",
+  },
+  {
+    id: "tpl-newsletter",
+    name: "Boletín Mensual (Newsletter)",
+    slug: "monthly-newsletter",
+    subject: "Tendencias de Empleo y Salarios en México — Boletín CVAI 📊",
+    body: `Hola {{first_name}},<br/><br/>Te compartimos nuestro resumen mensual de tendencias laborales en México:<br/><br/>• Las habilidades digitales más demandadas este trimestre.<br/>• Rangos salariales actualizados en tecnología, ventas y administración.<br/>• Guía paso a paso para negociar una mejor oferta económica.`,
+    ctaText: "Leer el Informe Completo →",
+    ctaUrl: "https://cvai.com.mx/blog",
+  },
+];
 
-function Kpi({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <Icon className="h-4 w-4" />
-        <span className="text-xs">{label}</span>
-      </div>
-      <p className="mt-1 font-display text-2xl font-semibold">{value}</p>
-    </div>
-  );
-}
+function EmailMarketingAdmin() {
+  // Main Submenu Tabs
+  const [activeTab, setActiveTab] = useState<
+    "broadcasts" | "create" | "history" | "templates" | "subscribers" | "settings" | "analytics"
+  >("broadcasts");
 
-function statusBadge(s: string) {
-  const map: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-    sent: "default", delivered: "default", draft: "secondary",
-    scheduled: "outline", bounced: "destructive", failed: "destructive",
-  };
-  return <Badge variant={map[s] ?? "secondary"}>{s}</Badge>;
-}
+  // Loading States
+  const [loading, setLoading] = useState(false);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    totalCampaigns: 0,
+    totalSent: 0,
+    totalOpened: 0,
+    totalClicked: 0,
+    avgOpenRate: "0.0%",
+    avgClickRate: "0.0%",
+    subscriberCount: 0,
+  });
 
-function EmailsAdmin() {
-  const [templates, setTemplates] = useState<Template[] | null>(null);
-  const [broadcasts, setBroadcasts] = useState<Broadcast[] | null>(null);
-  const [logs, setLogs] = useState<EmailLog[] | null>(null);
-  const [query, setQuery] = useState("");
+  // Subscribers
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [suppressedCount, setSuppressedCount] = useState(0);
 
-  const [tplDialog, setTplDialog] = useState(false);
-  const [tplEditId, setTplEditId] = useState<string | null>(null);
-  const [tplForm, setTplForm] = useState<TemplateForm>(emptyTemplate);
+  // Campaign Wizard State
+  const [campaignForm, setCampaignForm] = useState<CampaignData>({
+    name: "",
+    subject: "",
+    previewText: "",
+    senderName: "CVAI - Currículum Vitae AI",
+    senderEmail: "support@cvai.com.mx",
+    replyTo: "support@cvai.com.mx",
+    bodyHtml: "<p>Hola {{first_name}},</p><p>Tenemos noticias importantes para impulsar tu carrera profesional.</p>",
+    ctaText: "Acceder a mi panel →",
+    ctaUrl: "https://cvai.com.mx/panel",
+    bannerUrl: "",
+    audienceType: "all",
+    filters: { plan: "all", language: "all", registered: "all", createdResume: "all" },
+    language: "both",
+  });
 
-  const [bcDialog, setBcDialog] = useState(false);
-  const [bcEditId, setBcEditId] = useState<string | null>(null);
-  const [bcForm, setBcForm] = useState<BroadcastForm>(emptyBroadcast);
+  // Test Email in Wizard
+  const [wizardTestEmail, setWizardTestEmail] = useState("");
+  const [sendingWizardTest, setSendingWizardTest] = useState(false);
 
-  const [saving, setSaving] = useState(false);
+  // Safety Modal State
+  const [safetyOpen, setSafetyOpen] = useState(false);
+  const [targetRecipientsCount, setTargetRecipientsCount] = useState(0);
+  const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
 
-  // SMTP state
+  // SMTP Settings State
   const [smtpForm, setSmtpForm] = useState<SmtpFormState>(defaultSmtpForm);
-  const [loadingSmtp, setLoadingSmtp] = useState(false);
+  const [selectedProviderId, setSelectedProviderId] = useState("sitecountry");
   const [savingSmtp, setSavingSmtp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [testRecipient, setTestRecipient] = useState("");
-  const [sendingTest, setSendingTest] = useState(false);
-  const [selectedProviderId, setSelectedProviderId] = useState<string>("custom");
+  const [smtpTestEmail, setSmtpTestEmail] = useState("");
+  const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
 
-  // Template preview state
-  const [previewTpl, setPreviewTpl] = useState<Template | null>(null);
-  const [previewDialog, setPreviewDialog] = useState(false);
+  // Templates Management State
+  const [templates, setTemplates] = useState<any[]>(PREBUILT_TEMPLATES);
+  const [editingTemplate, setEditingTemplate] = useState<any | null>(null);
 
-  async function load() {
-    const [t, b, l] = await Promise.all([
-      supabase.from("email_templates").select("*").order("name"),
-      supabase.from("email_broadcasts").select("*").order("created_at", { ascending: false }),
-      supabase.from("email_logs").select("*").order("created_at", { ascending: false }).limit(100),
-    ]);
-    if (t.error) toast.error(t.error.message); else setTemplates(t.data as Template[]);
-    if (b.error) toast.error(b.error.message); else setBroadcasts(b.data as Broadcast[]);
-    if (l.error) toast.error(l.error.message); else setLogs(l.data as EmailLog[]);
-  }
-
-  async function loadSmtp() {
-    setLoadingSmtp(true);
+  // Initial Load
+  async function loadData() {
+    setLoading(true);
     try {
-      const res: any = await getAdminSmtpConfig();
-      const cfg = res?.data ?? res;
+      // 1. Load Broadcasts & Stats
+      const res = await getBroadcastsData();
+      if (res) {
+        setCampaigns(res.campaigns);
+        setStats(res.stats);
+      }
+
+      // 2. Load Subscribers & Suppression
+      const subRes = await getSubscribersOverview();
+      if (subRes) {
+        setSubscribers(subRes.subscribers);
+        setSuppressedCount(subRes.totalSuppressed);
+      }
+
+      // 3. Load SMTP Config
+      const smtpRes: any = await getAdminSmtpConfig();
+      const cfg = smtpRes?.data ?? smtpRes;
       if (cfg && typeof cfg === "object" && (cfg.host || cfg.user || cfg.fromEmail)) {
-        const loaded: SmtpFormState = {
+        setSmtpForm({
           host: (cfg.host || "").trim(),
           port: Number(cfg.port) || 465,
           secure: Boolean(cfg.secure),
@@ -370,33 +304,108 @@ function EmailsAdmin() {
           fromName: (cfg.fromName || "CVAI - Currículum Vitae AI").trim(),
           replyTo: (cfg.replyTo || "support@cvai.com.mx").trim(),
           ignoreTlsErrors: Boolean(cfg.ignoreTlsErrors),
-        };
-        setSmtpForm(loaded);
-
-        // Detect provider
-        const matched = EMAIL_PROVIDERS.find(
-          (p) => p.host && p.host.toLowerCase() === loaded.host.toLowerCase()
-        );
-        if (matched) {
-          setSelectedProviderId(matched.id);
-        } else if (loaded.host.startsWith("mail.")) {
-          setSelectedProviderId("cpanel");
-        } else {
-          setSelectedProviderId("custom");
-        }
+        });
       }
     } catch (err: any) {
-      console.error("Error loading SMTP config:", err);
+      console.error("Error loading email marketing data:", err);
     } finally {
-      setLoadingSmtp(false);
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    load();
-    loadSmtp();
+    loadData();
   }, []);
 
+  // Save or Create Campaign
+  async function handleSaveDraft() {
+    if (!campaignForm.name.trim() || !campaignForm.subject.trim()) {
+      toast.error("Por favor ingresa al menos el Nombre y Asunto de la campaña.");
+      return;
+    }
+    try {
+      const res = await saveCampaign({ data: { ...campaignForm, status: "draft" } });
+      if (res.ok) {
+        toast.success("Campaña guardada como borrador");
+        loadData();
+        setActiveTab("history");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error al guardar campaña");
+    }
+  }
+
+  // Pre-dispatch Safety Check
+  async function handleOpenSafetyModal() {
+    if (!campaignForm.name.trim() || !campaignForm.subject.trim()) {
+      toast.error("Ingresa el Nombre y Asunto de la campaña antes de enviar.");
+      return;
+    }
+
+    try {
+      // Save campaign first
+      const saveRes = await saveCampaign({ data: { ...campaignForm, status: "draft" } });
+      const currentCampaignId = saveRes.campaign?.id;
+      if (!currentCampaignId) throw new Error("No se pudo obtener el ID de la campaña.");
+
+      setCampaignForm((prev) => ({ ...prev, id: currentCampaignId }));
+      setTargetRecipientsCount(stats.subscriberCount || 1);
+      setSafetyOpen(true);
+    } catch (err: any) {
+      toast.error(err.message || "Error al preparar la campaña");
+    }
+  }
+
+  // Confirm and Send Campaign
+  async function handleConfirmLaunch() {
+    if (!campaignForm.id) return;
+    try {
+      const res = await launchCampaign({
+        data: {
+          campaignId: campaignForm.id,
+          confirmDuplicate: Boolean(duplicateWarning),
+        },
+      });
+
+      if (res.warning) {
+        setDuplicateWarning(res.message);
+        toast.warning(res.message);
+        return;
+      }
+
+      if (res.ok) {
+        toast.success(res.message || "¡Campaña despachada con éxito!");
+        loadData();
+        setActiveTab("history");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error al enviar la campaña");
+    }
+  }
+
+  // Send Test Email in Wizard
+  async function handleSendWizardTest() {
+    if (!wizardTestEmail.trim() || !wizardTestEmail.includes("@")) {
+      toast.error("Ingresa una dirección de correo válida para la prueba.");
+      return;
+    }
+    setSendingWizardTest(true);
+    try {
+      const res = await sendTestBroadcast({
+        data: {
+          campaign: campaignForm,
+          testEmail: wizardTestEmail.trim(),
+        },
+      });
+      if (res.ok) toast.success(res.message);
+    } catch (err: any) {
+      toast.error(err.message || "Error al enviar correo de prueba");
+    } finally {
+      setSendingWizardTest(false);
+    }
+  }
+
+  // Save SMTP Settings
   async function handleSaveSmtp() {
     if (!smtpForm.host.trim()) {
       toast.error("El servidor SMTP (Host) es obligatorio");
@@ -404,18 +413,10 @@ function EmailsAdmin() {
     }
     setSavingSmtp(true);
     try {
-      const cleanForm: SmtpFormState = {
-        ...smtpForm,
-        host: smtpForm.host.trim(),
-        user: smtpForm.user.trim(),
-        fromEmail: smtpForm.fromEmail.trim(),
-        replyTo: smtpForm.replyTo.trim(),
-        fromName: smtpForm.fromName.trim(),
-      };
-      const res: any = await saveAdminSmtpConfig({ data: cleanForm });
+      const res: any = await saveAdminSmtpConfig({ data: smtpForm });
       if (res?.success || res?.ok) {
         toast.success(res.message || "Configuración SMTP guardada exitosamente");
-        await loadSmtp();
+        loadData();
       } else {
         toast.error(res?.message || "Error al guardar SMTP");
       }
@@ -426,697 +427,935 @@ function EmailsAdmin() {
     }
   }
 
-  async function handleSendTest() {
-    if (!testRecipient.trim()) {
-      toast.error("Ingresa un correo destinatario para la prueba");
+  // Test SMTP Connection
+  async function handleTestSmtp() {
+    if (!smtpTestEmail.trim()) {
+      toast.error("Ingresa un correo destinatario para la prueba SMTP");
       return;
     }
-    setSendingTest(true);
+    setSendingSmtpTest(true);
     try {
       const res = await sendTestSmtpEmail({
         data: {
-          to: testRecipient.trim(),
-          recipient: testRecipient.trim(),
+          to: smtpTestEmail.trim(),
+          recipient: smtpTestEmail.trim(),
           customSettings: smtpForm,
         },
       });
       if (res.success || res.ok) {
-        toast.success(res.message || "¡Correo de prueba enviado con éxito!");
-        load();
-      } else {
-        toast.error((res as any).message || "Error al enviar correo de prueba");
-        load();
+        toast.success(res.message || "¡Conexión SMTP exitosa!");
       }
     } catch (err: any) {
-      toast.error(err.message || "Fallo en la prueba SMTP");
-      load();
+      toast.error(err.message || "Error en la prueba SMTP");
     } finally {
-      setSendingTest(false);
+      setSendingSmtpTest(false);
     }
   }
 
-  function applyProvider(providerId: string, customDomainHost?: string) {
-    setSelectedProviderId(providerId);
-    const p = EMAIL_PROVIDERS.find((x) => x.id === providerId);
-    if (!p) return;
+  // Load Template into Campaign Wizard
+  function handleUseTemplate(tpl: any) {
+    setCampaignForm((prev) => ({
+      ...prev,
+      name: `Campaña: ${tpl.name}`,
+      subject: tpl.subject,
+      bodyHtml: tpl.body,
+      ctaText: tpl.ctaText || "Ver más →",
+      ctaUrl: tpl.ctaUrl || "https://cvai.com.mx/panel",
+    }));
+    setActiveTab("create");
+    toast.success(`Plantilla '${tpl.name}' cargada en el editor`);
+  }
 
-    setSmtpForm((prev) => {
-      let nextHost = customDomainHost || p.host;
-      if (providerId === "cpanel" && !customDomainHost) {
-        const rawEmail = prev.fromEmail || prev.user || "";
-        const domain = rawEmail.includes("@") ? rawEmail.split("@")[1].toLowerCase().trim() : "";
-        if (domain) nextHost = `mail.${domain}`;
+  // Delete Campaign
+  async function handleDeleteCampaign(id: string) {
+    if (!confirm("¿Seguro que deseas eliminar esta campaña?")) return;
+    try {
+      const res = await deleteCampaign({ data: { id } });
+      if (res.ok) {
+        toast.success("Campaña eliminada");
+        loadData();
       }
-      return {
-        ...prev,
-        host: nextHost || prev.host,
-        port: p.port,
-        secure: p.secure,
-        user: p.id === "resend" ? "resend" : p.id === "sendgrid" ? "apikey" : prev.user,
-        ignoreTlsErrors: providerId === "sitecountry" || providerId === "cpanel" ? true : prev.ignoreTlsErrors,
-      };
-    });
-    toast.info(`Configuración para ${p.name} aplicada`);
-  }
-
-  async function autoDetectFromEmail(emailInput?: string) {
-    const raw = (emailInput || smtpForm.user || smtpForm.fromEmail || "").trim();
-    if (!raw.includes("@")) {
-      toast.error("Ingresa primero un correo con '@' para auto-detectar");
-      return;
+    } catch (err: any) {
+      toast.error(err.message || "Error al eliminar");
     }
-    const domain = raw.split("@")[1].toLowerCase().trim();
-    const matched = EMAIL_PROVIDERS.find((p) =>
-      p.domains.some((d) => domain === d || domain.endsWith("." + d))
-    );
-
-    if (matched) {
-      applyProvider(matched.id);
-      toast.success(`Proveedor detectado: ${matched.name}`);
-    } else {
-      // Query real DNS MX record for this domain
-      try {
-        const mxRes = await lookupMxRecord({ data: { domain } });
-        if (mxRes.ok && mxRes.host) {
-          applyProvider("cpanel", mxRes.host);
-          setSmtpForm((prev) => ({
-            ...prev,
-            host: mxRes.host,
-            port: 465,
-            secure: true,
-            ignoreTlsErrors: true,
-          }));
-          toast.success(`Servidor MX real detectado en DNS: ${mxRes.host}`);
-          return;
-        }
-      } catch (err) {
-        console.warn("Could not lookup MX via DoH:", err);
-      }
-
-      applyProvider("cpanel", `mail.${domain}`);
-      toast.success(`Dominio @${domain} detectado. Host sugerido: mail.${domain}`);
-    }
-  }
-
-  const selectedProvider = useMemo(() => {
-    return EMAIL_PROVIDERS.find((p) => p.id === selectedProviderId) || EMAIL_PROVIDERS[EMAIL_PROVIDERS.length - 1];
-  }, [selectedProviderId]);
-
-  function openPreview(t: Template) {
-    setPreviewTpl(t);
-    setPreviewDialog(true);
-  }
-
-  const previewRendered = useMemo(() => {
-    if (!previewTpl) return { subject: "", body: "" };
-    let sub = previewTpl.subject
-      .replace(/{{name}}/g, "Carlos Mendoza")
-      .replace(/{{ticketId}}/g, "TK-9821");
-    let body = previewTpl.body
-      .replace(/{{name}}/g, "Carlos Mendoza")
-      .replace(/{{email}}/g, "carlos.mendoza@ejemplo.com")
-      .replace(/{{link}}/g, "https://cvai.com.mx/login")
-      .replace(/{{ticketId}}/g, "TK-9821")
-      .replace(/{{ticketSubject}}/g, "Optimización de currículum para ATS de retail")
-      .replace(/{{replyMessage}}/g, "Hola Carlos, revisamos tu plantilla y optimizamos las etiquetas para los ATS más usados en México.")
-      .replace(/{{planName}}/g, "CVAI Pro Mensual")
-      .replace(/{{amount}}/g, "$99 MXN")
-      .replace(/{{nextBillingDate}}/g, "15 de Octubre, 2026")
-      .replace(/{{year}}/g, "2026");
-    return { subject: sub, body };
-  }, [previewTpl]);
-
-  const filteredTpl = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return templates ?? [];
-    return (templates ?? []).filter((t) => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q));
-  }, [templates, query]);
-
-  const deliverability = useMemo(() => {
-    const l = logs ?? [];
-    if (!l.length) return 100;
-    const ok = l.filter((x) => x.status === "sent" || x.status === "delivered").length;
-    return Math.round((ok / l.length) * 100);
-  }, [logs]);
-
-  // Template CRUD
-  function openNewTpl() { setTplEditId(null); setTplForm(emptyTemplate); setTplDialog(true); }
-  function openEditTpl(t: Template) {
-    setTplEditId(t.id);
-    setTplForm({ name: t.name, slug: t.slug, type: t.type, subject: t.subject, body: t.body, active: t.active });
-    setTplDialog(true);
-  }
-  async function saveTpl() {
-    if (!tplForm.name.trim()) { toast.error("El nombre es obligatorio"); return; }
-    setSaving(true);
-    const payload = {
-      name: tplForm.name.trim(), slug: tplForm.slug.trim() || slugify(tplForm.name),
-      type: tplForm.type, subject: tplForm.subject, body: tplForm.body, active: tplForm.active,
-    };
-    const res = tplEditId
-      ? await supabase.from("email_templates").update(payload).eq("id", tplEditId)
-      : await supabase.from("email_templates").insert(payload);
-    setSaving(false);
-    if (res.error) { toast.error(res.error.message); return; }
-    toast.success(tplEditId ? "Plantilla actualizada" : "Plantilla creada");
-    setTplDialog(false); load();
-  }
-  async function removeTpl(id: string) {
-    if (!confirm("¿Eliminar esta plantilla?")) return;
-    const { error } = await supabase.from("email_templates").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Plantilla eliminada");
-    setTemplates((r) => (r ?? []).filter((x) => x.id !== id));
-  }
-  async function toggleTpl(t: Template) {
-    const { error } = await supabase.from("email_templates").update({ active: !t.active }).eq("id", t.id);
-    if (error) { toast.error(error.message); return; }
-    setTemplates((r) => (r ?? []).map((x) => x.id === t.id ? { ...x, active: !x.active } : x));
-  }
-
-  // Broadcast CRUD
-  function openNewBc() { setBcEditId(null); setBcForm(emptyBroadcast); setBcDialog(true); }
-  function openEditBc(b: Broadcast) {
-    setBcEditId(b.id);
-    setBcForm({
-      subject: b.subject, body: b.body, audience: b.audience,
-      scheduled_at: b.scheduled_at ? b.scheduled_at.slice(0, 16) : "",
-    });
-    setBcDialog(true);
-  }
-  async function saveBc() {
-    if (!bcForm.subject.trim()) { toast.error("El asunto es obligatorio"); return; }
-    setSaving(true);
-    const payload = {
-      subject: bcForm.subject.trim(), body: bcForm.body, audience: bcForm.audience,
-      scheduled_at: bcForm.scheduled_at ? new Date(bcForm.scheduled_at).toISOString() : null,
-      status: bcForm.scheduled_at ? "scheduled" : "draft",
-    };
-    const res = bcEditId
-      ? await supabase.from("email_broadcasts").update(payload).eq("id", bcEditId)
-      : await supabase.from("email_broadcasts").insert(payload);
-    setSaving(false);
-    if (res.error) { toast.error(res.error.message); return; }
-    toast.success(bcEditId ? "Campaña actualizada" : "Campaña creada");
-    setBcDialog(false); load();
-  }
-  async function removeBc(id: string) {
-    if (!confirm("¿Eliminar esta campaña?")) return;
-    const { error } = await supabase.from("email_broadcasts").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Campaña eliminada");
-    setBroadcasts((r) => (r ?? []).filter((x) => x.id !== id));
-  }
-  async function markSent(b: Broadcast) {
-    if (!confirm("¿Marcar esta campaña como enviada?")) return;
-    const { error } = await supabase.from("email_broadcasts")
-      .update({ status: "sent", sent_count: b.recipients_count }).eq("id", b.id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Campaña enviada");
-    load();
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-semibold">Email management</h1>
-        <p className="text-sm text-muted-foreground">SMTP, plantillas y campañas.</p>
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/80 pb-5">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Email Marketing & Broadcasts
+            </h1>
+            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+              Pro Enterprise
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Diseña, segmenta y despacha campañas masivas a los usuarios registrados de CVAI.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadData}
+            disabled={loading}
+            className="gap-1.5 text-xs"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+            Actualizar
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => setActiveTab("create")}
+            className="gap-1.5 text-xs font-semibold shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Nueva Campaña
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={FileText} label="Plantillas" value={(templates?.length ?? 0).toString()} />
-        <Kpi icon={Megaphone} label="Campañas" value={(broadcasts?.length ?? 0).toString()} />
-        <Kpi icon={Send} label="Emails enviados" value={(logs ?? []).filter((l) => l.status === "sent" || l.status === "delivered").length.toString()} />
-        <Kpi icon={CheckCircle2} label="Entregabilidad" value={`${deliverability}%`} />
-      </div>
-
-      <Tabs defaultValue="templates">
-        <TabsList>
-          <TabsTrigger value="templates">Plantillas</TabsTrigger>
-          <TabsTrigger value="broadcasts">Campañas</TabsTrigger>
-          <TabsTrigger value="logs">Logs</TabsTrigger>
-          <TabsTrigger value="smtp">SMTP</TabsTrigger>
+      {/* Main Submenus / Navigation Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-6">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 w-full h-auto p-1 bg-muted/60 rounded-xl gap-1">
+          <TabsTrigger value="broadcasts" className="text-xs py-2 gap-1.5">
+            <Megaphone className="h-3.5 w-3.5" />
+            <span>Broadcasts</span>
+          </TabsTrigger>
+          <TabsTrigger value="create" className="text-xs py-2 gap-1.5">
+            <Plus className="h-3.5 w-3.5 text-primary" />
+            <span>Crear Campaña</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="text-xs py-2 gap-1.5">
+            <Clock className="h-3.5 w-3.5" />
+            <span>Historial</span>
+          </TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs py-2 gap-1.5">
+            <FileText className="h-3.5 w-3.5" />
+            <span>Plantillas</span>
+          </TabsTrigger>
+          <TabsTrigger value="subscribers" className="text-xs py-2 gap-1.5">
+            <Users className="h-3.5 w-3.5" />
+            <span>Suscriptores</span>
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="text-xs py-2 gap-1.5">
+            <Sliders className="h-3.5 w-3.5" />
+            <span>SMTP / Config</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs py-2 gap-1.5">
+            <BarChart3 className="h-3.5 w-3.5" />
+            <span>Analítica</span>
+          </TabsTrigger>
         </TabsList>
 
-        {/* Templates */}
-        <TabsContent value="templates" className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="relative max-w-sm flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Buscar plantilla…" value={query}
-                onChange={(e) => setQuery(e.target.value)} />
+        {/* 1. BROADCASTS OVERVIEW TAB */}
+        <TabsContent value="broadcasts" className="space-y-6 mt-0">
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                <span>Campañas Creadas</span>
+                <Megaphone className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-3xl font-bold text-foreground">{stats.totalCampaigns}</div>
+              <div className="text-[11px] text-muted-foreground">Envíos totales y borradores</div>
             </div>
-            <Button onClick={openNewTpl}><Plus className="mr-1 h-4 w-4" /> Nueva plantilla</Button>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                <span>Correos Entregados</span>
+                <Send className="h-4 w-4 text-blue-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground">
+                {stats.totalSent.toLocaleString("es-MX")}
+              </div>
+              <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                Despachados sin interrupción
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                <span>Tasa de Apertura</span>
+                <Eye className="h-4 w-4 text-emerald-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground">{stats.avgOpenRate}</div>
+              <div className="text-[11px] text-muted-foreground">
+                {stats.totalOpened} aperturas registradas
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                <span>Suscriptores Activos</span>
+                <Users className="h-4 w-4 text-purple-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground">
+                {stats.subscriberCount.toLocaleString("es-MX")}
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                {suppressedCount} en lista de exclusión
+              </div>
+            </div>
           </div>
-          <div className="rounded-2xl border border-border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Plantilla</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Asunto</TableHead>
-                  <TableHead>Activa</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {templates === null ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
-                ) : filteredTpl.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">Sin plantillas.</TableCell></TableRow>
-                ) : filteredTpl.map((t) => (
-                  <TableRow key={t.id}>
-                    <TableCell>
-                      <div className="font-medium">{t.name}</div>
-                      <div className="text-xs text-muted-foreground">{t.slug}</div>
-                    </TableCell>
-                    <TableCell><Badge variant="outline">{t.type}</Badge></TableCell>
-                    <TableCell className="max-w-[240px] truncate">{t.subject}</TableCell>
-                    <TableCell><Switch checked={t.active} onCheckedChange={() => toggleTpl(t)} /></TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openPreview(t)} title="Previsualizar"><Eye className="h-4 w-4 text-primary" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => openEditTpl(t)} title="Editar"><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => removeTpl(t.id)} title="Eliminar"><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+
+          {/* Quick Launch Action Banner */}
+          <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                Lanza una nueva campaña segmentada en minutos
+              </h3>
+              <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
+                Elige entre usuarios gratuitos, suscriptores Pro, creadores de currículum o usuarios inactivos. Personaliza dinámicamente con su nombre y previsualiza en desktop y móvil.
+              </p>
+            </div>
+            <Button
+              onClick={() => setActiveTab("create")}
+              className="gap-2 shrink-0 font-semibold shadow"
+            >
+              Comenzar Campaña
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Recent Campaigns Table */}
+          <div className="rounded-2xl border border-border bg-card overflow-hidden">
+            <div className="p-4 border-b border-border flex items-center justify-between">
+              <h3 className="font-semibold text-sm">Campañas Recientes</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs gap-1"
+                onClick={() => setActiveTab("history")}
+              >
+                Ver todas <ChevronRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+
+            {campaigns.length === 0 ? (
+              <div className="p-10 text-center text-muted-foreground text-xs space-y-2">
+                <Mail className="h-8 w-8 mx-auto text-muted-foreground/50" />
+                <p>No has creado ninguna campaña aún.</p>
+                <Button size="sm" variant="outline" onClick={() => setActiveTab("create")}>
+                  Crear mi primera campaña
+                </Button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-muted/30 border-b border-border text-muted-foreground font-semibold">
+                    <tr>
+                      <th className="py-3 px-4">Campaña</th>
+                      <th className="py-3 px-4">Estado</th>
+                      <th className="py-3 px-4">Audiencia</th>
+                      <th className="py-3 px-4">Enviados</th>
+                      <th className="py-3 px-4">Aperturas</th>
+                      <th className="py-3 px-4 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {campaigns.slice(0, 5).map((c) => (
+                      <tr key={c.id} className="hover:bg-muted/20">
+                        <td className="py-3 px-4">
+                          <div className="font-semibold text-foreground">{c.name}</div>
+                          <div className="text-[11px] text-muted-foreground truncate max-w-xs">
+                            {c.subject}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge
+                            variant={
+                              c.status === "sent"
+                                ? "default"
+                                : c.status === "sending"
+                                ? "secondary"
+                                : "outline"
+                            }
+                            className="text-[10px] capitalize"
+                          >
+                            {c.status === "sent"
+                              ? "Enviado"
+                              : c.status === "sending"
+                              ? "Enviando..."
+                              : c.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 capitalize text-muted-foreground">
+                          {c.audience === "all" ? "Todos los usuarios" : c.audience}
+                        </td>
+                        <td className="py-3 px-4 font-mono font-medium">{c.sentCount}</td>
+                        <td className="py-3 px-4 font-mono">
+                          {c.openedCount} ({c.sentCount > 0 ? ((c.openedCount / c.sentCount) * 100).toFixed(0) : 0}%)
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() => {
+                              setCampaignForm(c);
+                              setActiveTab("create");
+                            }}
+                          >
+                            Editar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </TabsContent>
 
-        {/* Broadcasts */}
-        <TabsContent value="broadcasts" className="space-y-4">
-          <div className="flex justify-end">
-            <Button onClick={openNewBc}><Plus className="mr-1 h-4 w-4" /> Nueva campaña</Button>
-          </div>
-          <div className="rounded-2xl border border-border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Asunto</TableHead>
-                  <TableHead>Audiencia</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Enviados</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {broadcasts === null ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
-                ) : broadcasts.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">Sin campañas.</TableCell></TableRow>
-                ) : broadcasts.map((b) => (
-                  <TableRow key={b.id}>
-                    <TableCell className="max-w-[240px] truncate font-medium">{b.subject}</TableCell>
-                    <TableCell><Badge variant="secondary">{b.audience}</Badge></TableCell>
-                    <TableCell>{statusBadge(b.status)}</TableCell>
-                    <TableCell>{b.sent_count.toLocaleString()}{b.recipients_count ? ` / ${b.recipients_count.toLocaleString()}` : ""}</TableCell>
-                    <TableCell className="text-right">
-                      {b.status !== "sent" && (
-                        <Button variant="ghost" size="icon" onClick={() => markSent(b)} title="Enviar"><Send className="h-4 w-4" /></Button>
-                      )}
-                      <Button variant="ghost" size="icon" onClick={() => openEditBc(b)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => removeBc(b.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-
-        {/* Logs */}
-        <TabsContent value="logs" className="space-y-4">
-          <div className="rounded-2xl border border-border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Destinatario</TableHead>
-                  <TableHead>Plantilla</TableHead>
-                  <TableHead>Asunto</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Fecha</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {logs === null ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" /></TableCell></TableRow>
-                ) : logs.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-10 text-center text-sm text-muted-foreground">Sin registros.</TableCell></TableRow>
-                ) : logs.map((l) => (
-                  <TableRow key={l.id}>
-                    <TableCell className="font-medium">{l.recipient}</TableCell>
-                    <TableCell>{l.template ?? "—"}</TableCell>
-                    <TableCell className="max-w-[220px] truncate">{l.subject ?? "—"}</TableCell>
-                    <TableCell>
-                      {l.status === "bounced" || l.status === "failed"
-                        ? <span className="flex items-center gap-1 text-destructive text-sm"><XCircle className="h-4 w-4" /> {l.status}</span>
-                        : statusBadge(l.status)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-sm text-muted-foreground">{new Date(l.created_at).toLocaleString()}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-
-        {/* SMTP */}
-        <TabsContent value="smtp" className="space-y-6">
-          {/* Status & Universal Provider Header */}
-          <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* 2. CREATE CAMPAIGN WIZARD TAB */}
+        <TabsContent value="create" className="space-y-6 mt-0">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
+            {/* Wizard Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
               <div>
-                <div className="flex items-center gap-2">
-                  <Server className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold text-base">Servidor de Correo Saliente (SMTP Universal)</h3>
-                  <Badge variant={smtpForm.host ? "default" : "secondary"}>
-                    {smtpForm.host ? "Configurado" : "Pendiente"}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {selectedProvider.name}
-                  </Badge>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Puedes utilizar <strong>cualquier proveedor de correo del mundo</strong>: Gmail, Microsoft Outlook, Yahoo, Zoho, iCloud, Hostinger, cPanel / Webmail o servicios transaccionales.
+                <h2 className="text-lg font-bold text-foreground">
+                  {campaignForm.id ? "Editar Campaña" : "Crear Nueva Campaña de Correo"}
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Configura el contenido visual, segmenta tu público y envía una prueba antes del lanzamiento.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => loadSmtp()} disabled={loadingSmtp}>
-                  <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loadingSmtp ? "animate-spin" : ""}`} />
-                  Recargar
+                <Button variant="outline" size="sm" onClick={handleSaveDraft} className="text-xs">
+                  Guardar Borrador
                 </Button>
-                <Button size="sm" onClick={handleSaveSmtp} disabled={savingSmtp}>
-                  {savingSmtp ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
-                  Guardar Cambios
+                <Button
+                  size="sm"
+                  onClick={handleOpenSafetyModal}
+                  className="gap-1.5 text-xs font-semibold bg-primary"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  Revisar y Enviar
                 </Button>
               </div>
             </div>
 
-            {/* Provider selector & auto-detect bar */}
-            <div className="pt-3 border-t border-border/60 flex flex-col md:flex-row md:items-center gap-3">
-              <div className="flex-1 space-y-1">
-                <Label htmlFor="provider-selector" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Elige tu Proveedor de Correo:
-                </Label>
-                <Select value={selectedProviderId} onValueChange={(val) => applyProvider(val)}>
-                  <SelectTrigger id="provider-selector" className="h-9">
-                    <SelectValue placeholder="Selecciona un proveedor..." />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-80">
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                      Correos Personales y Profesionales
-                    </div>
-                    {EMAIL_PROVIDERS.filter((p) => p.category === "personal").map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2 border-t border-border/40 pt-2">
-                      Servicios Transaccionales & Cloud
-                    </div>
-                    {EMAIL_PROVIDERS.filter((p) => p.category === "transactional").map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-
-                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2 border-t border-border/40 pt-2">
-                      Personalizado
-                    </div>
-                    {EMAIL_PROVIDERS.filter((p) => p.category === "custom").map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Campaign Metadata Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-name">Nombre Interno de la Campaña *</Label>
+                <Input
+                  id="camp-name"
+                  placeholder="Ej: Promo Septiembre Pro 30%"
+                  value={campaignForm.name}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, name: e.target.value }))}
+                />
               </div>
 
-              <div className="flex items-end pt-1">
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-subject">Asunto del Correo (Subject) *</Label>
+                <Input
+                  id="camp-subject"
+                  placeholder="Ej: Acelera tu búsqueda de empleo con CVAI Pro ✨"
+                  value={campaignForm.subject}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, subject: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-preview">Texto de Previsualización (Preheader)</Label>
+                <Input
+                  id="camp-preview"
+                  placeholder="Texto visible antes de abrir el correo..."
+                  value={campaignForm.previewText}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, previewText: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-sender-name">Nombre del Remitente</Label>
+                <Input
+                  id="camp-sender-name"
+                  placeholder="CVAI - Currículum Vitae AI"
+                  value={campaignForm.senderName}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, senderName: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-sender-email">Correo Remitente</Label>
+                <Input
+                  id="camp-sender-email"
+                  type="email"
+                  placeholder="support@cvai.com.mx"
+                  value={campaignForm.senderEmail}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, senderEmail: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="camp-reply-to">Responder a (Reply-To)</Label>
+                <Input
+                  id="camp-reply-to"
+                  type="email"
+                  placeholder="support@cvai.com.mx"
+                  value={campaignForm.replyTo}
+                  onChange={(e) => setCampaignForm((p) => ({ ...p, replyTo: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            {/* Visual Email Editor Component */}
+            <div className="pt-2">
+              <EmailVisualEditor
+                subject={campaignForm.subject}
+                previewText={campaignForm.previewText || ""}
+                bodyHtml={campaignForm.bodyHtml}
+                ctaText={campaignForm.ctaText || ""}
+                ctaUrl={campaignForm.ctaUrl || ""}
+                bannerUrl={campaignForm.bannerUrl || ""}
+                onChange={(updates) => setCampaignForm((p) => ({ ...p, ...updates }))}
+                onSaveAsTemplate={() => {
+                  setTemplates((prev) => [
+                    ...prev,
+                    {
+                      id: `tpl-${Date.now()}`,
+                      name: campaignForm.name || "Plantilla Personalizada",
+                      slug: `custom-${Date.now()}`,
+                      subject: campaignForm.subject,
+                      body: campaignForm.bodyHtml,
+                      ctaText: campaignForm.ctaText,
+                      ctaUrl: campaignForm.ctaUrl,
+                    },
+                  ]);
+                  toast.success("Campaña guardada en la lista de Plantillas");
+                }}
+              />
+            </div>
+
+            {/* Audience Targeting Builder Component */}
+            <div className="pt-6 border-t border-border">
+              <div className="mb-4">
+                <h3 className="font-bold text-base text-foreground">Segmentación de la Audiencia</h3>
+                <p className="text-xs text-muted-foreground">
+                  Elige a quién se entregará esta campaña y previsualiza los destinatarios reales.
+                </p>
+              </div>
+
+              <AudienceFilterBuilder
+                filters={campaignForm.filters || {}}
+                onChange={(f) => setCampaignForm((p) => ({ ...p, filters: f }))}
+              />
+            </div>
+
+            {/* Send Real Test Email Bar */}
+            <div className="rounded-xl border border-border/80 bg-muted/30 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                <span className="text-xs font-semibold">Probar antes del envío masivo:</span>
+              </div>
+
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Input
+                  type="email"
+                  className="text-xs h-9 w-full sm:w-64"
+                  placeholder="tu-correo@ejemplo.com"
+                  value={wizardTestEmail}
+                  onChange={(e) => setWizardTestEmail(e.target.value)}
+                />
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="h-9 gap-1.5"
-                  onClick={() => autoDetectFromEmail()}
-                  title="Detecta automáticamente el servidor analizando tu dirección de correo"
+                  onClick={handleSendWizardTest}
+                  disabled={sendingWizardTest}
+                  className="gap-1.5 shrink-0 text-xs"
                 >
-                  <Sparkles className="h-4 w-4 text-amber-500" />
-                  Auto-detectar desde mi correo
+                  {sendingWizardTest ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Send className="h-3.5 w-3.5" />
+                  )}
+                  Enviar Prueba
                 </Button>
-              </div>
-            </div>
-
-            {/* Dynamic Provider Tip Box */}
-            <div className="rounded-xl border border-blue-500/20 bg-blue-50/50 dark:bg-blue-950/20 p-3.5 flex items-start gap-3">
-              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-              <div className="text-xs space-y-1">
-                <div className="font-semibold text-blue-900 dark:text-blue-200">
-                  Instrucciones para {selectedProvider.name}:
-                </div>
-                <p className="text-blue-800 dark:text-blue-300 leading-relaxed">
-                  {selectedProvider.tip}
-                </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-blue-700/80 dark:text-blue-400/80 pt-1 text-[11px]">
-                  <span><strong>Formato de usuario:</strong> {selectedProvider.userHint}</span>
-                  <span><strong>Contraseña esperada:</strong> {selectedProvider.passHint}</span>
-                </div>
               </div>
             </div>
           </div>
+        </TabsContent>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left: Configuration Form (7 cols) */}
-            <div className="lg:col-span-7 rounded-2xl border border-border bg-card p-5 space-y-4">
-              <div className="flex items-center gap-2 font-medium text-sm">
-                <Key className="h-4 w-4 text-primary" />
-                Parámetros de Conexión SMTP
+        {/* 3. CAMPAIGN HISTORY TAB */}
+        <TabsContent value="history" className="space-y-4 mt-0">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-base text-foreground">Historial Completo de Campañas</h3>
+                <p className="text-xs text-muted-foreground">
+                  Monitorea el progreso de entrega, aperturas, clics y estado de cada envío.
+                </p>
               </div>
+              <Badge variant="outline">{campaigns.length} campañas registradas</Badge>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2 space-y-1.5">
-                  <Label htmlFor="smtp-host">Host / Servidor SMTP</Label>
-                  <Input
-                    id="smtp-host"
-                    placeholder="smtp.gmail.com o mail.tudominio.com"
-                    value={smtpForm.host}
-                    onChange={(e) => setSmtpForm((f) => ({ ...f, host: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="smtp-port">Puerto</Label>
-                  <Input
-                    id="smtp-port"
-                    type="number"
-                    placeholder="465 o 587"
-                    value={smtpForm.port}
-                    onChange={(e) => {
-                      const p = Number(e.target.value) || 465;
-                      setSmtpForm((f) => ({
-                        ...f,
-                        port: p,
-                        secure: p === 465 ? true : p === 587 ? false : f.secure,
-                      }));
-                    }}
-                  />
-                </div>
+            {campaigns.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground text-xs">
+                No hay historial de campañas registradas aún.
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
-                  <div className="space-y-0.5 pr-2">
-                    <div className="text-sm font-medium">SSL / TLS directo</div>
-                    <div className="text-xs text-muted-foreground">
-                      Puerto 465 (SSL activo) / Puerto 587 (STARTTLS inactivo).
-                    </div>
-                  </div>
-                  <Switch
-                    checked={smtpForm.secure}
-                    onCheckedChange={(v) =>
-                      setSmtpForm((f) => ({
-                        ...f,
-                        secure: v,
-                        port: v ? (f.port === 587 ? 465 : f.port) : (f.port === 465 ? 587 : f.port),
-                      }))
-                    }
-                  />
-                </div>
-
-                <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
-                  <div className="space-y-0.5 pr-2">
-                    <div className="text-sm font-medium">Ignorar errores TLS</div>
-                    <div className="text-xs text-muted-foreground">
-                      Para cPanel, certificados compartidos o autofirmados.
-                    </div>
-                  </div>
-                  <Switch
-                    checked={smtpForm.ignoreTlsErrors}
-                    onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, ignoreTlsErrors: v }))}
-                  />
-                </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+                    <tr>
+                      <th className="py-3 px-4">Campaña y Asunto</th>
+                      <th className="py-3 px-4">Fecha</th>
+                      <th className="py-3 px-4">Estado</th>
+                      <th className="py-3 px-4">Destinatarios</th>
+                      <th className="py-3 px-4">Enviados</th>
+                      <th className="py-3 px-4">Aperturas</th>
+                      <th className="py-3 px-4">Clics</th>
+                      <th className="py-3 px-4 text-right">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {campaigns.map((c) => (
+                      <tr key={c.id} className="hover:bg-muted/20">
+                        <td className="py-3 px-4 max-w-xs">
+                          <div className="font-semibold text-foreground truncate">{c.name}</div>
+                          <div className="text-[11px] text-muted-foreground truncate">{c.subject}</div>
+                        </td>
+                        <td className="py-3 px-4 text-muted-foreground whitespace-nowrap">
+                          {c.createdAt ? new Date(c.createdAt).toLocaleDateString("es-MX") : "—"}
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge
+                            variant={
+                              c.status === "sent"
+                                ? "default"
+                                : c.status === "sending"
+                                ? "secondary"
+                                : "outline"
+                            }
+                            className="text-[10px] capitalize"
+                          >
+                            {c.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 font-mono">{c.recipientsCount}</td>
+                        <td className="py-3 px-4 font-mono text-emerald-600 font-medium">
+                          {c.sentCount}
+                        </td>
+                        <td className="py-3 px-4 font-mono">
+                          {c.openedCount} ({c.sentCount > 0 ? ((c.openedCount / c.sentCount) * 100).toFixed(0) : 0}%)
+                        </td>
+                        <td className="py-3 px-4 font-mono">
+                          {c.clickedCount} ({c.sentCount > 0 ? ((c.clickedCount / c.sentCount) * 100).toFixed(0) : 0}%)
+                        </td>
+                        <td className="py-3 px-4 text-right space-x-1 whitespace-nowrap">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={() => {
+                              setCampaignForm(c);
+                              setActiveTab("create");
+                            }}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteCampaign(c.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            )}
+          </div>
+        </TabsContent>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="smtp-user">Usuario / Correo / API Key</Label>
-                    <button
-                      type="button"
-                      onClick={() => autoDetectFromEmail(smtpForm.user)}
-                      className="text-[11px] text-primary hover:underline flex items-center gap-0.5"
-                      title="Detectar servidor según este correo"
-                    >
-                      <Sparkles className="h-3 w-3" /> Auto-detectar
-                    </button>
-                  </div>
-                  <Input
-                    id="smtp-user"
-                    placeholder={selectedProvider.userHint || "tu-correo@ejemplo.com"}
-                    value={smtpForm.user}
-                    onChange={(e) => setSmtpForm((f) => ({ ...f, user: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="smtp-pass">Contraseña / Token / App Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="smtp-pass"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••••••••••"
-                      value={smtpForm.pass}
-                      onChange={(e) => setSmtpForm((f) => ({ ...f, pass: e.target.value }))}
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      onClick={() => setShowPassword((p) => !p)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-border/60 space-y-3">
-                <div className="text-sm font-medium">Identidad de Remitente (CVAI México)</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="smtp-from-name">Nombre que Verán los Usuarios</Label>
-                    <Input
-                      id="smtp-from-name"
-                      placeholder="CVAI - Currículum Vitae AI"
-                      value={smtpForm.fromName}
-                      onChange={(e) => setSmtpForm((f) => ({ ...f, fromName: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="smtp-from-email">Correo Remitente (From)</Label>
-                    <Input
-                      id="smtp-from-email"
-                      type="email"
-                      placeholder="contacto@cvai.com.mx"
-                      value={smtpForm.fromEmail}
-                      onChange={(e) => setSmtpForm((f) => ({ ...f, fromEmail: e.target.value }))}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="smtp-reply-to">Correo de Respuesta (Reply-To)</Label>
-                  <Input
-                    id="smtp-reply-to"
-                    type="email"
-                    placeholder="soporte@cvai.com.mx"
-                    value={smtpForm.replyTo}
-                    onChange={(e) => setSmtpForm((f) => ({ ...f, replyTo: e.target.value }))}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    A este buzón llegarán las respuestas que los usuarios escriban a los correos del sistema.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-2 flex justify-end">
-                <Button onClick={handleSaveSmtp} disabled={savingSmtp} className="w-full sm:w-auto">
-                  {savingSmtp ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Check className="mr-1.5 h-4 w-4" />}
-                  Guardar Configuración SMTP
-                </Button>
+        {/* 4. EMAIL TEMPLATES TAB */}
+        <TabsContent value="templates" className="space-y-4 mt-0">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
+              <div>
+                <h3 className="font-bold text-base text-foreground">Biblioteca de Plantillas de Correo</h3>
+                <p className="text-xs text-muted-foreground">
+                  Plantillas pre-diseñadas y personalizadas listas para usar en cualquier campaña.
+                </p>
               </div>
             </div>
 
-            {/* Right: Test Email & App Password Guides (5 cols) */}
-            <div className="lg:col-span-5 space-y-4">
-              {/* Test email card */}
-              <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
-                <div className="flex items-center gap-2 font-medium text-sm">
-                  <Send className="h-4 w-4 text-primary" />
-                  Prueba de Envío en Vivo
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Envía un correo de verificación en tiempo real usando los parámetros actuales del formulario para validar la conexión y autenticación antes de guardar.
-                </p>
-
-                <div className="space-y-2">
-                  <Label htmlFor="test-email">Destinatario de Prueba</Label>
-                  <Input
-                    id="test-email"
-                    type="email"
-                    placeholder="tu-correo@ejemplo.com"
-                    value={testRecipient}
-                    onChange={(e) => setTestRecipient(e.target.value)}
-                  />
-                </div>
-
-                <Button
-                  onClick={handleSendTest}
-                  disabled={sendingTest || !testRecipient.trim()}
-                  className="w-full"
-                  variant="outline"
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {templates.map((tpl) => (
+                <div
+                  key={tpl.id}
+                  className="rounded-xl border border-border bg-muted/20 hover:border-primary/40 transition-colors p-4 flex flex-col justify-between space-y-3"
                 >
-                  {sendingTest ? (
-                    <>
-                      <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-                      Conectando y enviando prueba…
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="mr-1.5 h-4 w-4" />
-                      Enviar Correo de Prueba
-                    </>
-                  )}
-                </Button>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm text-foreground">{tpl.name}</span>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {tpl.slug}
+                      </Badge>
+                    </div>
+                    <p className="text-xs font-medium text-muted-foreground truncate">
+                      {tpl.subject}
+                    </p>
+                    <div
+                      className="text-[11px] text-muted-foreground/80 line-clamp-3 bg-card p-2.5 rounded border border-border/60"
+                      dangerouslySetInnerHTML={{ __html: tpl.body }}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs h-7 gap-1"
+                      onClick={() => handleUseTemplate(tpl)}
+                    >
+                      <Copy className="h-3 w-3" /> Usar en Campaña
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* 5. SUBSCRIBERS & SUPPRESSION TAB */}
+        <TabsContent value="subscribers" className="space-y-4 mt-0">
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
+              <div>
+                <h3 className="font-bold text-base text-foreground">Audiencia y Lista de Exclusión (Supresión)</h3>
+                <p className="text-xs text-muted-foreground">
+                  Usuarios registrados y estado de consentimiento de marketing según las normas de privacidad.
+                </p>
               </div>
 
-              {/* Universal Provider Guide */}
-              <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
-                <div className="flex items-center gap-2 font-medium text-sm">
-                  <HelpCircle className="h-4 w-4 text-amber-500" />
-                  Guía Rápida para cualquier Proveedor
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">
+                  {subscribers.length} usuarios registrados
+                </Badge>
+                <Badge variant="secondary" className="text-xs text-amber-600 dark:text-amber-400">
+                  {suppressedCount} bajas voluntarias
+                </Badge>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+                  <tr>
+                    <th className="py-2.5 px-3">Usuario</th>
+                    <th className="py-2.5 px-3">Correo</th>
+                    <th className="py-2.5 px-3">Plan</th>
+                    <th className="py-2.5 px-3">Fecha Registro</th>
+                    <th className="py-2.5 px-3">Estado Marketing</th>
+                    <th className="py-2.5 px-3 text-right">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {subscribers.map((s) => (
+                    <tr key={s.id} className="hover:bg-muted/20">
+                      <td className="py-2.5 px-3 font-medium text-foreground">{s.name}</td>
+                      <td className="py-2.5 px-3 font-mono text-muted-foreground">{s.email}</td>
+                      <td className="py-2.5 px-3">
+                        <Badge variant={s.plan === "pro" ? "default" : "secondary"} className="text-[10px]">
+                          {s.plan === "pro" ? "Pro" : "Gratis"}
+                        </Badge>
+                      </td>
+                      <td className="py-2.5 px-3 text-muted-foreground">
+                        {s.createdAt ? new Date(s.createdAt).toLocaleDateString("es-MX") : "—"}
+                      </td>
+                      <td className="py-2.5 px-3">
+                        <Badge
+                          variant={s.isSuppressed ? "destructive" : "outline"}
+                          className="text-[10px]"
+                        >
+                          {s.isSuppressed ? "Baja / Excluido" : "Suscrito Activo"}
+                        </Badge>
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-[11px]"
+                          onClick={async () => {
+                            await toggleSuppression({
+                              data: { email: s.email, suppress: !s.isSuppressed },
+                            });
+                            toast.success("Estado actualizado");
+                            loadData();
+                          }}
+                        >
+                          {s.isSuppressed ? "Reactivar" : "Excluir"}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* 6. EMAIL SETTINGS & SMTP TAB */}
+        <TabsContent value="settings" className="space-y-6 mt-0">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+              <div>
+                <h3 className="font-bold text-base text-foreground">Configuración del Servidor SMTP</h3>
+                <p className="text-xs text-muted-foreground">
+                  Configura el proveedor de entrega (SiteCountry, Resend, Gmail, SES, etc.) para despachar correos.
+                </p>
+              </div>
+
+              <Button
+                onClick={handleSaveSmtp}
+                disabled={savingSmtp}
+                className="gap-1.5 font-semibold text-xs shadow-sm"
+              >
+                {savingSmtp ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                Guardar Configuración
+              </Button>
+            </div>
+
+            {/* Provider presets */}
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold">Seleccionar Proveedor Predeterminado</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                {EMAIL_PROVIDERS.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProviderId(p.id);
+                      setSmtpForm((prev) => ({
+                        ...prev,
+                        host: p.host || prev.host,
+                        port: p.port,
+                        secure: p.secure,
+                      }));
+                      toast.info(`Configuración para ${p.name} cargada`);
+                    }}
+                    className={`p-3 rounded-xl border text-left transition-all ${
+                      selectedProviderId === p.id
+                        ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30"
+                        : "border-border hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="font-semibold text-xs text-foreground">{p.badge}</div>
+                    <div className="text-[10px] text-muted-foreground truncate">{p.name}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* SMTP Input Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-host">Host / Servidor SMTP *</Label>
+                <Input
+                  id="smtp-host"
+                  placeholder="mailadmin.sitecountry.net"
+                  value={smtpForm.host}
+                  onChange={(e) => setSmtpForm((p) => ({ ...p, host: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-port">Puerto</Label>
+                <Input
+                  id="smtp-port"
+                  type="number"
+                  placeholder="465 o 587"
+                  value={smtpForm.port}
+                  onChange={(e) => {
+                    const port = Number(e.target.value) || 465;
+                    setSmtpForm((p) => ({
+                      ...p,
+                      port,
+                      secure: port === 465,
+                    }));
+                  }}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-user">Usuario / Correo Completo *</Label>
+                <Input
+                  id="smtp-user"
+                  placeholder="support@cvai.com.mx"
+                  value={smtpForm.user}
+                  onChange={(e) => setSmtpForm((p) => ({ ...p, user: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-pass">Contraseña SMTP</Label>
+                <div className="relative">
+                  <Input
+                    id="smtp-pass"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••••••"
+                    value={smtpForm.pass}
+                    onChange={(e) => setSmtpForm((p) => ({ ...p, pass: e.target.value }))}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
-                <div className="text-xs space-y-2.5 text-muted-foreground">
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                    <strong className="text-foreground block mb-0.5">Gmail / Google:</strong>
-                    Activa la <em>Verificación en 2 pasos</em> en myaccount.google.com y genera una <em>Contraseña de aplicación</em> de 16 caracteres.
-                  </div>
+              </div>
 
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                    <strong className="text-foreground block mb-0.5">Outlook / Hotmail / Office 365:</strong>
-                    Puerto 587 con STARTTLS. Si tienes autenticación en 2 pasos, crea una contraseña de aplicación en account.microsoft.com.
-                  </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-from-email">Correo Remitente (From)</Label>
+                <Input
+                  id="smtp-from-email"
+                  type="email"
+                  placeholder="support@cvai.com.mx"
+                  value={smtpForm.fromEmail}
+                  onChange={(e) => setSmtpForm((p) => ({ ...p, fromEmail: e.target.value }))}
+                />
+              </div>
 
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                    <strong className="text-foreground block mb-0.5">cPanel / Webmail / Hosting:</strong>
-                    Host: <code>mail.tudominio.com</code>. Usa el correo completo como usuario y activa <em>"Ignorar errores TLS"</em> si tu hosting usa SSL compartido.
-                  </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="smtp-from-name">Nombre Remitente</Label>
+                <Input
+                  id="smtp-from-name"
+                  placeholder="CVAI - Currículum Vitae AI"
+                  value={smtpForm.fromName}
+                  onChange={(e) => setSmtpForm((p) => ({ ...p, fromName: e.target.value }))}
+                />
+              </div>
+            </div>
 
-                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                    <strong className="text-foreground block mb-0.5">Yahoo / Zoho / Apple iCloud:</strong>
-                    Todos estos proveedores requieren que generes una <em>Contraseña de aplicación</em> desde la sección de seguridad de tu cuenta.
-                  </div>
+            {/* Test Connection Bar */}
+            <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs">
+                <div className="font-semibold text-foreground">Probar Conexión SMTP en Tiempo Real</div>
+                <div className="text-muted-foreground">
+                  Envía un correo de prueba para verificar que el servidor responde correctamente.
+                </div>
+              </div>
+
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Input
+                  type="email"
+                  className="text-xs h-9 w-full sm:w-64"
+                  placeholder="tu-correo@ejemplo.com"
+                  value={smtpTestEmail}
+                  onChange={(e) => setSmtpTestEmail(e.target.value)}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleTestSmtp}
+                  disabled={sendingSmtpTest}
+                  className="gap-1.5 shrink-0 text-xs"
+                >
+                  {sendingSmtpTest ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                  Probar Conexión
+                </Button>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* 7. ANALYTICS TAB */}
+        <TabsContent value="analytics" className="space-y-6 mt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Total Envíos
+              </div>
+              <div className="text-3xl font-bold text-foreground">{stats.totalSent}</div>
+              <div className="text-[11px] text-muted-foreground">Envíos acumulados</div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Aperturas Registradas
+              </div>
+              <div className="text-3xl font-bold text-emerald-600">{stats.totalOpened}</div>
+              <div className="text-[11px] text-muted-foreground">Tasa promedio: {stats.avgOpenRate}</div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Clics en Enlaces
+              </div>
+              <div className="text-3xl font-bold text-blue-600">{stats.totalClicked}</div>
+              <div className="text-[11px] text-muted-foreground">Tasa promedio: {stats.avgClickRate}</div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Tasa de Bajas
+              </div>
+              <div className="text-3xl font-bold text-amber-600">
+                {stats.totalSent > 0
+                  ? ((suppressedCount / stats.totalSent) * 100).toFixed(1) + "%"
+                  : "0.0%"}
+              </div>
+              <div className="text-[11px] text-muted-foreground">Dentro del umbral saludable (&lt; 2%)</div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+            <h3 className="font-bold text-base text-foreground">Embudo de Desempeño de Campañas</h3>
+            <p className="text-xs text-muted-foreground">
+              Desglose visual del flujo de entrega y engagement de las comunicaciones enviadas.
+            </p>
+
+            <div className="space-y-4 pt-3">
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1">
+                  <span>Enviados con Éxito (100%)</span>
+                  <span>{stats.totalSent} correos</span>
+                </div>
+                <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: "100%" }} />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1">
+                  <span>Aperturas Estimadas ({stats.avgOpenRate})</span>
+                  <span>{stats.totalOpened} abiertos</span>
+                </div>
+                <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full"
+                    style={{ width: stats.avgOpenRate }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1">
+                  <span>Clics en el Botón CTA ({stats.avgClickRate})</span>
+                  <span>{stats.totalClicked} clics</span>
+                </div>
+                <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-purple-500 rounded-full"
+                    style={{ width: stats.avgClickRate }}
+                  />
                 </div>
               </div>
             </div>
@@ -1124,131 +1363,18 @@ function EmailsAdmin() {
         </TabsContent>
       </Tabs>
 
-      {/* Template dialog */}
-      <Dialog open={tplDialog} onOpenChange={setTplDialog}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader><DialogTitle>{tplEditId ? "Editar plantilla" : "Nueva plantilla"}</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label>Nombre</Label>
-              <Input value={tplForm.name}
-                onChange={(e) => setTplForm((f) => ({ ...f, name: e.target.value, slug: tplEditId ? f.slug : slugify(e.target.value) }))} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label>Slug</Label>
-                <Input value={tplForm.slug} onChange={(e) => setTplForm((f) => ({ ...f, slug: e.target.value }))} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Tipo</Label>
-                <Select value={tplForm.type} onValueChange={(v) => setTplForm((f) => ({ ...f, type: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="transactional">Transaccional</SelectItem>
-                    <SelectItem value="welcome">Bienvenida</SelectItem>
-                    <SelectItem value="verification">Verificación</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Asunto</Label>
-              <Input value={tplForm.subject} onChange={(e) => setTplForm((f) => ({ ...f, subject: e.target.value }))} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Cuerpo</Label>
-              <Textarea rows={6} value={tplForm.body} onChange={(e) => setTplForm((f) => ({ ...f, body: e.target.value }))} />
-              <p className="text-xs text-muted-foreground">Usa {"{{variables}}"} como {"{{name}}"} o {"{{link}}"}.</p>
-            </div>
-            <div className="flex items-center justify-between rounded-lg border border-border p-3">
-              <Label>Activa</Label>
-              <Switch checked={tplForm.active} onCheckedChange={(v) => setTplForm((f) => ({ ...f, active: v }))} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTplDialog(false)}>Cancelar</Button>
-            <Button onClick={saveTpl} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Broadcast dialog */}
-      <Dialog open={bcDialog} onOpenChange={setBcDialog}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader><DialogTitle>{bcEditId ? "Editar campaña" : "Nueva campaña"}</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label>Asunto</Label>
-              <Input value={bcForm.subject} onChange={(e) => setBcForm((f) => ({ ...f, subject: e.target.value }))} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Cuerpo</Label>
-              <Textarea rows={6} value={bcForm.body} onChange={(e) => setBcForm((f) => ({ ...f, body: e.target.value }))} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label>Audiencia</Label>
-                <Select value={bcForm.audience} onValueChange={(v) => setBcForm((f) => ({ ...f, audience: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem value="free">Gratuitos</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                    <SelectItem value="inactive">Inactivos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Programar (opcional)</Label>
-                <Input type="datetime-local" value={bcForm.scheduled_at}
-                  onChange={(e) => setBcForm((f) => ({ ...f, scheduled_at: e.target.value }))} />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setBcDialog(false)}>Cancelar</Button>
-            <Button onClick={saveBc} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Template Preview Dialog */}
-      <Dialog open={previewDialog} onOpenChange={setPreviewDialog}>
-        <DialogContent className="max-h-[90vh] sm:max-w-2xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-primary" />
-              Previsualización: {previewTpl?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {previewTpl && (
-            <div className="space-y-4">
-              <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm space-y-1">
-                <div><span className="font-semibold text-foreground">Asunto:</span> {previewRendered.subject}</div>
-                <div><span className="font-semibold text-foreground">Slug:</span> <code className="text-xs bg-muted px-1 py-0.5 rounded">{previewTpl.slug}</code></div>
-                <div><span className="font-semibold text-foreground">Tipo:</span> <Badge variant="outline" className="ml-1">{previewTpl.type}</Badge></div>
-              </div>
-
-              <div className="rounded-xl border border-border p-4 bg-white text-black min-h-[250px] shadow-sm overflow-x-auto">
-                <div dangerouslySetInnerHTML={{ __html: previewRendered.body }} />
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                * Las variables dinámicas como {"{{name}}"}, {"{{link}}"}, etc., se han sustituido con datos de muestra para visualizar el diseño final.
-              </p>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewDialog(false)}>Cerrar</Button>
-            {previewTpl && (
-              <Button onClick={() => { setPreviewDialog(false); openEditTpl(previewTpl); }}>
-                <Pencil className="mr-1 h-4 w-4" /> Editar plantilla
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Safety Confirmation Modal */}
+      <CampaignSafetyModal
+        open={safetyOpen}
+        onOpenChange={setSafetyOpen}
+        campaignName={campaignForm.name}
+        subject={campaignForm.subject}
+        recipientsCount={targetRecipientsCount}
+        language={campaignForm.language || "both"}
+        scheduledAt={campaignForm.scheduledAt}
+        duplicateWarning={duplicateWarning}
+        onConfirm={handleConfirmLaunch}
+      />
     </div>
   );
 }
