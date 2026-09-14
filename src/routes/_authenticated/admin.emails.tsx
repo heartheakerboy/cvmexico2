@@ -2,10 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Search, Plus, Trash2, Loader2, Pencil, Mail, Send, FileText,
-  Server, CheckCircle2, XCircle, Megaphone,
+  Server, CheckCircle2, XCircle, Megaphone, Eye, EyeOff, Key,
+  ShieldCheck, AlertCircle, RefreshCw, Check, Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getAdminSmtpConfig,
+  saveAdminSmtpConfig,
+  sendTestSmtpEmail,
+} from "@/lib/smtp.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +50,28 @@ const emptyTemplate = { name: "", slug: "", type: "transactional", subject: "", 
 type TemplateForm = typeof emptyTemplate;
 const emptyBroadcast = { subject: "", body: "", audience: "all", scheduled_at: "" };
 type BroadcastForm = typeof emptyBroadcast;
+
+interface SmtpFormState {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+  fromEmail: string;
+  fromName: string;
+  replyTo: string;
+}
+
+const defaultSmtpForm: SmtpFormState = {
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
+  user: "resend",
+  pass: "",
+  fromEmail: "contacto@cvai.com.mx",
+  fromName: "CVAI - Currículum Vitae AI",
+  replyTo: "soporte@cvai.com.mx",
+};
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -86,6 +114,18 @@ function EmailsAdmin() {
 
   const [saving, setSaving] = useState(false);
 
+  // SMTP state
+  const [smtpForm, setSmtpForm] = useState<SmtpFormState>(defaultSmtpForm);
+  const [loadingSmtp, setLoadingSmtp] = useState(false);
+  const [savingSmtp, setSavingSmtp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [testRecipient, setTestRecipient] = useState("");
+  const [sendingTest, setSendingTest] = useState(false);
+
+  // Template preview state
+  const [previewTpl, setPreviewTpl] = useState<Template | null>(null);
+  const [previewDialog, setPreviewDialog] = useState(false);
+
   async function load() {
     const [t, b, l] = await Promise.all([
       supabase.from("email_templates").select("*").order("name"),
@@ -96,7 +136,139 @@ function EmailsAdmin() {
     if (b.error) toast.error(b.error.message); else setBroadcasts(b.data as Broadcast[]);
     if (l.error) toast.error(l.error.message); else setLogs(l.data as EmailLog[]);
   }
-  useEffect(() => { load(); }, []);
+
+  async function loadSmtp() {
+    setLoadingSmtp(true);
+    try {
+      const res = await getAdminSmtpConfig();
+      if (res.data) {
+        setSmtpForm({
+          host: res.data.host || "",
+          port: Number(res.data.port) || 465,
+          secure: Boolean(res.data.secure),
+          user: res.data.user || "",
+          pass: res.data.pass || "",
+          fromEmail: res.data.fromEmail || "contacto@cvai.com.mx",
+          fromName: res.data.fromName || "CVAI - Currículum Vitae AI",
+          replyTo: res.data.replyTo || "soporte@cvai.com.mx",
+        });
+      }
+    } catch (err: any) {
+      console.error("Error loading SMTP config:", err);
+    } finally {
+      setLoadingSmtp(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    loadSmtp();
+  }, []);
+
+  async function handleSaveSmtp() {
+    if (!smtpForm.host.trim()) {
+      toast.error("El servidor SMTP (Host) es obligatorio");
+      return;
+    }
+    setSavingSmtp(true);
+    try {
+      const res = await saveAdminSmtpConfig({ data: smtpForm });
+      if (res.success) {
+        toast.success(res.message || "Configuración SMTP guardada");
+      } else {
+        toast.error(res.message || "Error al guardar SMTP");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error al comunicarse con el servidor");
+    } finally {
+      setSavingSmtp(false);
+    }
+  }
+
+  async function handleSendTest() {
+    if (!testRecipient.trim()) {
+      toast.error("Ingresa un correo destinatario para la prueba");
+      return;
+    }
+    setSendingTest(true);
+    try {
+      const res = await sendTestSmtpEmail({ data: { to: testRecipient.trim() } });
+      if (res.success) {
+        toast.success(res.message || "¡Correo de prueba enviado con éxito!");
+        load();
+      } else {
+        toast.error(res.message || "Error al enviar correo de prueba");
+        load();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Fallo en la prueba SMTP");
+      load();
+    } finally {
+      setSendingTest(false);
+    }
+  }
+
+  function applyPreset(provider: "resend" | "gmail" | "sendgrid" | "brevo") {
+    if (provider === "resend") {
+      setSmtpForm((prev) => ({
+        ...prev,
+        host: "smtp.resend.com",
+        port: 465,
+        secure: true,
+        user: "resend",
+      }));
+      toast.info("Configuración de Resend aplicada");
+    } else if (provider === "gmail") {
+      setSmtpForm((prev) => ({
+        ...prev,
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+      }));
+      toast.info("Configuración de Gmail aplicada (requiere Contraseña de Aplicación de Google)");
+    } else if (provider === "sendgrid") {
+      setSmtpForm((prev) => ({
+        ...prev,
+        host: "smtp.sendgrid.net",
+        port: 587,
+        secure: false,
+        user: "apikey",
+      }));
+      toast.info("Configuración de SendGrid aplicada");
+    } else if (provider === "brevo") {
+      setSmtpForm((prev) => ({
+        ...prev,
+        host: "smtp-relay.brevo.com",
+        port: 587,
+        secure: false,
+      }));
+      toast.info("Configuración de Brevo aplicada");
+    }
+  }
+
+  function openPreview(t: Template) {
+    setPreviewTpl(t);
+    setPreviewDialog(true);
+  }
+
+  const previewRendered = useMemo(() => {
+    if (!previewTpl) return { subject: "", body: "" };
+    let sub = previewTpl.subject
+      .replace(/{{name}}/g, "Carlos Mendoza")
+      .replace(/{{ticketId}}/g, "TK-9821");
+    let body = previewTpl.body
+      .replace(/{{name}}/g, "Carlos Mendoza")
+      .replace(/{{email}}/g, "carlos.mendoza@ejemplo.com")
+      .replace(/{{link}}/g, "https://cvai.com.mx/login")
+      .replace(/{{ticketId}}/g, "TK-9821")
+      .replace(/{{ticketSubject}}/g, "Optimización de currículum para ATS de retail")
+      .replace(/{{replyMessage}}/g, "Hola Carlos, revisamos tu plantilla y optimizamos las etiquetas para los ATS más usados en México.")
+      .replace(/{{planName}}/g, "CVAI Pro Mensual")
+      .replace(/{{amount}}/g, "$99 MXN")
+      .replace(/{{nextBillingDate}}/g, "15 de Octubre, 2026")
+      .replace(/{{year}}/g, "2026");
+    return { subject: sub, body };
+  }, [previewTpl]);
 
   const filteredTpl = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -246,8 +418,9 @@ function EmailsAdmin() {
                     <TableCell className="max-w-[240px] truncate">{t.subject}</TableCell>
                     <TableCell><Switch checked={t.active} onCheckedChange={() => toggleTpl(t)} /></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openEditTpl(t)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => removeTpl(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => openPreview(t)} title="Previsualizar"><Eye className="h-4 w-4 text-primary" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => openEditTpl(t)} title="Editar"><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => removeTpl(t.id)} title="Eliminar"><Trash2 className="h-4 w-4 text-destructive" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -334,28 +507,239 @@ function EmailsAdmin() {
         </TabsContent>
 
         {/* SMTP */}
-        <TabsContent value="smtp" className="space-y-4">
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Server className="h-4 w-4" />
-              <span className="text-sm font-medium">Configuración de envío</span>
+        <TabsContent value="smtp" className="space-y-6">
+          {/* Status & Quick Presets Header */}
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Server className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold text-base">Servidor de Correo Saliente (SMTP)</h3>
+                  <Badge variant={smtpForm.host ? "default" : "secondary"}>
+                    {smtpForm.host ? "Configurado" : "Pendiente"}
+                  </Badge>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Configura el servidor SMTP para el envío de correos transaccionales, activaciones Pro, notificaciones ATS y soporte de CVAI.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => loadSmtp()} disabled={loadingSmtp}>
+                  <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loadingSmtp ? "animate-spin" : ""}`} />
+                  Recargar
+                </Button>
+                <Button size="sm" onClick={handleSaveSmtp} disabled={savingSmtp}>
+                  {savingSmtp ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}
+                  Guardar Cambios
+                </Button>
+              </div>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Los correos se envían a través de la infraestructura de correo integrada de la aplicación.
-              La entregabilidad actual es del <span className="font-semibold text-foreground">{deliverability}%</span> según los últimos registros.
-            </p>
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
-              <div className="rounded-lg border border-border p-3">
-                <div className="text-xs text-muted-foreground">Proveedor</div>
-                <div className="font-medium">Servicio Integrado</div>
+
+            {/* Quick Provider Presets */}
+            <div className="pt-2 border-t border-border/60">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="font-medium text-muted-foreground">Preajustes rápidos:</span>
+                <Button variant="secondary" size="sm" className="h-7 text-xs" onClick={() => applyPreset("resend")}>
+                  Resend (Recomendado)
+                </Button>
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("gmail")}>
+                  Google / Gmail
+                </Button>
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("sendgrid")}>
+                  SendGrid
+                </Button>
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("brevo")}>
+                  Brevo (Sendinblue)
+                </Button>
               </div>
-              <div className="rounded-lg border border-border p-3">
-                <div className="text-xs text-muted-foreground">Cifrado</div>
-                <div className="font-medium">TLS</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left: Configuration Form (7 cols) */}
+            <div className="lg:col-span-7 rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center gap-2 font-medium text-sm">
+                <Key className="h-4 w-4 text-primary" />
+                Parámetros de Conexión SMTP
               </div>
-              <div className="rounded-lg border border-border p-3">
-                <div className="text-xs text-muted-foreground">Estado</div>
-                <div className="font-medium flex items-center gap-1"><CheckCircle2 className="h-4 w-4 text-green-600" /> Activo</div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2 space-y-1.5">
+                  <Label htmlFor="smtp-host">Host / Servidor SMTP</Label>
+                  <Input
+                    id="smtp-host"
+                    placeholder="smtp.resend.com o smtp.gmail.com"
+                    value={smtpForm.host}
+                    onChange={(e) => setSmtpForm((f) => ({ ...f, host: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="smtp-port">Puerto</Label>
+                  <Input
+                    id="smtp-port"
+                    type="number"
+                    placeholder="465 o 587"
+                    value={smtpForm.port}
+                    onChange={(e) => setSmtpForm((f) => ({ ...f, port: Number(e.target.value) || 465 }))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
+                <div className="space-y-0.5">
+                  <div className="text-sm font-medium">Conexión Segura (SSL / TLS directo)</div>
+                  <div className="text-xs text-muted-foreground">
+                    Activar para puerto 465 (SSL/TLS). Desactivar para puerto 587 (STARTTLS).
+                  </div>
+                </div>
+                <Switch
+                  checked={smtpForm.secure}
+                  onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, secure: v }))}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="smtp-user">Usuario / API Key</Label>
+                  <Input
+                    id="smtp-user"
+                    placeholder="resend / apikey / correo"
+                    value={smtpForm.user}
+                    onChange={(e) => setSmtpForm((f) => ({ ...f, user: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="smtp-pass">Contraseña / Token</Label>
+                  <div className="relative">
+                    <Input
+                      id="smtp-pass"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••••••••••"
+                      value={smtpForm.pass}
+                      onChange={(e) => setSmtpForm((f) => ({ ...f, pass: e.target.value }))}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      onClick={() => setShowPassword((p) => !p)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-border/60 space-y-3">
+                <div className="text-sm font-medium">Identidad de Remitente (CVAI México)</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="smtp-from-name">Nombre que Verán los Usuarios</Label>
+                    <Input
+                      id="smtp-from-name"
+                      placeholder="CVAI - Currículum Vitae AI"
+                      value={smtpForm.fromName}
+                      onChange={(e) => setSmtpForm((f) => ({ ...f, fromName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="smtp-from-email">Correo Remitente (From)</Label>
+                    <Input
+                      id="smtp-from-email"
+                      type="email"
+                      placeholder="contacto@cvai.com.mx"
+                      value={smtpForm.fromEmail}
+                      onChange={(e) => setSmtpForm((f) => ({ ...f, fromEmail: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="smtp-reply-to">Correo de Respuesta (Reply-To)</Label>
+                  <Input
+                    id="smtp-reply-to"
+                    type="email"
+                    placeholder="soporte@cvai.com.mx"
+                    value={smtpForm.replyTo}
+                    onChange={(e) => setSmtpForm((f) => ({ ...f, replyTo: e.target.value }))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    A este buzón llegarán las respuestas directas de los usuarios a cualquier notificación del sistema.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <Button onClick={handleSaveSmtp} disabled={savingSmtp} className="w-full sm:w-auto">
+                  {savingSmtp ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Check className="mr-1.5 h-4 w-4" />}
+                  Guardar Configuración SMTP
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: Test Email & Diagnostics (5 cols) */}
+            <div className="lg:col-span-5 space-y-4">
+              {/* Test email card */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+                <div className="flex items-center gap-2 font-medium text-sm">
+                  <Send className="h-4 w-4 text-primary" />
+                  Prueba de Envío en Vivo
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Envía un correo de verificación en tiempo real para comprobar la autenticación TLS/SSL, las cabeceras y la entrega a la bandeja de entrada.
+                </p>
+
+                <div className="space-y-2">
+                  <Label htmlFor="test-email">Destinatario de Prueba</Label>
+                  <Input
+                    id="test-email"
+                    type="email"
+                    placeholder="tu-correo@ejemplo.com"
+                    value={testRecipient}
+                    onChange={(e) => setTestRecipient(e.target.value)}
+                  />
+                </div>
+
+                <Button
+                  onClick={handleSendTest}
+                  disabled={sendingTest || !testRecipient.trim()}
+                  className="w-full"
+                  variant="outline"
+                >
+                  {sendingTest ? (
+                    <>
+                      <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                      Conectando y enviando prueba…
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="mr-1.5 h-4 w-4" />
+                      Enviar Correo de Prueba
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Tips & Mexico compliance */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+                <div className="flex items-center gap-2 font-medium text-sm">
+                  <ShieldCheck className="h-4 w-4 text-green-600" />
+                  Mejores Prácticas y Entregabilidad
+                </div>
+                <ul className="text-xs space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
+                    <span><strong>Dominio cvai.com.mx:</strong> Asegúrate de tener registros SPF, DKIM y DMARC activos en tu proveedor de DNS.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
+                    <span><strong>Entorno México:</strong> Las plantillas están optimizadas en español de México con zona horaria central y moneda MXN.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
+                    <span><strong>Monitoreo de Logs:</strong> Cada intento de envío se registra automáticamente en la pestaña <em>Logs</em> con estado y errores si los hubiera.</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -447,6 +831,43 @@ function EmailsAdmin() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setBcDialog(false)}>Cancelar</Button>
             <Button onClick={saveBc} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Template Preview Dialog */}
+      <Dialog open={previewDialog} onOpenChange={setPreviewDialog}>
+        <DialogContent className="max-h-[90vh] sm:max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5 text-primary" />
+              Previsualización: {previewTpl?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {previewTpl && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm space-y-1">
+                <div><span className="font-semibold text-foreground">Asunto:</span> {previewRendered.subject}</div>
+                <div><span className="font-semibold text-foreground">Slug:</span> <code className="text-xs bg-muted px-1 py-0.5 rounded">{previewTpl.slug}</code></div>
+                <div><span className="font-semibold text-foreground">Tipo:</span> <Badge variant="outline" className="ml-1">{previewTpl.type}</Badge></div>
+              </div>
+
+              <div className="rounded-xl border border-border p-4 bg-white text-black min-h-[250px] shadow-sm overflow-x-auto">
+                <div dangerouslySetInnerHTML={{ __html: previewRendered.body }} />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                * Las variables dinámicas como {"{{name}}"}, {"{{link}}"}, etc., se han sustituido con datos de muestra para visualizar el diseño final.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPreviewDialog(false)}>Cerrar</Button>
+            {previewTpl && (
+              <Button onClick={() => { setPreviewDialog(false); openEditTpl(previewTpl); }}>
+                <Pencil className="mr-1 h-4 w-4" /> Editar plantilla
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
