@@ -36,7 +36,7 @@ const faqs = [
 const crossLinks = [
   { label: "Gerente de RR. HH.", to: "/hr-manager-resume-template" },
   { label: "Contador", to: "/accountant-resume-template" },
-  { label: "Ejecutivo de Ventas", to: "/sales-executive-results-template" },
+  { label: "Ejecutivo de Ventas", to: "/sales-executive-resume-template" },
   { label: "Ing. de Software", to: "/software-engineer-resume-template" },
   { label: "Abogado", to: "/lawyer-resume-template" }
 ];

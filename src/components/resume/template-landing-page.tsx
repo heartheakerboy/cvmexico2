@@ -102,7 +102,7 @@ export function TemplateLandingPage({
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link to="/auth" search={{ template: templateId }}>
+            <Link to="/auth" search={{ template: templateId }} rel="nofollow">
               <Button size="lg" className="w-full sm:w-auto gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-none">
                 Usar esta plantilla <ArrowRight className="h-4 w-4" />
               </Button>

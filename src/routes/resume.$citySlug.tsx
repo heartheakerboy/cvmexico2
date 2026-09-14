@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { ResumePaper } from "@/components/resume/resume-paper";
 import { makeDefaultDesign, defaultLayout } from "@/lib/resume/types";
 import { getStaticCityBySlug, getStaticCities, type City } from "@/lib/cities-data";
+import { getTemplateUrl } from "@/lib/resume/template-routes";
 import { localizeResumeDoc } from "@/lib/cities-helper";
 import { softwareEngineerSample } from "@/lib/resume/industry-samples";
 
@@ -438,9 +439,9 @@ function CityLandingPage() {
                 <h4 className="font-bold text-sm text-foreground">{tpl.name}</h4>
                 <p className="text-xs text-muted-foreground leading-snug">{tpl.desc}</p>
               </div>
-              <Link to="/auth" search={{ template: tpl.id, city: city.slug }} className="mt-4">
+              <Link to={getTemplateUrl(tpl.id)} className="mt-4">
                 <Button size="sm" className="w-full text-xs gap-1">
-                  Usar en {city.name} <ArrowRight className="h-3 w-3" />
+                  Ver plantilla en {city.name} <ArrowRight className="h-3 w-3" />
                 </Button>
               </Link>
             </div>
