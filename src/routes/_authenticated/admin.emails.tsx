@@ -81,6 +81,19 @@ export interface EmailProviderDef {
 
 export const EMAIL_PROVIDERS: EmailProviderDef[] = [
   {
+    id: "sitecountry",
+    name: "SiteCountry Webmail (cvai.com.mx)",
+    badge: "SiteCountry",
+    category: "personal",
+    host: "mailadmin.sitecountry.net",
+    port: 465,
+    secure: true,
+    userHint: "support@cvai.com.mx",
+    passHint: "Contraseña creada en tu panel de SiteCountry",
+    tip: "Servidor oficial de correo de SiteCountry para cvai.com.mx (mailadmin.sitecountry.net). Usa tu correo completo y la contraseña creada en tu panel DirectAdmin de SiteCountry.",
+    domains: ["sitecountry.net", "cvai.com.mx"],
+  },
+  {
     id: "gmail",
     name: "Google / Gmail / Workspace",
     badge: "Gmail / G-Suite",
@@ -450,6 +463,7 @@ function EmailsAdmin() {
         port: p.port,
         secure: p.secure,
         user: p.id === "resend" ? "resend" : p.id === "sendgrid" ? "apikey" : prev.user,
+        ignoreTlsErrors: providerId === "sitecountry" || providerId === "cpanel" ? true : prev.ignoreTlsErrors,
       };
     });
     toast.info(`Configuración para ${p.name} aplicada`);
