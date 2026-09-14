@@ -6,7 +6,8 @@ import {
   ArrowRight, FileText, Check, HelpCircle, ChevronRight, RefreshCw,
   UploadCloud, Printer, FileCheck, Layers, Award, Target,
   Clock, Eye, EyeOff, Trash2, Zap, TrendingUp, AlertCircle, CheckCircle,
-  Mail, Send, FileType, CheckCheck,
+  Mail, Send, FileType, CheckCheck, XCircle, Building2, Cpu, Users,
+  CheckSquare, Ban,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,21 +26,64 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 
+export const ATS_FAQS = [
+  {
+    q: "¿Es este verificador y simulador ATS realmente gratuito y sin registro?",
+    a: "Sí. En CVAI el análisis técnico y diagnóstico de compatibilidad ATS de tu currículum (ya sea subiendo tu archivo PDF o DOCX, o pegando el texto) es 100% gratuito. No requiere ingresar tarjeta de crédito ni crear una cuenta obligatoria para ver tu puntuación general, desglose de datos de contacto detectados, verbos de acción y advertencias de formato.",
+  },
+  {
+    q: "¿Qué es exactamente un sistema ATS (Applicant Tracking System) y por qué importa?",
+    a: "Un ATS es un software de reclutamiento corporativo que las empresas utilizan para filtrar, procesar, clasificar y rankear cientos de solicitudes de empleo antes de que un reclutador humano intervenga. En México y Latinoamérica, más del 75% de los currículums son descartados automáticamente en esta etapa por problemas de formato, tablas complejas o falta de palabras clave requeridas en la vacante.",
+  },
+  {
+    q: "¿Es mejor enviar el currículum en formato PDF o en Word (.docx) para un ATS?",
+    a: "Ambos formatos son aceptados por los sistemas ATS modernos en 2026. No obstante, el PDF generado con capas de texto vectorial (como los que descarga CVAI) es el estándar de oro de la industria porque mantiene intacto el diseño y la tipografía en cualquier dispositivo. La clave indispensable es que el PDF contenga texto seleccionable y no sea una imagen plana o captura escaneada.",
+  },
+  {
+    q: "¿Por qué un currículum hecho en Canva o Photoshop suele reprobar en el ATS?",
+    a: "Las herramientas de diseño gráfico general suelen exportar archivos con cajas de texto flotantes no secuenciales, capas desordenadas o texto rasterizado como imagen. Cuando el parser del ATS lee el archivo, extrae palabras inconexas, mezcla columnas de izquierda a derecha sin orden jerárquico o no encuentra ningún texto legible, provocando el rechazo automático del candidato.",
+  },
+  {
+    q: "¿Qué sucede si mi currículum incluye dos columnas o barras de porcentaje de habilidades?",
+    a: "Las barras de porcentaje y gráficos de barras (ej. 'Inglés 85%' o 'Excel 90%') son totalmente invisibles para los sistemas ATS, ya que no interpretan gráficos ni niveles numéricos subjetivos. Además, los diseños de dos columnas mal codificados provocan que el lector automático lea de corrido en línea horizontal, mezclando la información de la columna izquierda con la derecha.",
+  },
+  {
+    q: "¿Debo adaptar mi currículum para cada oferta de empleo individual?",
+    a: "Sí. Cada vacante cuenta con un conjunto específico de requisitos y palabras clave. Si una oferta busca 'Coordinador de Compras con experiencia en SAP MM y negociación con proveedores' y tu CV solo menciona 'Administración de insumos', el algoritmo asignará una coincidencia semántica muy baja. Adaptar tu resumen y habilidades a cada postulación multiplica tus posibilidades de entrevista.",
+  },
+  {
+    q: "¿El truco de poner palabras clave en texto blanco invisible funciona hoy en día?",
+    a: "No, es un error peligroso que debes evitar. Los sistemas ATS actuales extraen el texto sin formato de estilo ni colores. Si insertas palabras en color blanco para intentar burlar el algoritmo, el reclutador verá todas las palabras expuestas en su pantalla como texto plano o el software clasificará el documento como intento de manipulación (spam), descalificando tu perfil de inmediato.",
+  },
+  {
+    q: "¿Qué tipografías y fuentes son las más recomendadas para superar los filtros ATS?",
+    a: "Las fuentes estándar y sin remates (sans-serif) como Inter, Arial, Calibri, Roboto, Helvetica, Open Sans y Georgia son 100% compatibles con cualquier parser de ATS. Se recomienda evitar tipografías cursivas, decorativas, condensadas o de fantasía que dificulten la extracción de caracteres.",
+  },
+  {
+    q: "¿Cómo sé si una empresa en México o Latinoamérica utiliza un software ATS?",
+    a: "Cualquier postulación que realices a través de plataformas como OCCMundial, Computrabajo, LinkedIn, Indeed o portales corporativos de grandes empresas (como Workday, Taleo, SAP SuccessFactors, Greenhouse o Lever) pasa por un filtro ATS automatizado. Únicamente las microempresas o vacantes donde envías tu CV directamente al correo del reclutador carecen de este filtro.",
+  },
+  {
+    q: "¿Por qué mi CV obtuvo un puntaje bajo si cuento con más de 10 años de experiencia?",
+    a: "El analizador ATS evalúa la estructura técnica, la claridad semántica y la presencia de métricas cuantificables, no solo la antigüedad. Si tu experiencia laboral no incluye fechas en formato reconocible, carece de verbos de acción al inicio de cada viñeta o no presenta logros medibles (cifras monetarias, porcentajes de optimización o números de equipo), el sistema penalizará la puntuación de impacto profesional.",
+  },
+];
+
 export const Route = createFileRoute("/ats-checker")({
   head: () => ({
     meta: [
       {
-        title: "Verificador ATS de Currículum con Subida de PDF Gratis en México | CVAI",
+        title: "Verificador y Simulador ATS de Currículum en México (Gratis y con Subida de PDF) | CVAI",
       },
       {
         name: "description",
         content:
-          "Escanea tu CV en PDF gratis con el verificador ATS inteligente de CVAI. Sube tu PDF, evalúa compatibilidad con filtros de selección en México, detecta palabras clave faltantes y optimiza tu currículum.",
+          "Escanea tu CV en PDF gratis con el simulador ATS inteligente de CVAI. Evalúa compatibilidad con filtros de selección en México (Workday, Taleo, SAP, OCC), detecta palabras clave faltantes y optimiza tu currículum sin registro.",
       },
-      { property: "og:title", content: "Verificador ATS de Currículum en PDF Gratis | CVAI México" },
+      { property: "og:title", content: "Verificador y Simulador ATS de Currículum en México | CVAI" },
       {
         property: "og:description",
-        content: "Sube tu currículum en PDF y obtén un diagnóstico ATS completo con puntaje, palabras clave y métricas de impacto en segundos.",
+        content: "Sube tu currículum en PDF y simula cómo lo evalúan los filtros ATS de las empresas en México. Puntaje, palabras clave y métricas en segundos.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.cvai.com.mx/ats-checker" },
@@ -51,10 +95,10 @@ export const Route = createFileRoute("/ats-checker")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          name: "Verificador ATS de Currículum en PDF CVAI",
+          name: "Simulador y Verificador ATS de Currículum CVAI",
           url: "https://www.cvai.com.mx/ats-checker",
           description:
-            "Herramienta avanzada gratuita para escanear y auditar currículums en PDF contra sistemas de seguimiento de candidatos (ATS) en el mercado laboral mexicano.",
+            "Simulador profesional gratuito de sistemas de seguimiento de candidatos (ATS) para auditar currículums en PDF frente a vacantes en el mercado laboral mexicano.",
           applicationCategory: "UtilityApplication",
           operatingSystem: "All",
           offers: {
@@ -69,32 +113,14 @@ export const Route = createFileRoute("/ats-checker")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: [
-            {
-              "@type": "Question",
-              name: "¿Puedo subir directamente mi CV en PDF?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Sí. Nuestro analizador procesa directamente archivos PDF en tu navegador sin almacenar tus datos privados en servidores públicos, extrayendo el texto y evaluando su compatibilidad ATS al instante.",
-              },
+          mainEntity: ATS_FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: f.a,
             },
-            {
-              "@type": "Question",
-              name: "¿Qué es un verificador ATS y cómo funciona?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Es una herramienta que simula cómo los sistemas de seguimiento de candidatos (como Workday, Taleo o LinkedIn) leen, extraen y califican el texto de tu CV frente a una vacante.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "¿Qué puntaje ATS se considera bueno en México?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Un puntaje superior a 80 puntos garantiza que tu CV superará los filtros automáticos y llegará a manos del reclutador humano.",
-              },
-            },
-          ],
+          })),
         }),
       },
     ],
@@ -416,6 +442,26 @@ function PublicAtsCheckerPage() {
 
       {/* Main Interactive Scanner Container */}
       <main className="mx-auto max-w-5xl px-4 py-12 space-y-12">
+        {/* ATS Impact Statistics Grid */}
+        <section className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+          <div className="rounded-2xl border border-border/80 bg-card p-4 text-center shadow-xs transition-colors hover:border-primary/40">
+            <p className="font-display text-2xl sm:text-3xl font-black text-primary">97%</p>
+            <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground font-medium">de empresas Fortune 500 y líderes en México usan ATS</p>
+          </div>
+          <div className="rounded-2xl border border-border/80 bg-card p-4 text-center shadow-xs transition-colors hover:border-destructive/40">
+            <p className="font-display text-2xl sm:text-3xl font-black text-destructive">75%</p>
+            <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground font-medium">de los currículums son rechazados antes de ver a un humano</p>
+          </div>
+          <div className="rounded-2xl border border-border/80 bg-card p-4 text-center shadow-xs transition-colors hover:border-amber-500/40">
+            <p className="font-display text-2xl sm:text-3xl font-black text-amber-500">250+</p>
+            <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground font-medium">solicitudes compiten en promedio por cada puesto publicado</p>
+          </div>
+          <div className="rounded-2xl border border-border/80 bg-card p-4 text-center shadow-xs transition-colors hover:border-emerald-500/40">
+            <p className="font-display text-2xl sm:text-3xl font-black text-emerald-500">6 seg</p>
+            <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground font-medium">tiempo promedio que dedica el reclutador a los CVs aprobados</p>
+          </div>
+        </section>
+
         <form onSubmit={handleAnalyze} className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
             <div>
@@ -1078,90 +1124,451 @@ function PublicAtsCheckerPage() {
           </section>
         )}
 
-        {/* Educational Content Section */}
-        <section className="space-y-6 pt-6">
-          <div className="space-y-2">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              ¿Cómo evalúan los sistemas ATS los currículums en México?
+        {/* How ATS Actually Works: The 5 Steps */}
+        <section className="space-y-6 pt-6 border-t border-border">
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+              <Cpu className="h-3.5 w-3.5" /> Detrás del Filtro
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              ¿Cómo funciona realmente un ATS? (Los 5 pasos críticos)
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              En México, empresas medianas y grandes que reclutan a través de plataformas como OCCMundial, LinkedIn Recruiter, Workday, Taleo o SAP SuccessFactors utilizan sistemas ATS para filtrar hasta el 75% de las solicitudes antes de que un reclutador humano las lea.
+              El 75% de los currículums son eliminados por un algoritmo antes de que cualquier reclutador los abra. Así es exactamente como el software procesa tu archivo en segundos:
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3 text-xs">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                1
-              </div>
-              <h3 className="font-bold text-foreground text-sm">Extracción Técnica (Parsing)</h3>
+          <div className="grid gap-4 sm:grid-cols-5 text-xs">
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2 relative">
+              <div className="text-2xl font-black text-primary/40 font-mono">01</div>
+              <h3 className="font-bold text-foreground text-sm">Subes tu CV</h3>
               <p className="text-muted-foreground leading-relaxed">
-                El sistema convierte el archivo PDF en texto plano. Si tu documento fue diseñado con tablas complejas, cuadros de texto flotantes o como imagen escaneada en Canva, el software no podrá extraer tu información.
+                Tu archivo ingresa a la base de datos de la empresa convocante. En este instante tu diseño visual aún existe intacto.
               </p>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                2
-              </div>
-              <h3 className="font-bold text-foreground text-sm">Afinidad de Palabras Clave</h3>
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2 relative">
+              <div className="text-2xl font-black text-primary/40 font-mono">02</div>
+              <h3 className="font-bold text-foreground text-sm">El ATS despoja el diseño</h3>
               <p className="text-muted-foreground leading-relaxed">
-                El software compara las palabras clave requeridas en la vacante (software, certificaciones, herramientas) con las que aparecen en tu experiencia laboral y les asigna un porcentaje de coincidencia.
+                El software elimina colores, iconos, tablas, cuadros flotantes y columnas. Si tus datos de contacto estaban en un encabezado, el robot los ignora.
               </p>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                3
-              </div>
-              <h3 className="font-bold text-foreground text-sm">Clasificación para el Reclutador</h3>
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2 relative">
+              <div className="text-2xl font-black text-primary/40 font-mono">03</div>
+              <h3 className="font-bold text-foreground text-sm">Mapeo de secciones</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Los candidatos que alcanzan puntuaciones por encima de 80 aparecen en los primeros lugares de la lista del reclutador para agendar la primera entrevista telefónica o por videollamada.
+                El parser busca encabezados estándar: Experiencia, Educación, Habilidades. Encabezados creativos como "Mi trayecto" provocan error.
               </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2 relative">
+              <div className="text-2xl font-black text-primary/40 font-mono">04</div>
+              <h3 className="font-bold text-foreground text-sm">Cruce de keywords</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                El sistema compara tus palabras clave contra la descripción del empleo. Los mejores ATS en 2026 emplean concordancia semántica profunda.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2 relative">
+              <div className="text-2xl font-black text-primary/40 font-mono">05</div>
+              <h3 className="font-bold text-foreground text-sm">Ranking del reclutador</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                El reclutador no lee cientos de CVs; abre una lista clasificada por puntuación. Solo los perfiles de 80 a 95+ puntos obtienen entrevista.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* What Gets Your CV Killed: Visual Comparison Table */}
+        <section className="space-y-6 border-t border-border pt-10">
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 text-destructive px-3 py-1 text-xs font-semibold">
+              <AlertTriangle className="h-3.5 w-3.5" /> Errores Fatales de Formato
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Lo que arruina tu currículum frente al robot
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Muchos candidatos pasan horas perfeccionando un diseño que el software destruye en microsegundos. Compara lo que diseñaste con lo que el ATS realmente extrae:
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-xs">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/50 font-semibold text-foreground">
+                  <th className="p-3.5 sm:p-4">Lo que hiciste en tu diseño</th>
+                  <th className="p-3.5 sm:p-4">Lo que el parser ATS realmente ve</th>
+                  <th className="p-3.5 sm:p-4 text-center">Veredicto ATS</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                <tr className="bg-destructive/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Diseño de 2 o 3 columnas (estilo Canva)</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Texto desordenado horizontalmente; mezcla puestos con habilidades de la barra lateral</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-2.5 py-1 text-[11px] font-bold text-destructive">
+                      <XCircle className="h-3.5 w-3.5" /> RECHAZADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-destructive/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Barras o gráficos de porcentaje de habilidades ("Excel 90%")</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Elemento gráfico invisible; el ATS registra 0 habilidades técnicas</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-2.5 py-1 text-[11px] font-bold text-destructive">
+                      <XCircle className="h-3.5 w-3.5" /> RECHAZADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-destructive/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Iconos decorativos para teléfono, correo y ubicación</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Símbolos corruptos, espacios vacíos o texto de contacto no identificado</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-2.5 py-1 text-[11px] font-bold text-destructive">
+                      <XCircle className="h-3.5 w-3.5" /> RECHAZADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-destructive/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Tablas invisibles para alinear fechas y empresas</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Líneas de texto fragmentadas fuera de secuencia cronológica</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-2.5 py-1 text-[11px] font-bold text-destructive">
+                      <XCircle className="h-3.5 w-3.5" /> RECHAZADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-destructive/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Datos de contacto puestos en el encabezado o pie de Word</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Completamente ignorados por la mayoría de motores ATS</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-destructive/15 px-2.5 py-1 text-[11px] font-bold text-destructive">
+                      <XCircle className="h-3.5 w-3.5" /> RECHAZADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-emerald-500/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Estructura limpia de 1 sola columna secuencial</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Flujo de lectura perfecto de principio a fin sin saltos erróneos</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> APROBADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-emerald-500/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Encabezados canónicos ("Experiencia Laboral", "Educación", "Habilidades")</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Secciones reconocidas, indexadas y asignadas a los campos del perfil al 100%</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> APROBADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-emerald-500/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">PDF con capa de texto seleccionable nativa</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Extracción inmediata de caracteres con codificación UTF-8 intacta</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> APROBADO
+                    </span>
+                  </td>
+                </tr>
+                <tr className="bg-emerald-500/5">
+                  <td className="p-3.5 sm:p-4 font-medium text-foreground">Teléfono a 10 dígitos y correo electrónico en el cuerpo principal</td>
+                  <td className="p-3.5 sm:p-4 text-muted-foreground">Datos del candidato capturados de inmediato para contacto telefónico o email</td>
+                  <td className="p-3.5 sm:p-4 text-center">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> APROBADO
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ATS Myths vs Facts 2026 */}
+        <section className="space-y-6 border-t border-border pt-10">
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+              <Sparkles className="h-3.5 w-3.5" /> Mitos y Realidades 2026
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Mitos del ATS que debes olvidar hoy mismo
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Circula mucha desinformación sobre cómo burlar los filtros de selección. Esto es lo que la tecnología actual realmente hace:
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 text-xs">
+            <div className="rounded-2xl border border-destructive/20 bg-card p-5 space-y-2">
+              <span className="inline-flex rounded-full bg-destructive/10 px-2.5 py-0.5 text-[11px] font-bold text-destructive">
+                Mito Popular
+              </span>
+              <h3 className="text-sm font-bold text-foreground">"Los archivos en PDF siempre fallan en los filtros ATS"</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Falso. Los sistemas ATS modernos en 2026 leen PDFs vectoriales perfectamente. El problema no es la extensión .pdf, sino subir una imagen escaneada o un archivo exportado de Photoshop que no posee capa de texto seleccionable.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-destructive/20 bg-card p-5 space-y-2">
+              <span className="inline-flex rounded-full bg-destructive/10 px-2.5 py-0.5 text-[11px] font-bold text-destructive">
+                Mito Peligroso
+              </span>
+              <h3 className="text-sm font-bold text-foreground">"Pon palabras clave en texto blanco invisible para subir tu calificación"</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Peligroso error. Los sistemas ATS extraen texto puro e ignoran el color visual. El reclutador verá un bloque sospechoso de palabras amontonadas o el sistema activará una alerta de manipulación por spam, descalificándote de por vida de esa empresa.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-destructive/20 bg-card p-5 space-y-2">
+              <span className="inline-flex rounded-full bg-destructive/10 px-2.5 py-0.5 text-[11px] font-bold text-destructive">
+                Mito Frecuente
+              </span>
+              <h3 className="text-sm font-bold text-foreground">"Un diseño visual ultra-creativo y complejo impresionará al reclutador"</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Solo si el reclutador llega a verlo. En empresas medianas y grandes, ningún ser humano abre tu CV si el robot no fue capaz de extraer tu información y darte al menos 80 puntos de compatibilidad inicial.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-emerald-500/20 bg-card p-5 space-y-2">
+              <span className="inline-flex rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                Realidad Comprobada
+              </span>
+              <h3 className="text-sm font-bold text-foreground">"Cada sistema ATS evalúa con algoritmos distintos pero con las mismas bases"</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Verdadero. Workday, Taleo, SAP, Greenhouse y OCC tienen diferentes ponderaciones, pero todos coinciden en premiar la estructura de 1 columna, fechas cronológicas claras, palabras clave de la vacante y métricas cuantificadas.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Major ATS Systems in Mexico & LatAm */}
+        <section className="space-y-6 border-t border-border pt-10">
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+              <Building2 className="h-3.5 w-3.5" /> Ecosistema Corporativo
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Los principales sistemas ATS en México y Latinoamérica
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Dependiendo del tamaño de la empresa y su industria, tu currículum será evaluado por diferentes plataformas. Conoce sus prioridades:
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-xs">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-foreground">Workday</h3>
+                <Badge variant="outline">Corporativos / Fortune 500</Badge>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Utilizado en México por bancos, farmacéuticas y multinacionales (BBVA, FEMSA, Bimbo, Walmart).
+              </p>
+              <div className="border-t border-border/60 pt-2 text-[11px] space-y-1">
+                <span className="font-semibold text-foreground">Prioridad de evaluación:</span>
+                <p className="text-muted-foreground">Coincidencia semántica estricta de palabras clave, cronología inversa sin traslapes y títulos de puesto homologados.</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-foreground">SAP SuccessFactors</h3>
+                <Badge variant="outline">Manufactura / Automotriz</Badge>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Predominante en clústeres industriales de Nuevo León, Bajío, Puebla y Estado de México.
+              </p>
+              <div className="border-t border-border/60 pt-2 text-[11px] space-y-1">
+                <span className="font-semibold text-foreground">Prioridad de evaluación:</span>
+                <p className="text-muted-foreground">Validación de certificaciones técnicas, grados universitarios o cédulas y habilidades duras operativas.</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-foreground">Taleo (Oracle)</h3>
+                <Badge variant="outline">Banca / Aseguradoras</Badge>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                El sistema tradicional más utilizado por instituciones financieras y dependencias de gobierno.
+              </p>
+              <div className="border-t border-border/60 pt-2 text-[11px] space-y-1">
+                <span className="font-semibold text-foreground">Prioridad de evaluación:</span>
+                <p className="text-muted-foreground">Estructura canónica estricta. Es muy sensible a tablas complejas o gráficos que rompen la extracción de texto.</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-foreground">Greenhouse &amp; Lever</h3>
+                <Badge variant="outline">Tech / Startups / Fintech</Badge>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Elegido por unicornios y scale-ups tecnológicas (Mercado Libre, Kavak, Nubank, Clip).
+              </p>
+              <div className="border-t border-border/60 pt-2 text-[11px] space-y-1">
+                <span className="font-semibold text-foreground">Prioridad de evaluación:</span>
+                <p className="text-muted-foreground">Stack tecnológico, herramientas ágiles, dominio de inglés (B2/C1) y logros cuantificados con porcentajes de impacto.</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs sm:col-span-2 lg:col-span-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-foreground">OCCMundial &amp; Computrabajo</h3>
+                <Badge variant="outline">Bolsas Masivas en México</Badge>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Los dos portales de reclutamiento más grandes del mercado laboral mexicano donde millones de candidatos postulan mensualmente.
+              </p>
+              <div className="border-t border-border/60 pt-2 text-[11px] space-y-1">
+                <span className="font-semibold text-foreground">Prioridad de evaluación:</span>
+                <p className="text-muted-foreground">Palabras clave exactas contenidas en la descripción del puesto, concordancia de salario pretendido y proximidad geográfica en México.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Actionable 12-Point Checklist */}
+        <section className="space-y-6 border-t border-border pt-10">
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-xs font-semibold">
+              <CheckSquare className="h-3.5 w-3.5" /> Plan de Acción
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Lista de verificación técnica para superar filtros ATS (12 puntos)
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Asegúrate de marcar cada uno de estos requisitos antes de enviar tu postulación a cualquier vacante en México:
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 text-xs">
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Diseño de una sola columna limpia:</strong>
+                <p className="text-muted-foreground mt-0.5">Evita divisiones laterales no secuenciales que desorientan al lector automático.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Encabezados canónicos reconocibles:</strong>
+                <p className="text-muted-foreground mt-0.5">Usa títulos claros: Experiencia Laboral, Educación, Habilidades y Perfil Profesional.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Datos de contacto en el cuerpo del documento:</strong>
+                <p className="text-muted-foreground mt-0.5">Nunca coloques teléfono o email en encabezados o pies de página de Word.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Palabras clave incorporadas con naturalidad:</strong>
+                <p className="text-muted-foreground mt-0.5">Replica los términos técnicos de la vacante dentro de tus responsabilidades reales.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Formato consistente de fechas cronológicas:</strong>
+                <p className="text-muted-foreground mt-0.5">Usa un estándar uniforme como "Ene 2021 – Presente" o "05/2020 – 11/2023".</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Cero tablas complejas o cuadros flotantes:</strong>
+                <p className="text-muted-foreground mt-0.5">El texto debe fluir de corrido sin cajas que atrapen los caracteres fuera de orden.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Exportado en PDF o Word con texto seleccionable:</strong>
+                <p className="text-muted-foreground mt-0.5">Comprueba que puedas seleccionar y copiar el texto con el cursor de tu ratón.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Extensión equilibrada (400 a 800 palabras):</strong>
+                <p className="text-muted-foreground mt-0.5">Ni demasiado escueto ni un testamento de 5 páginas. 1 a 2 páginas es el estándar.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Logros cuantificados con métricas de impacto:</strong>
+                <p className="text-muted-foreground mt-0.5">Agrega porcentajes, números de personas coordinadas o cifras de ahorro monetario.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Verbos de acción al inicio de viñetas:</strong>
+                <p className="text-muted-foreground mt-0.5">Comienza con: "Implementé", "Coordiné", "Diseñé", "Optimicé" o "Supervisé".</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Tipografías estándar seguras:</strong>
+                <p className="text-muted-foreground mt-0.5">Utiliza fuentes limpias como Inter, Arial, Calibri, Roboto, Helvetica o Georgia.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
+              <div>
+                <strong className="text-foreground">Validación previa con el simulador de CVAI:</strong>
+                <p className="text-muted-foreground mt-0.5">Prueba tu archivo en esta herramienta para corregir detalles antes de postular.</p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* FAQs */}
         <section className="space-y-6 border-t border-border pt-10">
-          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <HelpCircle className="h-6 w-6 text-primary" /> Preguntas frecuentes sobre el verificador ATS
-          </h2>
+          <div className="space-y-2 text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+              <HelpCircle className="h-3.5 w-3.5" /> Respuestas de Expertos
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Preguntas frecuentes sobre el verificador y simulador ATS
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Resolvemos todas las dudas sobre cómo los algoritmos de reclutamiento filtran currículums en México y Latinoamérica:
+            </p>
+          </div>
 
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="faq-1">
-              <AccordionTrigger className="text-left text-sm font-semibold">
-                ¿Es mejor enviar el currículum en PDF o en Word (.docx)?
-              </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                El formato PDF generado con código estructurado (como el de CVAI) es el estándar preferido hoy en día porque preserva la tipografía y el diseño en cualquier dispositivo sin desconfigurarse. Solo asegúrate de que el PDF contenga texto seleccionable y no sea una imagen plana escaneada.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="faq-2">
-              <AccordionTrigger className="text-left text-sm font-semibold">
-                ¿Qué pasa si mi currículum tiene dos columnas?
-              </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                Muchos sistemas ATS antiguos leen los documentos de izquierda a derecha en línea horizontal. Si las dos columnas no están codificadas correctamente, el sistema puede mezclar el texto de ambas columnas, arruinando la lectura. Las plantillas de CVAI están optimizadas para que el orden de lectura sea siempre secuencial y seguro.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="faq-3">
-              <AccordionTrigger className="text-left text-sm font-semibold">
-                ¿Cómo adapta el verificador los criterios al mercado de México?
-              </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                Considera la estructura habitual de reclutamiento en México: validación de cédula profesional o grado académico, clave lada telefónica nacional (10 dígitos), ciudades y estados del país, y el peso de certificaciones técnicas e idiomas (como el dominio de inglés B2/C1).
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="faq-4">
-              <AccordionTrigger className="text-left text-sm font-semibold">
-                ¿El análisis de mi PDF es privado y confidencial?
-              </AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
-                Totalmente. La extracción del texto del PDF se realiza directamente en tu propio navegador web a través de bibliotecas seguras. No almacenamos tus archivos ni tus datos de contacto en servidores externos para fines comerciales.
-              </AccordionContent>
-            </AccordionItem>
+          <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+            {ATS_FAQS.map((faq, idx) => (
+              <AccordionItem key={idx} value={`faq-${idx}`}>
+                <AccordionTrigger className="text-left text-sm font-semibold">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
           </Accordion>
         </section>
 
