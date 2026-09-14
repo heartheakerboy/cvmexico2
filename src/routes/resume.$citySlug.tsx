@@ -60,13 +60,12 @@ export const Route = createFileRoute("/resume/$citySlug")({
 function CityLandingPage() {
   const { citySlug } = Route.useParams();
   const navigate = useNavigate();
+  const staticCity = getStaticCityBySlug(citySlug);
   const [dbCity, setDbCity] = useState<City | null>(null);
-  const [loading, setLoading] = useState(true);
 
   // Load from Supabase, fallback to static
   useEffect(() => {
     (async () => {
-      setLoading(true);
       try {
         const { data, error } = await supabase
           .from("cities")
@@ -76,27 +75,22 @@ function CityLandingPage() {
 
         if (data && !error) {
           setDbCity(data as unknown as City);
-        } else {
-          setDbCity(null);
         }
       } catch (err) {
         console.error("Error loading city from Supabase:", err);
-      } finally {
-        setLoading(false);
       }
     })();
   }, [citySlug]);
 
-  const staticCity = getStaticCityBySlug(citySlug);
   const city = dbCity || staticCity;
 
   // Render a nice 404/redirect if the city does not exist
   useEffect(() => {
-    if (!loading && !city) {
+    if (!city) {
       toast.error("Ciudad no encontrada");
       navigate({ to: "/plantillas" });
     }
-  }, [city, loading, navigate]);
+  }, [city, navigate]);
 
   const activeCities = getStaticCities().filter((c) => c.slug !== citySlug);
 
@@ -107,7 +101,7 @@ function CityLandingPage() {
     return localizeResumeDoc(softwareEngineerSample, city);
   }, [city]);
 
-  if (loading) {
+  if (!city) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <SiteHeader />
@@ -118,8 +112,6 @@ function CityLandingPage() {
       </div>
     );
   }
-
-  if (!city) return null;
 
   // JSON-LD Product Schema
   const productSchema = {

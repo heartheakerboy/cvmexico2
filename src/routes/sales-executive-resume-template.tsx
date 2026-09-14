@@ -5,12 +5,12 @@ import { salesExecutiveSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/sales-executive-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Ejecutivos de Ventas || CVAI" },
+      { title: "Plantilla CV Ejecutivos de Ventas | CVAI" },
       {
         name: "description",
         content: "Crea tu CV comercial de alto impacto. Diseñado para ejecutivos de ventas, KAMs y gerentes comerciales. Destaca metas B2B y métricas.",
       },
-      { property: "og:title", content: "Plantilla de CV para Ejecutivos de Ventas || CVAI" },
+      { property: "og:title", content: "Plantilla CV Ejecutivos de Ventas | CVAI" },
       { property: "og:url", content: "/sales-executive-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/sales-executive-resume-template" }],

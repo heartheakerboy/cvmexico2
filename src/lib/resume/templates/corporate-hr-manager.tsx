@@ -36,7 +36,7 @@ export function CorporateHrManagerTemplate({ doc, design, layout }: TemplateProp
           paddingBottom: "1em",
           marginBottom: "0.5em"
         }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.8em",
             fontWeight: 700,
@@ -44,7 +44,7 @@ export function CorporateHrManagerTemplate({ doc, design, layout }: TemplateProp
             margin: 0
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           {doc.headline && (
             <p style={{
               color: accent,

@@ -23,7 +23,7 @@ export function EngineeringProTemplate({ doc, design, layout }: TemplateProps) {
         marginBottom: `${design.spacing * 1.2}em`
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "2em", 
             fontWeight: 800, 
@@ -31,7 +31,7 @@ export function EngineeringProTemplate({ doc, design, layout }: TemplateProps) {
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           
           {doc.headline && (
             <span style={{ 

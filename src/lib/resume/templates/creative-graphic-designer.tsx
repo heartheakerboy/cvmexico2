@@ -66,7 +66,7 @@ export function CreativeGraphicDesignerTemplate({ doc, design, layout }: Templat
             </div>
           )}
           
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.35em",
             fontWeight: 800,
@@ -75,7 +75,7 @@ export function CreativeGraphicDesignerTemplate({ doc, design, layout }: Templat
             lineHeight: 1.25
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           <p style={{
             fontSize: "0.82em",
             color: accent,

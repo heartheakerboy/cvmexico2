@@ -27,7 +27,7 @@ export function CreativeModernCircularTemplate({ doc, design, layout }: Template
         marginBottom: `${design.spacing * 1.3}em`
       }}>
         <div style={{ flex: 1 }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "2.1em", 
             fontWeight: 800, 
@@ -37,7 +37,7 @@ export function CreativeModernCircularTemplate({ doc, design, layout }: Template
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: primaryColor, 

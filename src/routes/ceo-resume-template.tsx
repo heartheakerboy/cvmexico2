@@ -5,12 +5,12 @@ import { ceoSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/ceo-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Directores Generales y CEOs || CVAI" },
+      { title: "Plantilla CV Directores Generales y CEOs | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de Director General (CEO). Diseño premium con foco en EBITDA, transformación digital, y consejos de administración en México.",
       },
-      { property: "og:title", content: "Plantilla de CV para Directores Generales y CEOs || CVAI" },
+      { property: "og:title", content: "Plantilla CV Directores Generales y CEOs | CVAI" },
       { property: "og:url", content: "/ceo-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/ceo-resume-template" }],

@@ -25,7 +25,7 @@ export function LegalExecutiveTemplate({ doc, design, layout }: TemplateProps) {
         paddingBottom: "1.2em",
         marginBottom: `${design.spacing * 1.3}em`
       }}>
-        <h1 style={{ 
+        <div style={{ 
           fontFamily: legalFontStack, 
           fontSize: "2.2em", 
           fontWeight: 500, 
@@ -34,7 +34,7 @@ export function LegalExecutiveTemplate({ doc, design, layout }: TemplateProps) {
           margin: 0
         }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         
         {doc.headline && (
           <div style={{ 

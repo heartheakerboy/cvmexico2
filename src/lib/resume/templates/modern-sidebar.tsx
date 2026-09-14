@@ -28,7 +28,7 @@ export function ModernSidebarTemplate({ doc, design, layout }: TemplateProps) {
       </aside>
       <main style={{ flex: 1, padding: "1.5em 1.4em" }}>
         <header style={{ marginBottom: `${design.spacing}em` }}>
-          <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, lineHeight: 1.1 }}>{doc.full_name || "Tu Nombre"}</h1>
+          <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, lineHeight: 1.1 }}>{doc.full_name || "Tu Nombre"}</div>
           <div style={{ color: design.accent, fontWeight: 600 }}>{doc.headline}</div>
         </header>
         <div style={{ display: "flex", flexDirection: "column", gap: `${design.spacing}em` }}>

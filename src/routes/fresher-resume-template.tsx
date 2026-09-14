@@ -5,12 +5,12 @@ import { fresherSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/fresher-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Recién Egresados || CVAI" },
+      { title: "Plantilla CV Recién Egresados | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de recién egresado o titulado. Diseño moderno de dos columnas enfocado en objetivos profesionales y habilidades técnicas.",
       },
-      { property: "og:title", content: "Plantilla de CV para Recién Egresados || CVAI" },
+      { property: "og:title", content: "Plantilla CV Recién Egresados | CVAI" },
       { property: "og:url", content: "/fresher-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/fresher-resume-template" }],

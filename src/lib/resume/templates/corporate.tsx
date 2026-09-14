@@ -9,9 +9,9 @@ export function CorporateTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#0f172a", fontSize: "10.5pt" }}>
       <header style={{ borderBottom: `3px solid ${design.accent}`, paddingBottom: "0.7em" }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700, letterSpacing: "-0.01em" }}>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700, letterSpacing: "-0.01em" }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         {doc.headline && <div style={{ color: design.accent, fontWeight: 600, marginTop: "0.15em" }}>{doc.headline}</div>}
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.4em" }}>{contactList(doc).join("  •  ")}</div>
       </header>

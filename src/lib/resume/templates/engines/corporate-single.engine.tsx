@@ -38,10 +38,10 @@ export function CorporateSingleEngine({ doc, design, layout }: TemplateProps, cf
           }} />
         )}
         <div>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.55em",
             fontWeight: 800, margin: 0, letterSpacing: "0.01em", color: headerText,
-          }}>{doc.full_name || "Tu Nombre"}</h1>
+          }}>{doc.full_name || "Tu Nombre"}</div>
           {doc.headline && (
             <p style={{ fontSize: "0.88em", fontWeight: 500, color: "rgba(255,255,255,0.85)", marginTop: "0.2em", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               {doc.headline}

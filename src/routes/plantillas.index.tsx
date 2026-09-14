@@ -12,13 +12,13 @@ import { getTemplateUrl } from "@/lib/resume/template-routes";
 export const Route = createFileRoute("/plantillas/")({
   head: () => ({
     meta: [
-      { title: "Plantillas de CV ATS Gratis || CVAI" },
+      { title: "Plantillas de CV ATS Gratis | CVAI" },
       {
         name: "description",
         content:
           "Plantillas de currículum profesionales y compatibles con ATS, optimizadas para el mercado laboral mexicano. Elige la tuya y empieza gratis.",
       },
-      { property: "og:title", content: "Plantillas de CV ATS Gratis || CVAI" },
+      { property: "og:title", content: "Plantillas de CV ATS Gratis | CVAI" },
       { property: "og:url", content: "https://www.cvai.com.mx/plantillas" },
     ],
     links: [{ rel: "canonical", href: "https://www.cvai.com.mx/plantillas" }],

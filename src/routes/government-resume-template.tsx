@@ -5,12 +5,12 @@ import { governmentSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/government-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Servidores Públicos || CVAI" },
+      { title: "Plantilla CV Servidores Públicos | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum oficial. Plantilla minimalista estructurada de una columna sin adornos para administración pública y gobierno en México.",
       },
-      { property: "og:title", content: "Plantilla de CV para Servidores Públicos || CVAI" },
+      { property: "og:title", content: "Plantilla CV Servidores Públicos | CVAI" },
       { property: "og:url", content: "/government-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/government-resume-template" }],

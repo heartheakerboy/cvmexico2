@@ -5,12 +5,12 @@ import { studentSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/student-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Estudiantes Gratis || CVAI" },
+      { title: "Plantilla CV Estudiantes Gratis | CVAI" },
       {
         name: "description",
         content: "Crea tu primer currículum de estudiante. Diseñado para destacar proyectos académicos, voluntariados y becas sin experiencia previa. Empieza gratis.",
       },
-      { property: "og:title", content: "Plantilla de CV para Estudiantes Gratis || CVAI" },
+      { property: "og:title", content: "Plantilla CV Estudiantes Gratis | CVAI" },
       { property: "og:url", content: "/student-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/student-resume-template" }],

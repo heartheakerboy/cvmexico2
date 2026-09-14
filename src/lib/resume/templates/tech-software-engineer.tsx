@@ -51,7 +51,7 @@ export function TechSoftwareEngineerTemplate({ doc, design, layout }: TemplatePr
               }}
             />
           )}
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.4em",
             fontWeight: 700,
@@ -60,7 +60,7 @@ export function TechSoftwareEngineerTemplate({ doc, design, layout }: TemplatePr
             lineHeight: 1.2
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           <p style={{
             fontSize: "0.85em",
             color: accent,

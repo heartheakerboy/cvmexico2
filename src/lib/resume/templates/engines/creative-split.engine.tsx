@@ -51,10 +51,10 @@ export function CreativeSplitEngine({ doc, design, layout }: TemplateProps, cfg?
 
         {/* Name + headline */}
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.3)", paddingBottom: "1em" }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.25em",
             fontWeight: 800, color: "#fff", margin: 0, lineHeight: 1.2,
-          }}>{doc.full_name || "Tu Nombre"}</h1>
+          }}>{doc.full_name || "Tu Nombre"}</div>
           {doc.headline && (
             <p style={{ fontSize: "0.8em", fontWeight: 600, color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: "0.04em", marginTop: "0.3em" }}>
               {doc.headline}

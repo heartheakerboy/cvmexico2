@@ -22,7 +22,7 @@ export function StageGovernmentTemplate({ doc, design, layout }: TemplateProps) 
         borderBottom: `2.5px solid ${accent}`,
         paddingBottom: "0.8em"
       }}>
-        <h1 style={{
+        <div style={{
           fontFamily: FONT_STACKS[design.headingFont],
           fontSize: "1.75em",
           fontWeight: 700,
@@ -32,7 +32,7 @@ export function StageGovernmentTemplate({ doc, design, layout }: TemplateProps) 
           margin: 0
         }}>
           {doc.full_name || "Nombre Completo"}
-        </h1>
+        </div>
         
         {doc.headline && (
           <div style={{

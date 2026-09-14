@@ -29,7 +29,7 @@ export function StudentSuccessTemplate({ doc, design, layout }: TemplateProps) {
         marginBottom: `${design.spacing * 1.2}em`
       }}>
         <div style={{ flex: 1 }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "1.85em", 
             fontWeight: 800, 
@@ -38,7 +38,7 @@ export function StudentSuccessTemplate({ doc, design, layout }: TemplateProps) {
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: primaryColor, 

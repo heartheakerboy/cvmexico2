@@ -73,14 +73,14 @@ export const Route = createFileRoute("/ats-checker")({
   head: () => ({
     meta: [
       {
-        title: "Verificador y Simulador ATS de Currículum en México (Gratis y con Subida de PDF) | CVAI",
+        title: "Verificador ATS de Currículum Gratis en México | CVAI",
       },
       {
         name: "description",
         content:
           "Escanea tu CV en PDF gratis con el simulador ATS inteligente de CVAI. Evalúa compatibilidad con filtros de selección en México (Workday, Taleo, SAP, OCC), detecta palabras clave faltantes y optimiza tu currículum sin registro.",
       },
-      { property: "og:title", content: "Verificador y Simulador ATS de Currículum en México | CVAI" },
+      { property: "og:title", content: "Verificador ATS de Currículum Gratis en México | CVAI" },
       {
         property: "og:description",
         content: "Sube tu currículum en PDF y simula cómo lo evalúan los filtros ATS de las empresas en México. Puntaje, palabras clave y métricas en segundos.",

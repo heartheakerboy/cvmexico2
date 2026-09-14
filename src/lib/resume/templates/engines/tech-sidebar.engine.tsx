@@ -55,10 +55,10 @@ export function TechSidebarEngine({ doc, design, layout }: TemplateProps, cfg?: 
 
         {/* Name + Headline */}
         <div style={{ borderBottom: `1.5px solid ${hexToRgba(accent, 0.4)}`, paddingBottom: "1em" }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.2em",
             fontWeight: 800, color: "#f1f5f9", margin: 0, letterSpacing: "0.01em",
-          }}>{doc.full_name || "Tu Nombre"}</h1>
+          }}>{doc.full_name || "Tu Nombre"}</div>
           {doc.headline && (
             <p style={{ color: accent, fontSize: "0.8em", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginTop: "0.3em" }}>
               {doc.headline}

@@ -36,7 +36,7 @@ export function ExecutiveProjectManagerTemplate({ doc, design, layout }: Templat
           paddingBottom: "0.8em",
           marginBottom: "0.5em"
         }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.85em",
             fontWeight: 800,
@@ -45,7 +45,7 @@ export function ExecutiveProjectManagerTemplate({ doc, design, layout }: Templat
             letterSpacing: "0.01em"
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           {doc.headline && (
             <p style={{
               color: accent,

@@ -23,7 +23,7 @@ export function CorporateAccountantTemplate({ doc, design, layout }: TemplatePro
         borderBottom: `2px solid ${accent}`,
         paddingBottom: "0.8em"
       }}>
-        <h1 style={{
+        <div style={{
           fontFamily: FONT_STACKS[design.headingFont],
           fontSize: "1.8em",
           fontWeight: 700,
@@ -33,7 +33,7 @@ export function CorporateAccountantTemplate({ doc, design, layout }: TemplatePro
           margin: 0
         }}>
           {doc.full_name || "Nombre Completo"}
-        </h1>
+        </div>
         
         {doc.headline && (
           <div style={{

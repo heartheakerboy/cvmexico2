@@ -6,7 +6,7 @@ import { getSampleDocForTemplate } from "@/lib/resume/sample-resolver";
 export const Route = createFileRoute("/plantillas/$id")({
   head: ({ params }) => {
     const tpl = getTemplate(params.id);
-    const title = `Plantilla de Currículum ${tpl.name} ATS || CVAI`;
+    const title = `Plantilla CV ${tpl.name} ATS | CVAI`;
     const description = `${tpl.description} Plantilla de CV profesional, optimizada para filtros ATS y adaptada al mercado laboral de México. Empieza gratis.`;
     const canonicalUrl = `https://www.cvai.com.mx/plantillas/${params.id}`;
 

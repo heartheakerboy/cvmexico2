@@ -11,9 +11,9 @@ export function CompactProTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#111827", fontSize: "10.5pt" }}>
       <header style={{ marginBottom: `${design.spacing}em`, background: hexToRgba(design.accent, 0.08), borderLeft: `4px solid ${design.accent}`, padding: "0.7em 0.9em", borderRadius: "0 0.4em 0.4em 0" }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 800 }}>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 800 }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         {doc.headline && <div style={{ color: design.accent, fontWeight: 600, fontSize: "0.95em" }}>{doc.headline}</div>}
         <div style={{ color: muted, fontSize: "0.82em", marginTop: "0.3em" }}>{contactList(doc).join("  |  ")}</div>
       </header>

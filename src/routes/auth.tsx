@@ -44,6 +44,9 @@ function AuthPage() {
       </Link>
 
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-sm">
+        <h1 className="text-xl font-bold font-display text-center text-foreground mb-6">
+          {tab === "recuperar" ? "Recuperar Contraseña" : tab === "registro" ? "Crear cuenta en CVAI" : "Iniciar sesión en CVAI"}
+        </h1>
         {tab === "recuperar" ? (
           <ForgotPasswordForm onBack={() => setTab("login")} />
         ) : (

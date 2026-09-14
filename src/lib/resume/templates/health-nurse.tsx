@@ -46,7 +46,7 @@ export function HealthNurseTemplate({ doc, design, layout }: TemplateProps) {
           />
         )}
         <div style={{ flex: 1 }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.7em",
             fontWeight: 700,
@@ -54,7 +54,7 @@ export function HealthNurseTemplate({ doc, design, layout }: TemplateProps) {
             margin: 0
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           <p style={{
             fontSize: "0.95em",
             color: "#ccfbf1",

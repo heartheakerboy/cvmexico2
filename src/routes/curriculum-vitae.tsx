@@ -15,7 +15,7 @@ export const Route = createFileRoute("/curriculum-vitae")({
   head: () => ({
     meta: [
       {
-        title: "Crear Currículum Vitae con Inteligencia Artificial Gratis | CVAI México",
+        title: "Crear Currículum Vitae con IA Gratis | CVAI México",
       },
       {
         name: "description",

@@ -7,7 +7,7 @@ import { AlertCircle, ShieldAlert, CheckCircle2, FileSearch, Building2, HelpCirc
 export const Route = createFileRoute("/aviso-legal")({
   head: () => ({
     meta: [
-      { title: "Aviso Legal y Deslinde de Responsabilidad (Disclaimer) | CVAI" },
+      { title: "Aviso Legal y Deslinde de Responsabilidad | CVAI" },
       {
         name: "description",
         content: "Aviso Legal y Deslinde de Responsabilidad de CVAI (Curriculum Vitae AI). Información clara sobre la naturaleza de la herramienta, puntuaciones ATS y ausencia de garantías laborales.",

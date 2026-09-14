@@ -10,7 +10,7 @@ export function StudentFreshTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#1f2937", fontSize: "10.5pt" }}>
       <header style={{ background: design.accent, color: "#fff", borderRadius: "14px", padding: "1.2em 1.3em", marginBottom: `${design.spacing}em` }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 800 }}>{doc.full_name || "Tu Nombre"}</h1>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 800 }}>{doc.full_name || "Tu Nombre"}</div>
         {doc.headline && <div style={{ fontWeight: 500, opacity: 0.95 }}>{doc.headline}</div>}
         <div style={{ fontSize: "0.85em", marginTop: "0.35em", opacity: 0.9 }}>{contactList(doc).join("  •  ")}</div>
       </header>

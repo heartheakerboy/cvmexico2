@@ -17,7 +17,7 @@ export function ExecutiveTemplate({ doc, design, layout }: TemplateProps) {
           <img src={doc.photo_url} alt="" style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: "12px" }} />
         )}
         <div>
-          <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.5em", fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>{doc.full_name || "Tu Nombre"}</h1>
+          <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.5em", fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>{doc.full_name || "Tu Nombre"}</div>
           <div style={{ color: design.accent, fontWeight: 600, marginTop: "0.2em" }}>{doc.headline}</div>
         </div>
         <div style={{ fontSize: "0.85em", display: "flex", flexDirection: "column", gap: "0.25em", color: "#cbd5e1" }}>

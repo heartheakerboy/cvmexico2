@@ -11,9 +11,9 @@ export function CleanSlateTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#1f2937", fontSize: "10.5pt" }}>
       <header style={{ marginBottom: `${design.spacing * 1.5}em` }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.3em", fontWeight: 600, display: "inline-block", borderBottom: `4px solid ${design.accent}`, paddingBottom: "0.1em" }}>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.3em", fontWeight: 600, display: "inline-block", borderBottom: `4px solid ${design.accent}`, paddingBottom: "0.1em" }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         {doc.headline && <div style={{ color: muted, marginTop: "0.35em", fontSize: "1.05em" }}>{doc.headline}</div>}
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.5em" }}>{contactList(doc).join("     ")}</div>
       </header>

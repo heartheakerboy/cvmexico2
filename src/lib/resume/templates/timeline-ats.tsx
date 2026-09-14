@@ -11,9 +11,9 @@ export function TimelineAtsTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#111827", fontSize: "10.5pt" }}>
       <header style={{ marginBottom: `${design.spacing * 1.2}em`, background: hexToRgba(design.accent, 0.07), padding: "0.9em 1em", borderRadius: "0.5em" }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700, color: design.accent }}>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700, color: design.accent }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         {doc.headline && <div style={{ fontWeight: 600, marginTop: "0.15em" }}>{doc.headline}</div>}
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.35em" }}>{contactList(doc).join("  •  ")}</div>
       </header>

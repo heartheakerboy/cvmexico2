@@ -5,12 +5,12 @@ import { freelancerSample } from "@/lib/resume/stage-samples";
 export const Route = createFileRoute("/freelancer-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Freelancers y Remotos || CVAI" },
+      { title: "Plantilla CV Freelancers y Remotos | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de freelancer o contratista. Diseño creativo enfocado en portafolio de clientes, testimonios y servicios ofrecidos. Empieza gratis.",
       },
-      { property: "og:title", content: "Plantilla de CV para Freelancers y Remotos || CVAI" },
+      { property: "og:title", content: "Plantilla CV Freelancers y Remotos | CVAI" },
       { property: "og:url", content: "/freelancer-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/freelancer-resume-template" }],

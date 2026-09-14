@@ -5,12 +5,12 @@ import { teacherSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/teacher-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Docentes y Profesores || CVAI" },
+      { title: "Plantilla CV Docentes y Profesores | CVAI" },
       {
         name: "description",
         content: "Descarga la plantilla de currículum académico para profesores y docentes en México. Destaca materias, pedagogía y talleres educativos.",
       },
-      { property: "og:title", content: "Plantilla de CV para Docentes y Profesores || CVAI" },
+      { property: "og:title", content: "Plantilla CV Docentes y Profesores | CVAI" },
       { property: "og:url", content: "/teacher-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/teacher-resume-template" }],

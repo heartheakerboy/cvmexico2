@@ -5,12 +5,12 @@ import { accountantSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/accountant-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Contadores Públicos ATS || CVAI" },
+      { title: "Plantilla CV Contadores Públicos ATS | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum de contador público optimizado para el SAT y sistemas ATS. Formato limpio de una columna para auditoría y finanzas.",
       },
-      { property: "og:title", content: "Plantilla de CV para Contadores Públicos ATS || CVAI" },
+      { property: "og:title", content: "Plantilla CV Contadores Públicos ATS | CVAI" },
       { property: "og:url", content: "/accountant-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/accountant-resume-template" }],

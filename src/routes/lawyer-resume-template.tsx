@@ -5,12 +5,12 @@ import { lawyerSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/lawyer-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Abogados y Litigantes || CVAI" },
+      { title: "Plantilla CV Abogados y Litigantes | CVAI" },
       {
         name: "description",
         content: "Crea tu currículum legal premium. Formato serif elegante para abogados corporativos, civilistas y penalistas en México. Pruébala gratis.",
       },
-      { property: "og:title", content: "Plantilla de CV para Abogados y Litigantes || CVAI" },
+      { property: "og:title", content: "Plantilla CV Abogados y Litigantes | CVAI" },
       { property: "og:url", content: "/lawyer-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/lawyer-resume-template" }],

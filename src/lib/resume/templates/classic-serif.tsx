@@ -11,9 +11,9 @@ export function ClassicSerifTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#111827", fontSize: "10.5pt" }}>
       <header style={{ textAlign: "center", marginBottom: `${design.spacing * 1.3}em`, padding: "0.6em 0", borderTop: `3px double ${design.accent}`, borderBottom: `3px double ${design.accent}` }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.1em", fontWeight: 700, letterSpacing: "0.06em", color: design.accent }}>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.1em", fontWeight: 700, letterSpacing: "0.06em", color: design.accent }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         {doc.headline && <div style={{ color: muted, marginTop: "0.2em", fontStyle: "italic", letterSpacing: "0.03em" }}>{doc.headline}</div>}
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.4em" }}>{contactList(doc).join("  •  ")}</div>
       </header>

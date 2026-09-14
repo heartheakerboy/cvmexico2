@@ -21,7 +21,7 @@ export function MinimalAtsEliteTemplate({ doc, design, layout }: TemplateProps) 
         borderBottom: `1px solid ${design.accent || "#000"}`,
         paddingBottom: "1em"
       }}>
-        <h1 style={{ 
+        <div style={{ 
           fontFamily: FONT_STACKS[design.headingFont], 
           fontSize: "1.9em", 
           fontWeight: 700, 
@@ -31,7 +31,7 @@ export function MinimalAtsEliteTemplate({ doc, design, layout }: TemplateProps) 
           margin: 0
         }}>
           {doc.full_name || "Tu Nombre"}
-        </h1>
+        </div>
         
         {doc.headline && (
           <div style={{ 

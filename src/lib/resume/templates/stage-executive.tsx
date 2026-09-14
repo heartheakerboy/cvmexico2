@@ -36,7 +36,7 @@ export function StageExecutiveTemplate({ doc, design, layout }: TemplateProps) {
           paddingBottom: "1em",
           marginBottom: "0.5em"
         }}>
-          <h1 style={{
+          <div style={{
             fontSize: "1.9em",
             fontWeight: 700,
             color: "#0f172a",
@@ -45,7 +45,7 @@ export function StageExecutiveTemplate({ doc, design, layout }: TemplateProps) {
             margin: 0
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           {doc.headline && (
             <p style={{
               color: "#475569",

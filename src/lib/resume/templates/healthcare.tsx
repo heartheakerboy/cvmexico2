@@ -10,7 +10,7 @@ export function HealthcareTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#0f172a", fontSize: "10.5pt" }}>
       <header style={{ textAlign: "center", borderBottom: `2px solid ${hexToRgba(design.accent, 0.4)}`, paddingBottom: "0.8em", marginBottom: `${design.spacing}em` }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, color: design.accent }}>{doc.full_name || "Tu Nombre"}</h1>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, color: design.accent }}>{doc.full_name || "Tu Nombre"}</div>
         <div style={{ fontWeight: 500, letterSpacing: "0.02em" }}>{doc.headline}</div>
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.35em" }}>{contactList(doc).join("   •   ")}</div>
       </header>

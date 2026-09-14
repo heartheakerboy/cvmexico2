@@ -14,9 +14,9 @@ export function ProfessionalPlusTemplate({ doc, design, layout }: TemplateProps)
       <header style={{ display: "flex", alignItems: "center", gap: "0.9em", marginBottom: `${design.spacing * 1.2}em`, paddingBottom: "0.7em", borderBottom: `2px solid ${design.accent}` }}>
         <span style={{ width: "2.6em", height: "2.6em", borderRadius: "0.5em", background: design.accent, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "1.1em", flexShrink: 0 }}>{initials}</span>
         <div>
-          <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700 }}>
+          <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.9em", fontWeight: 700 }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && <div style={{ color: design.accent, fontWeight: 500 }}>{doc.headline}</div>}
           <div style={{ color: muted, fontSize: "0.82em", marginTop: "0.2em" }}>{contactList(doc).join("   ·   ")}</div>
         </div>

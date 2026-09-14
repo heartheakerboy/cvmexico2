@@ -45,7 +45,7 @@ export function ExecutiveLawyerTemplate({ doc, design, layout }: TemplateProps) 
             }}
           />
         )}
-        <h1 style={{
+        <div style={{
           fontSize: "1.85em",
           fontWeight: 700,
           color: "#000",
@@ -54,7 +54,7 @@ export function ExecutiveLawyerTemplate({ doc, design, layout }: TemplateProps) 
           textTransform: "uppercase"
         }}>
           {doc.full_name || "Nombre Completo"}
-        </h1>
+        </div>
         {doc.headline && (
           <p style={{
             fontSize: "0.9em",

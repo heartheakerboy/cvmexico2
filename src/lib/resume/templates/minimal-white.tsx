@@ -9,7 +9,7 @@ export function MinimalWhiteTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#1f2937", fontSize: "10.5pt", padding: "0.5em" }}>
       <header style={{ marginBottom: `${design.spacing * 1.6}em` }}>
-        <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.1em", fontWeight: 300, letterSpacing: "0.02em" }}>{doc.full_name || "Tu Nombre"}</h1>
+        <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "2.1em", fontWeight: 300, letterSpacing: "0.02em" }}>{doc.full_name || "Tu Nombre"}</div>
         <div style={{ color: muted, marginTop: "0.3em", letterSpacing: "0.04em" }}>{doc.headline}</div>
         <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.5em" }}>{contactList(doc).join("     ")}</div>
       </header>

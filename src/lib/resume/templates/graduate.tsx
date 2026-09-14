@@ -12,7 +12,7 @@ export function GraduateTemplate({ doc, design, layout }: TemplateProps) {
       <header style={{ background: hexToRgba(design.accent, 0.1), borderRadius: "16px", padding: "1.3em 1.4em", marginBottom: `${design.spacing}em`, display: "flex", alignItems: "center", gap: "1em" }}>
         {doc.photo_url && <img src={doc.photo_url} alt="" style={{ width: "5em", height: "5em", objectFit: "cover", borderRadius: "999px" }} />}
         <div>
-          <h1 style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, color: design.accent }}>{doc.full_name || "Tu Nombre"}</h1>
+          <div style={{ fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.8em", fontWeight: 700, color: design.accent }}>{doc.full_name || "Tu Nombre"}</div>
           <div style={{ fontWeight: 500 }}>{doc.headline}</div>
           <div style={{ color: muted, fontSize: "0.85em", marginTop: "0.3em" }}>{contactList(doc).join("  •  ")}</div>
         </div>

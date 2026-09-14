@@ -13,7 +13,7 @@ export function CreativeTemplate({ doc, design, layout }: TemplateProps) {
           <img src={doc.photo_url} alt="" style={{ width: "5.5em", height: "5.5em", objectFit: "cover", borderRadius: "999px", border: "3px solid rgba(255,255,255,0.7)" }} />
         )}
         <div>
-          <h1 style={{ fontFamily: FONT_STACKS.serif, fontSize: "2.3em", fontWeight: 700, lineHeight: 1, letterSpacing: "-0.01em" }}>{doc.full_name || "Tu Nombre"}</h1>
+          <div style={{ fontFamily: FONT_STACKS.serif, fontSize: "2.3em", fontWeight: 700, lineHeight: 1, letterSpacing: "-0.01em" }}>{doc.full_name || "Tu Nombre"}</div>
           <div style={{ fontStyle: "italic", fontSize: "1.05em", marginTop: "0.25em", opacity: 0.95 }}>{doc.headline}</div>
           <div style={{ fontSize: "0.82em", marginTop: "0.5em", opacity: 0.9 }}>{contactList(doc).join("   ·   ")}</div>
         </div>

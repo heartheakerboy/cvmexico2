@@ -54,20 +54,20 @@ import { TEMPLATES } from "@/lib/resume/registry";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
+      { title: "CVAI — Creador de Currículum con IA | Plantillas ATS México" },
       {
         name: "description",
         content:
           "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis.",
       },
-      { property: "og:title", content: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
+      { property: "og:title", content: "CVAI — Creador de Currículum con IA | Plantillas ATS México" },
       {
         property: "og:description",
         content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
+      { name: "twitter:title", content: "CVAI — Creador de Currículum con IA | Plantillas ATS México" },
       { name: "twitter:description", content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis." },
     ],
     scripts: [

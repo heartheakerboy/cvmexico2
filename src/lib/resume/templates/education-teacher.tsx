@@ -44,7 +44,7 @@ export function EducationTeacherTemplate({ doc, design, layout }: TemplateProps)
             }}
           />
         )}
-        <h1 style={{
+        <div style={{
           fontFamily: FONT_STACKS.serif, // Always elegant serif for name in teacher template
           fontSize: "1.9em",
           fontWeight: 700,
@@ -53,7 +53,7 @@ export function EducationTeacherTemplate({ doc, design, layout }: TemplateProps)
           letterSpacing: "0.01em"
         }}>
           {doc.full_name || "Nombre Completo"}
-        </h1>
+        </div>
         <p style={{
           fontSize: "0.95em",
           color: accent,

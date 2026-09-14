@@ -36,7 +36,7 @@ export function StageMidLevelTemplate({ doc, design, layout }: TemplateProps) {
           paddingBottom: "0.8em",
           marginBottom: "0.5em"
         }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.8em",
             fontWeight: 800,
@@ -44,7 +44,7 @@ export function StageMidLevelTemplate({ doc, design, layout }: TemplateProps) {
             margin: 0
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           {doc.headline && (
             <p style={{
               color: accent,

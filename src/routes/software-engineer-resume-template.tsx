@@ -5,12 +5,12 @@ import { softwareEngineerSample } from "@/lib/resume/industry-samples";
 export const Route = createFileRoute("/software-engineer-resume-template")({
   head: () => ({
     meta: [
-      { title: "Plantilla de Currículum para Ingeniero de Software ATS || CVAI" },
+      { title: "Plantilla CV Ingeniero de Software ATS | CVAI" },
       {
         name: "description",
         content: "Descarga la plantilla de CV para Ingeniero de Software optimizada para filtros ATS. Diseñada para programadores y desarrolladores en México. Empieza gratis.",
       },
-      { property: "og:title", content: "Plantilla de CV para Ingeniero de Software ATS || CVAI" },
+      { property: "og:title", content: "Plantilla CV Ingeniero de Software ATS | CVAI" },
       { property: "og:url", content: "/software-engineer-resume-template" },
     ],
     links: [{ rel: "canonical", href: "/software-engineer-resume-template" }],

@@ -35,10 +35,10 @@ export function MedicalTimelineEngine({ doc, design, layout }: TemplateProps, cf
             }} />
           )}
           <div>
-            <h1 style={{
+            <div style={{
               fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.5em",
               fontWeight: 800, margin: 0, color: "#0f172a",
-            }}>{doc.full_name || "Tu Nombre"}</h1>
+            }}>{doc.full_name || "Tu Nombre"}</div>
             {doc.headline && (
               <p style={{ fontSize: "0.88em", fontWeight: 600, color: accent, marginTop: "0.2em" }}>
                 {doc.headline}

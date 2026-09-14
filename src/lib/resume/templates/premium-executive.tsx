@@ -48,7 +48,7 @@ export function PremiumExecutiveTemplate({ doc, design, layout }: TemplateProps)
         )}
         
         <div style={{ borderBottom: `1px solid ${hexToRgba(textGold, 0.4)}`, paddingBottom: "1em" }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "1.6em", 
             fontWeight: 700, 
@@ -57,7 +57,7 @@ export function PremiumExecutiveTemplate({ doc, design, layout }: TemplateProps)
             letterSpacing: "0.02em"
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: textGold, 

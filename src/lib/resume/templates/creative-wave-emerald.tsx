@@ -155,7 +155,7 @@ export function CreativeWaveEmeraldTemplate({ doc, design, layout }: TemplatePro
       }}>
         {/* Name & Headline Header */}
         <header style={{ paddingBottom: "0.6em", borderBottom: `2px solid ${primaryColor}` }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "2.1em", 
             fontWeight: 800, 
@@ -164,7 +164,7 @@ export function CreativeWaveEmeraldTemplate({ doc, design, layout }: TemplatePro
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: mutedText, 

@@ -21,16 +21,20 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => {
     const isEjemplos = params.slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos";
     const isAts = params.slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" || params.slug === "cv-filtros-ats";
+    const isCarta = params.slug === "errores-carta-presentacion";
 
-    let title = "¿Cómo hacer un currículum vitae en México? Guía paso a paso (2026) | CVAI";
+    let title = "Cómo Hacer un Currículum Vitae en México (2026) | CVAI";
     let description = "Aprende cómo hacer un currículum vitae profesional en México paso a paso. Conoce qué poner, ejemplos reales antes/después, optimización para filtros ATS y formatos recomendados.";
 
     if (isEjemplos) {
-      title = "10 ejemplos de currículum vitae para diferentes trabajos (Guía México 2026) | CVAI";
+      title = "10 Ejemplos de Currículum Vitae Profesionales | CVAI";
       description = "Explora 10 ejemplos de currículum vitae reales adaptados a México: estudiantes, sin experiencia, recién egresados, ingenieros, ventas, directivos y trabajo remoto.";
     } else if (isAts) {
-      title = "¿Qué es un currículum ATS y cómo hacer un CV compatible? (México 2026) | CVAI";
+      title = "Qué es un Currículum ATS y Cómo Hacerlo Compatible | CVAI";
       description = "Descubre qué es un sistema ATS en México, cómo analizan tu CV las empresas y cómo optimizar el formato, estructura y palabras clave para superar los filtros de selección.";
+    } else if (isCarta) {
+      title = "10 Errores en Carta de Presentación y Soluciones | CVAI";
+      description = "Evita los errores más comunes al redactar tu carta de presentación laboral en México. Consejos prácticos, ejemplos y cómo destacar ante reclutadores.";
     }
 
     const canonicalUrl = `https://www.cvai.com.mx/blog/${params.slug}`;
@@ -42,6 +46,8 @@ export const Route = createFileRoute("/blog/$slug")({
         ? "10 ejemplos de currículum vitae para diferentes trabajos y perfiles profesionales"
         : isAts
         ? "¿Qué es un currículum ATS y cómo hacer un CV que pase los filtros de selección?"
+        : isCarta
+        ? "10 errores comunes en la carta de presentación y cómo evitarlos"
         : "¿Cómo hacer un currículum vitae en México? Guía paso a paso para crear un CV profesional",
       description: description,
       inLanguage: "es-MX",
@@ -141,6 +147,33 @@ export const Route = createFileRoute("/blog/$slug")({
               },
             },
           ]
+        : isCarta
+        ? [
+            {
+              "@type": "Question",
+              name: "¿Es obligatoria la carta de presentación en las empresas en México?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "No siempre es obligatoria, pero cuando una vacante la solicita o cuando compites con cientos de candidatos, una carta personalizada y bien redactada incrementa tus posibilidades de obtener una entrevista.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Qué extensión máxima debe tener una carta de presentación?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Debe tener como máximo una cuartilla (entre 250 y 350 palabras divididas en 3 o 4 párrafos concretos). Los reclutadores dedican menos de 1 minuto a leerla.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Debo repetir lo mismo que dice mi currículum en la carta?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "No. La carta de presentación complementa tu currículum, contextualizando tus mayores logros, tu motivación para unirte a esa empresa específica y cómo resolverás sus retos actuales.",
+              },
+            },
+          ]
         : [
             {
               "@type": "Question",
@@ -216,7 +249,8 @@ function BlogPostDetail() {
       slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" ||
       slug === "como-hacer-un-curriculum-vitae-mexico" ||
       slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" ||
-      slug === "cv-filtros-ats"
+      slug === "cv-filtros-ats" ||
+      slug === "errores-carta-presentacion"
     ) {
       return;
     }
@@ -254,6 +288,10 @@ function BlogPostDetail() {
 
   if (slug === "como-hacer-un-curriculum-vitae-mexico") {
     return <GuiaHacerCvArticle copyLink={copyLink} copied={copied} />;
+  }
+
+  if (slug === "errores-carta-presentacion") {
+    return <CartaPresentacionArticle copyLink={copyLink} copied={copied} />;
   }
 
   if (dbPost === undefined) {
@@ -1757,6 +1795,392 @@ function GuiaHacerCvArticle({ copyLink, copied }: { copyLink: () => void; copied
               <div className="space-y-2 text-xs">
                 <Link to="/blog/$slug" params={{ slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" }} className="block font-medium text-foreground hover:text-primary">
                   → 10 Ejemplos de CV para diferentes trabajos
+                </Link>
+                <Link to="/ats-checker" className="block text-muted-foreground hover:text-primary">
+                  → Verificador ATS Gratuito
+                </Link>
+                <Link to="/plantillas" className="block text-muted-foreground hover:text-primary">
+                  → Plantillas de CV para México
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+/* =======================================================================
+   ARTICLE 4: 10 ERRORES EN LA CARTA DE PRESENTACIÓN Y CÓMO EVITARLOS
+   ======================================================================= */
+function CartaPresentacionArticle({ copyLink, copied }: { copyLink: () => void; copied: boolean }) {
+  const [checkedList, setCheckedList] = useState<Record<number, boolean>>({});
+
+  const checklistItems = [
+    "¿Investigaste el nombre del reclutador, gerente de área o líder del equipo para personalizar el saludo?",
+    "¿El primer párrafo especifica claramente el puesto al que aspiras y el motivo de tu postulación?",
+    "¿Mencionas al menos 1 o 2 logros con cifras o resultados concretos que no son una copia idéntica de tu CV?",
+    "¿Explicas cómo tus habilidades solucionarán una necesidad o meta real de la empresa?",
+    "¿El tono es profesional, proactivo y respetuoso (evitando la arrogancia o la excesiva informalidad)?",
+    "¿La extensión total es de una cuartilla (entre 250 y 350 palabras divididas en 3 a 4 párrafos)?",
+    "¿Revisaste minuciosamente la ortografía, la acentuación y el nombre exacto de la empresa y del cargo?",
+    "¿Incluiste un llamado a la acción final proponiendo una breve conversación de 15 minutos?",
+  ];
+
+  function toggleCheck(index: number) {
+    setCheckedList((prev) => ({ ...prev, [index]: !prev[index] }));
+  }
+
+  const completedCount = Object.values(checkedList).filter(Boolean).length;
+
+  const erroresList = [
+    {
+      num: "01",
+      titulo: "Usar un saludo genérico y despersonalizado",
+      descripcion:
+        "Iniciar con 'A quien corresponda', 'Estimado señor/señora' o 'Estimado reclutador' denota que enviaste la misma carta de manera masiva a decenas de vacantes.",
+      solucion:
+        "Investiga en LinkedIn, en la publicación de empleo o en el sitio de la empresa quién lidera el área o el departamento de Recursos Humanos. Dirígete a la persona por su nombre (ej. 'Estimada Lic. Mariana Morales' o 'Estimado Ing. Roberto Castro'). Si es imposible averiguarlo, dirígete al equipo específico: 'Estimado Equipo de Selección de [Empresa]'.",
+    },
+    {
+      num: "02",
+      titulo: "Repetir palabra por palabra lo que ya está en tu currículum",
+      descripcion:
+        "La carta de presentación no es un resumen ejecutivo de tu trayectoria laboral ni una lista de empleos pasados.",
+      solucion:
+        "Utiliza la carta para contar el 'por qué' y el 'cómo': el contexto de tu mayor logro, por qué te entusiasma la misión de esa empresa y cómo tus habilidades transferibles resuelven sus retos actuales.",
+    },
+    {
+      num: "03",
+      titulo: "Enfocarte únicamente en lo que tú esperas obtener de la empresa",
+      descripcion:
+        "Frases como 'Esta vacante me permitirá crecer como profesional' o 'Busco una oportunidad para aprender' colocan el foco en tu beneficio personal.",
+      solucion:
+        "Invierte la perspectiva: demuestra qué valor recibirá la empresa al contratarte. Destaca cómo tu experiencia puede reducir costos, optimizar procesos, incrementar ventas o acelerar el desarrollo del equipo.",
+    },
+    {
+      num: "04",
+      titulo: "Extensión excesiva: escribir más de una cuartilla",
+      descripcion:
+        "Los reclutadores en México revisan decenas de postulaciones diarias y dedican entre 30 y 60 segundos a una carta.",
+      solucion:
+        "Mantén una extensión estricta de 1 cuartilla (entre 250 y 350 palabras). Estructura el documento en 3 o 4 párrafos claros y concisos.",
+    },
+    {
+      num: "05",
+      titulo: "Tono inapropiado: demasiado informal o excesivamente anticuado",
+      descripcion:
+        "Expresiones muy coloquiales le restan seriedad a tu candidatura, mientras que fórmulas arcaicas como 'Por medio de la presente me dirijo a su digna persona' suenan acartonadas.",
+      solucion:
+        "Adopta un tono profesional moderno, cordial, claro y directo. Habla con seguridad sobre tus capacidades sin sonar arrogante ni excesivamente sumiso.",
+    },
+    {
+      num: "06",
+      titulo: "Errores de ortografía o dejar el nombre de otra empresa",
+      descripcion:
+        "Es uno de los motivos de descarte automático más frecuentes: copiar una plantilla previa y olvidar cambiar el nombre de la compañía o del cargo.",
+      solucion:
+        "Lee el texto en voz alta antes de enviarlo. Utiliza correctores ortográficos y verifica dos veces que la empresa, el puesto y la persona destinataria coincidan con la vacante en curso.",
+    },
+    {
+      num: "07",
+      titulo: "Disculparte o resaltar habilidades que no tienes",
+      descripcion:
+        "Escribir 'A pesar de que no cuento con experiencia en el sector...' o 'Aunque no domino al 100% la herramienta...' condiciona negativamente al evaluador.",
+      solucion:
+        "Enfócate en lo que sí dominas y en tus capacidades de adaptación rápida. Resalta logros pasados con herramientas equivalentes y tu disposición para generar resultados inmediatos.",
+    },
+    {
+      num: "08",
+      titulo: "Ausencia total de métricas o evidencias cuantitativas",
+      descripcion:
+        "Afirmar 'Soy muy responsable y orientado a resultados' no aporta ninguna prueba real de tu impacto.",
+      solucion:
+        "Respalda tus afirmaciones con al menos una o dos cifras comprobables (ej. 'Lideré una optimización que redujo el tiempo de respuesta en un 35%' o 'Gestioné una cartera de más de 40 clientes corporativos').",
+    },
+    {
+      num: "09",
+      titulo: "Omitir una llamada a la acción (Call to Action) clara",
+      descripcion:
+        "Cerrar con una despedida pasiva como 'Quedo a sus órdenes' deja la iniciativa completamente en el aire.",
+      solucion:
+        "Propón proactivamente el siguiente paso con cortesía: 'Me encantaría coordinar una breve llamada de 15 minutos para compartir cómo estas estrategias pueden aplicarse a los objetivos de [Empresa] para este trimestre'.",
+    },
+    {
+      num: "10",
+      titulo: "Formato descuidado o enviar archivos editables (.docx roto)",
+      descripcion:
+        "Enviar un archivo de Word con fuentes no estándar puede verse desconfigurado en la pantalla del reclutador.",
+      solucion:
+        "Exporta siempre tu carta en formato PDF limpio, con márgenes de 2.5 cm, interlineado de 1.15 y tipografías universales legibles (Arial, Calibri o Inter). Asegúrate de que el diseño combine visualmente con tu currículum.",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteHeader />
+
+      <main className="container max-w-6xl mx-auto px-4 py-8 lg:py-12">
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
+          <Link to="/" className="hover:text-foreground transition-colors">
+            Inicio
+          </Link>
+          <ChevronRight className="h-3 w-3" />
+          <Link to="/blog" className="hover:text-foreground transition-colors">
+            Blog
+          </Link>
+          <ChevronRight className="h-3 w-3" />
+          <span className="text-foreground font-medium truncate max-w-xs">
+            10 Errores en la Carta de Presentación
+          </span>
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Main Article */}
+          <article className="lg:col-span-8 space-y-10">
+            {/* Header / Hero */}
+            <header className="space-y-4 border-b border-border pb-8">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary" className="text-xs font-semibold">
+                  Consejos Laborales • México
+                </Badge>
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> 10 min de lectura
+                </span>
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Calendar className="h-3 w-3" /> Actualizado 2026
+                </span>
+              </div>
+
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.15]">
+                10 errores comunes en la carta de presentación y cómo evitarlos
+              </h1>
+
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                Descubre los fallos más frecuentes que cometen los candidatos al postularse en México y aprende cómo redactar una carta persuasiva, profesional y orientada a conseguir entrevistas.
+              </p>
+
+              <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary text-sm">
+                    CV
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-foreground">Equipo Editorial CVAI</div>
+                    <div className="text-[11px] text-muted-foreground">Especialistas en Empleo y Reclutamiento en México</div>
+                  </div>
+                </div>
+
+                <Button variant="outline" size="sm" onClick={copyLink} className="gap-1.5 text-xs">
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Share2 className="h-3.5 w-3.5" />}
+                  {copied ? "¡Copiado!" : "Compartir"}
+                </Button>
+              </div>
+            </header>
+
+            {/* Intro Content */}
+            <section className="space-y-4 text-sm sm:text-base leading-relaxed text-muted-foreground">
+              <p>
+                En el mercado laboral mexicano actual, donde una sola vacante en portales como LinkedIn, OCCMundial o CompuTrabajo recibe entre 150 y 500 postulaciones, la <strong>carta de presentación</strong> (o carta de motivación) representa una valiosa oportunidad para destacar sobre la multitud.
+              </p>
+              <p>
+                Mientras que el currículum resume tus datos cronológicos, responsabilidades y credenciales académicas, la carta te permite <strong>demostrar tu voz profesional, tu entusiasmo genuino por el proyecto y el valor específico que aportarás a los objetivos de la empresa</strong>.
+              </p>
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 sm:p-5 flex items-start gap-3 text-amber-900 dark:text-amber-200">
+                <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                <div className="text-xs sm:text-sm leading-relaxed">
+                  <strong>Atención:</strong> Una carta de presentación genérica, con faltas ortográficas o copiada de Internet puede descartarte al instante, incluso si tu currículum cumple con todos los requisitos técnicos del puesto.
+                </div>
+              </div>
+            </section>
+
+            {/* The 10 Errors */}
+            <section className="space-y-8">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
+                Los 10 errores que debes erradicar de tu carta de presentación
+              </h2>
+
+              <div className="space-y-6">
+                {erroresList.map((err) => (
+                  <div
+                    key={err.num}
+                    className="rounded-2xl border border-border bg-card p-6 space-y-4 hover:border-primary/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary font-mono text-sm font-bold">
+                        {err.num}
+                      </span>
+                      <h3 className="font-display text-lg font-bold text-foreground">
+                        {err.titulo}
+                      </h3>
+                    </div>
+
+                    <div className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+                      <div className="flex items-start gap-2 bg-destructive/5 rounded-xl p-3 border border-destructive/20 text-destructive dark:text-red-400">
+                        <XCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="font-medium text-foreground">El error: </strong>
+                          {err.descripcion}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 bg-emerald-500/5 rounded-xl p-3 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="font-medium text-foreground">Cómo solucionarlo: </strong>
+                          {err.solucion}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Checklist */}
+            <section className="rounded-3xl border border-border bg-muted/20 p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+                    <CheckSquare className="h-6 w-6 text-primary" /> Lista de verificación antes de enviar tu carta
+                  </h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                    Marca cada elemento conforme lo verifiques en tu borrador.
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-extrabold text-primary">{completedCount}</span>
+                  <span className="text-xs text-muted-foreground">/{checklistItems.length}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                {checklistItems.map((item, idx) => {
+                  const isChecked = !!checkedList[idx];
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleCheck(idx)}
+                      className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-start gap-3 ${
+                        isChecked
+                          ? "border-emerald-500/30 bg-emerald-500/5 text-foreground line-through opacity-80"
+                          : "border-border bg-card hover:border-primary/40 text-foreground"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${
+                          isChecked
+                            ? "border-emerald-500 bg-emerald-500 text-white"
+                            : "border-muted-foreground/40 bg-background"
+                        }`}
+                      >
+                        {isChecked && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                      </span>
+                      <span className="leading-snug">{item}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* FAQs */}
+            <section className="space-y-6">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
+                <HelpCircle className="h-6 w-6 text-primary" /> Preguntas frecuentes sobre cartas de presentación
+              </h2>
+
+              <Accordion type="single" collapsible className="w-full space-y-3">
+                <AccordionItem value="item-1" className="border border-border rounded-2xl px-5 bg-card">
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-left">
+                    ¿Es obligatoria la carta de presentación en las empresas en México?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    No siempre es obligatoria, pero cuando una vacante la solicita explícitamente o cuando compites con cientos de candidatos en vacantes ejecutivas, tecnológicas o multinacionales, una carta bien redactada te coloca inmediatamente en el grupo prioritario de candidatos a entrevistar.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-2" className="border border-border rounded-2xl px-5 bg-card">
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-left">
+                    ¿Qué extensión máxima debe tener una carta de presentación?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    Debe tener como máximo una sola cuartilla (entre 250 y 350 palabras divididas en 3 o 4 párrafos concretos). Nunca envíes dos páginas de carta; los reclutadores no disponen del tiempo necesario para leer textos extensos.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3" className="border border-border rounded-2xl px-5 bg-card">
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-left">
+                    ¿Debo repetir lo mismo que dice mi currículum en la carta?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    No. Tu currículum ya contiene la cronología de tus cargos y funciones. En la carta debes explicar las motivaciones detrás de tus decisiones, tu afinidad cultural con la compañía y profundizar en el contexto de 1 o 2 logros específicos de alto impacto.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-4" className="border border-border rounded-2xl px-5 bg-card">
+                  <AccordionTrigger className="text-sm sm:text-base font-semibold text-left">
+                    ¿Conviene enviar la carta en el cuerpo del correo o adjuntarla en PDF?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    Si te postulas por correo electrónico directo al reclutador, puedes utilizar el texto de la carta directamente en el cuerpo del correo y adjuntar tu CV en PDF. Si te postulas a través de una plataforma ATS (como Workday, Taleo o Greenhouse), adjunta la carta como un documento PDF complementario.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </section>
+
+            {/* Bottom CTA Banner */}
+            <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 sm:p-10 space-y-4 text-center">
+              <h3 className="font-display text-2xl font-bold text-foreground">
+                Acompaña tu carta con un currículum ganador
+              </h3>
+              <p className="mx-auto max-w-lg text-sm text-muted-foreground">
+                En <strong>CVAI</strong> te ayudamos a crear un currículum vitae compatible con sistemas ATS, adaptado al mercado mexicano y con plantillas profesionales en menos de 10 minutos.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <Link to="/plantillas">
+                  <Button variant="outline">Ver plantillas de CV</Button>
+                </Link>
+                <Link to="/curriculum-vitae">
+                  <Button className="gap-2">
+                    Crear mi currículum ahora <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </article>
+
+          {/* Sidebar */}
+          <aside className="lg:col-span-4 space-y-6">
+            <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Bookmark className="h-3.5 w-3.5 text-primary" /> Recursos destacados
+              </h3>
+              <div className="space-y-2 text-xs">
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: "como-hacer-un-curriculum-vitae-mexico" }}
+                  className="block font-medium text-foreground hover:text-primary"
+                >
+                  → Cómo Hacer un CV en México (Paso a Paso)
+                </Link>
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" }}
+                  className="block font-medium text-foreground hover:text-primary"
+                >
+                  → 10 Ejemplos de CV Profesionales
+                </Link>
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: "que-es-un-curriculum-ats-como-hacer-cv-compatible" }}
+                  className="block text-muted-foreground hover:text-primary"
+                >
+                  → Qué es un CV ATS y cómo optimizarlo
                 </Link>
                 <Link to="/ats-checker" className="block text-muted-foreground hover:text-primary">
                   → Verificador ATS Gratuito

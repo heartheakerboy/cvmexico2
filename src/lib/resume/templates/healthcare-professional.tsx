@@ -43,7 +43,7 @@ export function HealthcareProfessionalTemplate({ doc, design, layout }: Template
         )}
         
         <div style={{ flex: 1 }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "1.85em", 
             fontWeight: 700, 
@@ -52,7 +52,7 @@ export function HealthcareProfessionalTemplate({ doc, design, layout }: Template
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: primaryColor, 

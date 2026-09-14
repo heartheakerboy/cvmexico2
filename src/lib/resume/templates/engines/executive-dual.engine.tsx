@@ -39,10 +39,10 @@ export function ExecutiveDualEngine({ doc, design, layout }: TemplateProps, cfg?
           }} />
         )}
         <div>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont], fontSize: "1.7em",
             fontWeight: 800, margin: 0, color: "#0f172a", letterSpacing: "-0.01em",
-          }}>{doc.full_name || "Tu Nombre"}</h1>
+          }}>{doc.full_name || "Tu Nombre"}</div>
           {doc.headline && (
             <p style={{ fontSize: "0.9em", fontWeight: 600, color: accent, marginTop: "0.15em", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               {doc.headline}

@@ -94,7 +94,7 @@ export function MarketingPortfolioTemplate({ doc, design, layout }: TemplateProp
       }}>
         {/* Name & Headline Block */}
         <header style={{ borderBottom: `2px solid ${hexToRgba(primaryColor, 0.15)}`, paddingBottom: "1.2em" }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "2.1em", 
             fontWeight: 800, 
@@ -103,7 +103,7 @@ export function MarketingPortfolioTemplate({ doc, design, layout }: TemplateProp
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: primaryColor, 

@@ -11,7 +11,7 @@ export function SimpleAtsTemplate({ doc, design, layout }: TemplateProps) {
   return (
     <div style={{ fontFamily: FONT_STACKS[design.bodyFont], color: "#000", fontSize: "10.5pt" }}>
       <header style={{ textAlign: "center", marginBottom: `${design.spacing}em` }}>
-        <h1 style={{ fontSize: "1.7em", fontWeight: 700 }}>{doc.full_name || "Tu Nombre"}</h1>
+        <div style={{ fontSize: "1.7em", fontWeight: 700 }}>{doc.full_name || "Tu Nombre"}</div>
         {doc.headline && <div style={{ marginTop: "0.15em" }}>{doc.headline}</div>}
         <div style={{ fontSize: "0.88em", marginTop: "0.3em" }}>{contactList(doc).join(" | ")}</div>
       </header>

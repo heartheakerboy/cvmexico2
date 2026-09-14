@@ -105,7 +105,7 @@ export function CreativePremiumPlusTemplate({ doc, design, layout }: TemplatePro
       }}>
         {/* Name and headline header */}
         <header style={{ marginBottom: "0.4em" }}>
-          <h1 style={{ 
+          <div style={{ 
             fontFamily: FONT_STACKS[design.headingFont], 
             fontSize: "2.2em", 
             fontWeight: 800, 
@@ -115,7 +115,7 @@ export function CreativePremiumPlusTemplate({ doc, design, layout }: TemplatePro
             margin: 0
           }}>
             {doc.full_name || "Tu Nombre"}
-          </h1>
+          </div>
           {doc.headline && (
             <div style={{ 
               color: accentColor, 

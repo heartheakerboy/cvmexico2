@@ -36,7 +36,7 @@ export function StageSeniorTemplate({ doc, design, layout }: TemplateProps) {
           paddingBottom: "1em",
           marginBottom: "0.5em"
         }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.9em",
             fontWeight: 800,
@@ -45,7 +45,7 @@ export function StageSeniorTemplate({ doc, design, layout }: TemplateProps) {
             letterSpacing: "0.01em"
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           {doc.headline && (
             <p style={{
               color: accent,

@@ -46,7 +46,7 @@ export function SalesExecutiveResultsTemplate({ doc, design, layout }: TemplateP
           />
         )}
         <div style={{ flex: 1 }}>
-          <h1 style={{
+          <div style={{
             fontFamily: FONT_STACKS[design.headingFont],
             fontSize: "1.75em",
             fontWeight: 700,
@@ -54,7 +54,7 @@ export function SalesExecutiveResultsTemplate({ doc, design, layout }: TemplateP
             margin: 0
           }}>
             {doc.full_name || "Nombre Completo"}
-          </h1>
+          </div>
           <p style={{
             fontSize: "0.95em",
             color: "#dcfce7",
