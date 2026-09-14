@@ -12,6 +12,7 @@ import {
   getAdminSmtpConfig,
   saveAdminSmtpConfig,
   sendTestSmtpEmail,
+  lookupMxRecord,
 } from "@/lib/smtp.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -454,7 +455,7 @@ function EmailsAdmin() {
     toast.info(`Configuración para ${p.name} aplicada`);
   }
 
-  function autoDetectFromEmail(emailInput?: string) {
+  async function autoDetectFromEmail(emailInput?: string) {
     const raw = (emailInput || smtpForm.user || smtpForm.fromEmail || "").trim();
     if (!raw.includes("@")) {
       toast.error("Ingresa primero un correo con '@' para auto-detectar");
@@ -469,8 +470,27 @@ function EmailsAdmin() {
       applyProvider(matched.id);
       toast.success(`Proveedor detectado: ${matched.name}`);
     } else {
+      // Query real DNS MX record for this domain
+      try {
+        const mxRes = await lookupMxRecord({ data: { domain } });
+        if (mxRes.ok && mxRes.host) {
+          applyProvider("cpanel", mxRes.host);
+          setSmtpForm((prev) => ({
+            ...prev,
+            host: mxRes.host,
+            port: 465,
+            secure: true,
+            ignoreTlsErrors: true,
+          }));
+          toast.success(`Servidor MX real detectado en DNS: ${mxRes.host}`);
+          return;
+        }
+      } catch (err) {
+        console.warn("Could not lookup MX via DoH:", err);
+      }
+
       applyProvider("cpanel", `mail.${domain}`);
-      toast.success(`Dominio @${domain} detectado. Host asignado: mail.${domain}`);
+      toast.success(`Dominio @${domain} detectado. Host sugerido: mail.${domain}`);
     }
   }
 
@@ -869,7 +889,14 @@ function EmailsAdmin() {
                     type="number"
                     placeholder="465 o 587"
                     value={smtpForm.port}
-                    onChange={(e) => setSmtpForm((f) => ({ ...f, port: Number(e.target.value) || 465 }))}
+                    onChange={(e) => {
+                      const p = Number(e.target.value) || 465;
+                      setSmtpForm((f) => ({
+                        ...f,
+                        port: p,
+                        secure: p === 465 ? true : p === 587 ? false : f.secure,
+                      }));
+                    }}
                   />
                 </div>
               </div>
@@ -879,12 +906,18 @@ function EmailsAdmin() {
                   <div className="space-y-0.5 pr-2">
                     <div className="text-sm font-medium">SSL / TLS directo</div>
                     <div className="text-xs text-muted-foreground">
-                      Activar para puerto 465. Desactivar para 587 (STARTTLS).
+                      Puerto 465 (SSL activo) / Puerto 587 (STARTTLS inactivo).
                     </div>
                   </div>
                   <Switch
                     checked={smtpForm.secure}
-                    onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, secure: v }))}
+                    onCheckedChange={(v) =>
+                      setSmtpForm((f) => ({
+                        ...f,
+                        secure: v,
+                        port: v ? (f.port === 587 ? 465 : f.port) : (f.port === 465 ? 587 : f.port),
+                      }))
+                    }
                   />
                 </div>
 

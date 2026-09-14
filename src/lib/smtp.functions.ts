@@ -28,6 +28,31 @@ export const saveAdminSmtpConfig = createServerFn({ method: "POST" })
     return { ok: true, success: true, message: "Configuración SMTP guardada exitosamente" };
   });
 
+export const lookupMxRecord = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: { domain: string }) => data)
+  .handler(async ({ data }) => {
+    const cleanDomain = data.domain.replace(/^.*@/, "").trim().toLowerCase();
+    try {
+      const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${cleanDomain}&type=MX`, {
+        headers: { accept: "application/dns-json" },
+      });
+      const json = await res.json();
+      if (json.Answer && json.Answer.length > 0) {
+        const sorted = json.Answer.sort((a: any, b: any) => {
+          const prioA = parseInt(a.data.split(" ")[0]) || 10;
+          const prioB = parseInt(b.data.split(" ")[0]) || 10;
+          return prioA - prioB;
+        });
+        const mxHost = sorted[0].data.split(" ")[1]?.replace(/\.$/, "") || "";
+        return { ok: true, host: mxHost };
+      }
+    } catch (err: any) {
+      console.warn("MX lookup error:", err);
+    }
+    return { ok: false, host: null };
+  });
+
 export const sendTestSmtpEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(
@@ -62,11 +87,29 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
 
     const { transporter } = await createSmtpTransporter(configToTest);
 
-    // 1. Verify connection
+    // 1. Verify connection with intelligent diagnostics
     try {
       await transporter.verify();
     } catch (verifyErr: any) {
-      throw new Error(`Error de conexión SMTP: ${verifyErr.message || String(verifyErr)}`);
+      const msg = verifyErr.message || String(verifyErr);
+      if (msg.includes("ETIMEDOUT")) {
+        throw new Error(
+          `Tiempo de espera agotado (ETIMEDOUT): El host '${configToTest.host}' en el puerto ${configToTest.port} no respondió. Verifica que el servidor sea correcto (no una IP de parking) y que el puerto sea el adecuado (465 para SSL o 587 para STARTTLS).`
+        );
+      } else if (
+        msg.includes("535") ||
+        msg.includes("Incorrect authentication data") ||
+        msg.includes("Invalid login")
+      ) {
+        throw new Error(
+          `Autenticación fallida (Error 535): Usuario o contraseña incorrectos en '${configToTest.host}'. Verifica que el usuario sea tu correo completo y que la contraseña sea correcta (o genera una 'Contraseña de aplicación' si usas Gmail/Outlook).`
+        );
+      } else if (msg.includes("ECONNREFUSED")) {
+        throw new Error(
+          `Conexión rechazada (ECONNREFUSED): El servidor '${configToTest.host}' rechazó la conexión en el puerto ${configToTest.port}. Prueba cambiando entre puerto 465 (SSL) y 587 (TLS).`
+        );
+      }
+      throw new Error(`Error de conexión SMTP: ${msg}`);
     }
 
     // 2. Send formatted test email
