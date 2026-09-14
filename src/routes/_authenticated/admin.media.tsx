@@ -213,11 +213,11 @@ function MediaAdmin() {
         if (dbErr) { toast.error(`${raw.name}: ${dbErr.message}`); continue; }
         ok++;
       } catch (e: any) {
-        toast.error(`Error subiendo ${raw.name}: ${e.message}`);
+        toast.error(`Error uploading ${raw.name}: ${e.message}`);
       }
     }
     setUploading(false);
-    if (ok) toast.success(`${ok} archivo(s) subido(s)`);
+    if (ok) toast.success(`${ok} file(s) uploaded`);
     load();
   }
 
@@ -268,11 +268,11 @@ function MediaAdmin() {
         is_svg: isSvg,
       }).eq("id", file.id);
 
-      toast.success("Archivo reemplazado");
+      toast.success("File replaced");
       load();
     } catch (e: any) {
       console.error(e);
-      toast.error("Error al reemplazar archivo: " + e.message);
+      toast.error("Error replacing file: " + e.message);
     } finally {
       setUploading(false);
     }
@@ -294,7 +294,7 @@ function MediaAdmin() {
     const { error } = await supabase.from("media_files").delete().in("id", ids);
     if (error) return toast.error(error.message);
     setSelected(new Set());
-    toast.success(`${ids.length} archivo(s) eliminado(s)`);
+    toast.success(`${ids.length} file(s) deleted`);
     load();
   }
 
@@ -316,8 +316,8 @@ function MediaAdmin() {
           <ImageIcon className="h-5 w-5" />
         </span>
         <div>
-          <h1 className="font-display text-2xl font-bold">Media library</h1>
-          <p className="text-sm text-muted-foreground">Upload, organize and compress files.</p>
+          <h1 className="font-display text-2xl font-bold">Media Library</h1>
+          <p className="text-sm text-muted-foreground">Upload, organize, and compress assets.</p>
         </div>
       </header>
 
@@ -328,17 +328,17 @@ function MediaAdmin() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Kpi icon={FileImage} label="Archivos" value={String(files!.length)} />
-            <Kpi icon={Folder} label="Carpetas" value={String(folders.length)} />
+            <Kpi icon={FileImage} label="Files" value={String(files!.length)} />
+            <Kpi icon={Folder} label="Folders" value={String(folders.length)} />
             <Kpi icon={FileCode} label="SVG" value={String(svgCount)} />
-            <Kpi icon={HardDrive} label="Almacenamiento" value={humanSize(totalSize)} />
+            <Kpi icon={HardDrive} label="Storage" value={humanSize(totalSize)} />
           </div>
 
           {/* Upload bar */}
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex flex-wrap items-end gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Subir a carpeta</Label>
+                <Label className="text-xs">Upload to folder</Label>
                 <Select value={uploadFolder} onValueChange={setUploadFolder}>
                   <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -348,18 +348,18 @@ function MediaAdmin() {
               </div>
               <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
                 <input type="checkbox" checked={compress} onChange={(e) => setCompress(e.target.checked)} className="h-4 w-4 rounded border-border" />
-                Comprimir imágenes (WebP, máx 1600px)
+                Compress images (WebP, max 1600px)
               </label>
               <div className="ml-auto flex gap-2">
                 <Button variant="outline" onClick={() => setFolderDialog(true)}>
-                  <FolderPlus className="mr-2 h-4 w-4" />Nueva carpeta
+                  <FolderPlus className="mr-2 h-4 w-4" />New folder
                 </Button>
-                <Button variant="outline" size="icon" onClick={() => load()} title="Recargar">
+                <Button variant="outline" size="icon" onClick={() => load()} title="Reload">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
                 <Button onClick={() => fileInput.current?.click()} disabled={uploading}>
                   {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                  Subir archivos
+                  Upload files
                 </Button>
               </div>
             </div>
@@ -391,7 +391,7 @@ function MediaAdmin() {
               onClick={() => setActiveFolder("all")}
               className={`rounded-full px-3 py-1 text-xs font-medium ${activeFolder === "all" ? "bg-primary text-primary-foreground" : "border border-border bg-background text-muted-foreground"}`}
             >
-              Todas
+              All
             </button>
             {folders.map((f) => (
               <button
@@ -409,7 +409,7 @@ function MediaAdmin() {
                 className="ml-auto"
                 onClick={() => removeFiles(Array.from(selected))}
               >
-                <Trash2 className="mr-2 h-4 w-4" />Eliminar {selected.size}
+                <Trash2 className="mr-2 h-4 w-4" />Delete {selected.size}
               </Button>
             )}
           </div>
@@ -417,7 +417,7 @@ function MediaAdmin() {
           {/* Grid */}
           {visible.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-              No hay archivos en esta carpeta. Sube algunos para empezar.
+              No files in this folder. Upload some to get started.
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -431,7 +431,7 @@ function MediaAdmin() {
                     <button
                       onClick={() => toggleSelect(f.id)}
                       className={`absolute left-2 top-2 z-10 flex h-5 w-5 items-center justify-center rounded-md border ${sel ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background/80"}`}
-                      aria-label="Seleccionar"
+                      aria-label="Select"
                     >
                       {sel && <Check className="h-3.5 w-3.5" />}
                     </button>
@@ -448,7 +448,7 @@ function MediaAdmin() {
                           variant="outline" size="sm" className="h-7 flex-1 text-[11px]"
                           onClick={() => { replaceTarget.current = f; replaceInput.current?.click(); }}
                         >
-                          <ReplaceIcon className="mr-1 h-3 w-3" />Reemplazar
+                          <ReplaceIcon className="mr-1 h-3 w-3" />Replace
                         </Button>
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeFiles([f.id])}>
                           <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -466,25 +466,25 @@ function MediaAdmin() {
       {/* New folder dialog */}
       <Dialog open={folderDialog} onOpenChange={setFolderDialog}>
         <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Nueva carpeta</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>New Folder</DialogTitle></DialogHeader>
           <div className="space-y-1.5">
-            <Label className="text-xs">Nombre</Label>
+            <Label className="text-xs">Name</Label>
             <Input value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="logos" />
           </div>
           <DialogFooter>
             <Button
               onClick={() => {
                 const name = slug(newFolder.trim());
-                if (!name) return toast.error("Escribe un nombre");
+                if (!name) return toast.error("Please enter a name");
                 setExtraFolders((s) => Array.from(new Set([...s, name])));
                 setUploadFolder(name);
                 setActiveFolder(name);
                 setNewFolder("");
                 setFolderDialog(false);
-                toast.success("Carpeta creada");
+                toast.success("Folder created");
               }}
             >
-              <Layers className="mr-2 h-4 w-4" />Crear
+              <Layers className="mr-2 h-4 w-4" />Create
             </Button>
           </DialogFooter>
         </DialogContent>

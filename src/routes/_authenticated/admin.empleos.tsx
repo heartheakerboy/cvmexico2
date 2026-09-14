@@ -115,7 +115,7 @@ function JobsAdmin() {
   }
 
   async function save() {
-    if (!form.title.trim()) { toast.error("El título es obligatorio"); return; }
+    if (!form.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const payload = {
       title: form.title.trim(),
@@ -135,16 +135,16 @@ function JobsAdmin() {
       : await supabase.from("occupations").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(editId ? "Ocupación actualizada" : "Ocupación creada");
+    toast.success(editId ? "Job role updated" : "Job role created");
     setDialog(false);
     load();
   }
 
   async function remove(id: string) {
-    if (!confirm("¿Eliminar esta ocupación?")) return;
+    if (!confirm("Delete this job role?")) return;
     const { error } = await supabase.from("occupations").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Ocupación eliminada");
+    toast.success("Job role deleted");
     setRows((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -158,22 +158,22 @@ function JobsAdmin() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-semibold">Jobs database</h1>
-          <p className="text-sm text-muted-foreground">Ocupaciones, habilidades, salarios y más.</p>
+          <h1 className="font-display text-2xl font-semibold">Jobs Database</h1>
+          <p className="text-sm text-muted-foreground">Occupations, skills, salary ranges, and resume tips.</p>
         </div>
-        <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> Nueva ocupación</Button>
+        <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> New Job Role</Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={Briefcase} label="Ocupaciones" value={(rows?.length ?? 0).toString()} />
-        <Kpi icon={Building2} label="Industrias" value={industries.toString()} />
-        <Kpi icon={Star} label="Destacadas" value={(rows ?? []).filter((r) => r.featured).length.toString()} />
-        <Kpi icon={FileText} label="Ejemplos CV" value={(rows ?? []).reduce((a, r) => a + r.resume_examples.length, 0).toString()} />
+        <Kpi icon={Briefcase} label="Job Roles" value={(rows?.length ?? 0).toString()} />
+        <Kpi icon={Building2} label="Industries" value={industries.toString()} />
+        <Kpi icon={Star} label="Featured" value={(rows ?? []).filter((r) => r.featured).length.toString()} />
+        <Kpi icon={FileText} label="Resume Examples" value={(rows ?? []).reduce((a, r) => a + r.resume_examples.length, 0).toString()} />
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Buscar por título, industria o habilidad…"
+        <Input className="pl-9" placeholder="Search by title, industry, or skill…"
           value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
 
@@ -181,12 +181,12 @@ function JobsAdmin() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Ocupación</TableHead>
-              <TableHead>Industria</TableHead>
-              <TableHead>Habilidades</TableHead>
-              <TableHead>Salario</TableHead>
-              <TableHead>Destacada</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead>Job Role</TableHead>
+              <TableHead>Industry</TableHead>
+              <TableHead>Skills</TableHead>
+              <TableHead>Salary</TableHead>
+              <TableHead>Featured</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -196,7 +196,7 @@ function JobsAdmin() {
               </TableCell></TableRow>
             ) : filtered.length === 0 ? (
               <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                Sin ocupaciones.
+                No job roles found.
               </TableCell></TableRow>
             ) : filtered.map((o) => (
               <TableRow key={o.id}>
@@ -232,11 +232,11 @@ function JobsAdmin() {
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editId ? "Editar ocupación" : "Nueva ocupación"}</DialogTitle>
+            <DialogTitle>{editId ? "Edit Job Role" : "New Job Role"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label>Título</Label>
+              <Label>Title</Label>
               <Input value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value, slug: editId ? f.slug : slugify(e.target.value) }))} />
             </div>
@@ -245,16 +245,16 @@ function JobsAdmin() {
               <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} />
             </div>
             <div className="space-y-1.5">
-              <Label>Industria</Label>
+              <Label>Industry</Label>
               <Input value={form.industry} onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))} />
             </div>
             <div className="space-y-1.5">
-              <Label>Descripción</Label>
+              <Label>Description</Label>
               <Textarea rows={3} value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
             </div>
             <div className="space-y-1.5">
-              <Label className="flex items-center gap-1"><GraduationCap className="h-4 w-4" /> Habilidades (separadas por coma)</Label>
+              <Label className="flex items-center gap-1"><GraduationCap className="h-4 w-4" /> Skills (comma separated)</Label>
               <Input value={form.skills} onChange={(e) => setForm((f) => ({ ...f, skills: e.target.value }))} />
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -269,28 +269,28 @@ function JobsAdmin() {
                   onChange={(e) => setForm((f) => ({ ...f, salary_max: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Moneda</Label>
+                <Label>Currency</Label>
                 <Input value={form.salary_currency}
                   onChange={(e) => setForm((f) => ({ ...f, salary_currency: e.target.value }))} />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="flex items-center gap-1"><Building2 className="h-4 w-4" /> Universidades (separadas por coma)</Label>
+              <Label className="flex items-center gap-1"><Building2 className="h-4 w-4" /> Universities (comma separated)</Label>
               <Input value={form.universities} onChange={(e) => setForm((f) => ({ ...f, universities: e.target.value }))} />
             </div>
             <div className="space-y-1.5">
-              <Label className="flex items-center gap-1"><FileText className="h-4 w-4" /> Ejemplos de CV (separados por coma)</Label>
+              <Label className="flex items-center gap-1"><FileText className="h-4 w-4" /> Resume Examples (comma separated)</Label>
               <Input value={form.resume_examples} onChange={(e) => setForm((f) => ({ ...f, resume_examples: e.target.value }))} />
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border p-3">
-              <Label>Destacada</Label>
+              <Label>Featured</Label>
               <Switch checked={form.featured} onCheckedChange={(v) => setForm((f) => ({ ...f, featured: v }))} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setDialog(false)}>Cancel</Button>
             <Button onClick={save} disabled={saving}>
-              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar
+              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Save
             </Button>
           </DialogFooter>
         </DialogContent>

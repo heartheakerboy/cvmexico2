@@ -40,8 +40,8 @@ type ApiKey = {
 const ROLES = ["admin", "user"] as const;
 
 const PERMISSIONS: { role: string; caps: string[] }[] = [
-  { role: "admin", caps: ["Gestionar usuarios", "Facturación", "Configuración", "Contenido", "Seguridad"] },
-  { role: "user", caps: ["Crear CV", "Descargar", "Editar perfil"] },
+  { role: "admin", caps: ["Manage users", "Billing", "Settings", "Content", "Security"] },
+  { role: "user", caps: ["Create resume", "Download", "Edit profile"] },
 ];
 
 function severityBadge(s: string) {
@@ -72,7 +72,7 @@ function Kpi({ icon: Icon, label, value }: { icon: React.ComponentType<{ classNa
 
 function fmt(d: string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" });
+  return new Date(d).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 }
 
 function SecurityAdmin() {
@@ -116,21 +116,21 @@ function SecurityAdmin() {
   }, [logs, query]);
 
   async function saveRole() {
-    if (!roleForm.user_id.trim()) { toast.error("El ID de usuario es obligatorio"); return; }
+    if (!roleForm.user_id.trim()) { toast.error("User ID is required"); return; }
     setRoleSaving(true);
     const { error } = await supabase.from("user_roles")
       .insert({ user_id: roleForm.user_id.trim(), role: roleForm.role as "admin" | "user" });
     setRoleSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Rol asignado");
+    toast.success("Role assigned");
     setRoleDialog(false); setRoleForm({ user_id: "", role: "user" }); load();
   }
 
   async function removeRole(id: string) {
-    if (!confirm("¿Revocar este rol?")) return;
+    if (!confirm("Revoke this role?")) return;
     const { error } = await supabase.from("user_roles").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Rol revocado");
+    toast.success("Role revoked");
     setRoles((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -141,7 +141,7 @@ function SecurityAdmin() {
   }
 
   async function saveKey() {
-    if (!keyForm.name.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!keyForm.name.trim()) { toast.error("Name is required"); return; }
     setKeySaving(true);
     const prefix = `cvmx_live_${Math.random().toString(36).slice(2, 6)}`;
     const { error } = await supabase.from("api_keys").insert({
@@ -149,7 +149,7 @@ function SecurityAdmin() {
     });
     setKeySaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success(`Clave creada: ${prefix}••••`);
+    toast.success(`Key created: ${prefix}••••`);
     setKeyDialog(false); setKeyForm({ name: "", scopes: "read", active: true }); load();
   }
 
@@ -160,10 +160,10 @@ function SecurityAdmin() {
   }
 
   async function removeKey(id: string) {
-    if (!confirm("¿Eliminar esta clave? Dejará de funcionar de inmediato.")) return;
+    if (!confirm("Delete this API key? It will stop working immediately.")) return;
     const { error } = await supabase.from("api_keys").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Clave eliminada");
+    toast.success("Key deleted");
     setKeys((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -171,40 +171,40 @@ function SecurityAdmin() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-semibold">Security</h1>
-        <p className="text-sm text-muted-foreground">Roles, auditoría, 2FA y sesiones.</p>
+        <p className="text-sm text-muted-foreground">Roles, audit logs, 2FA, and sessions.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={ShieldCheck} label="Administradores" value={adminCount.toString()} />
-        <Kpi icon={ScrollText} label="Eventos críticos" value={criticalCount.toString()} />
-        <Kpi icon={KeyRound} label="API keys activas" value={activeKeys.toString()} />
-        <Kpi icon={Users} label="Roles asignados" value={(roles?.length ?? 0).toString()} />
+        <Kpi icon={ShieldCheck} label="Administrators" value={adminCount.toString()} />
+        <Kpi icon={ScrollText} label="Critical events" value={criticalCount.toString()} />
+        <Kpi icon={KeyRound} label="Active API keys" value={activeKeys.toString()} />
+        <Kpi icon={Users} label="Assigned roles" value={(roles?.length ?? 0).toString()} />
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex-wrap">
           <TabsTrigger value="roles">Roles</TabsTrigger>
-          <TabsTrigger value="permissions">Permisos</TabsTrigger>
-          <TabsTrigger value="audit">Auditoría</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
+          <TabsTrigger value="audit">Audit Log</TabsTrigger>
           <TabsTrigger value="2fa">2FA</TabsTrigger>
-          <TabsTrigger value="sessions">Sesiones</TabsTrigger>
-          <TabsTrigger value="keys">API keys</TabsTrigger>
+          <TabsTrigger value="sessions">Sessions</TabsTrigger>
+          <TabsTrigger value="keys">API Keys</TabsTrigger>
         </TabsList>
 
         {/* ROLES */}
         <TabsContent value="roles" className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">Roles asignados a los usuarios.</p>
-            <Button onClick={() => setRoleDialog(true)}><Plus className="mr-1 h-4 w-4" /> Asignar rol</Button>
+            <p className="text-sm text-muted-foreground">Roles assigned to users.</p>
+            <Button onClick={() => setRoleDialog(true)}><Plus className="mr-1 h-4 w-4" /> Assign role</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Usuario (ID)</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Asignado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>User (ID)</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Assigned</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -213,14 +213,14 @@ function SecurityAdmin() {
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : roles.length === 0 ? (
                   <TableRow><TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
-                    Sin roles asignados</TableCell></TableRow>
+                    No assigned roles</TableCell></TableRow>
                 ) : roles.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="font-mono text-xs">{r.user_id}</TableCell>
                     <TableCell>{roleBadge(r.role)}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{fmt(r.created_at)}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => removeRole(r.id)} title="Revocar">
+                      <Button variant="ghost" size="icon" onClick={() => removeRole(r.id)} title="Revoke">
                         <Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
                   </TableRow>
@@ -248,7 +248,7 @@ function SecurityAdmin() {
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Los permisos se derivan del rol mediante la función segura <code>has_role</code>.
+            Permissions are derived from the role using the secure function <code>has_role</code>.
           </p>
         </TabsContent>
 
@@ -256,19 +256,19 @@ function SecurityAdmin() {
         <TabsContent value="audit" className="space-y-4">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="pl-9" placeholder="Buscar en la auditoría…" value={query}
+            <Input className="pl-9" placeholder="Search audit logs…" value={query}
               onChange={(e) => setQuery(e.target.value)} />
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Acción</TableHead>
+                  <TableHead>Action</TableHead>
                   <TableHead>Actor</TableHead>
                   <TableHead>IP</TableHead>
-                  <TableHead>Severidad</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Severity</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -277,7 +277,7 @@ function SecurityAdmin() {
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : filteredLogs.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
-                    Sin eventos</TableCell></TableRow>
+                    No events</TableCell></TableRow>
                 ) : filteredLogs.map((l) => (
                   <TableRow key={l.id}>
                     <TableCell>
@@ -292,7 +292,7 @@ function SecurityAdmin() {
                     <TableCell>{severityBadge(l.severity)}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{fmt(l.created_at)}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => clearLog(l.id)} title="Eliminar">
+                      <Button variant="ghost" size="icon" onClick={() => clearLog(l.id)} title="Delete">
                         <Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
                   </TableRow>
@@ -310,21 +310,21 @@ function SecurityAdmin() {
                 <Fingerprint className="h-6 w-6" />
               </span>
               <div className="flex-1">
-                <h2 className="font-display text-lg font-semibold">Autenticación en dos pasos</h2>
+                <h2 className="font-display text-lg font-semibold">Two-Factor Authentication</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Exige un segundo factor a las cuentas del equipo para reforzar el acceso.
+                  Require a second factor for team accounts to enforce secure access.
                 </p>
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-between rounded-xl border border-border p-3">
-                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> Requerir 2FA a administradores</div>
+                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> Require 2FA for administrators</div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between rounded-xl border border-border p-3">
-                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> App de autenticación (TOTP)</div>
+                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> Authenticator App (TOTP)</div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between rounded-xl border border-border p-3">
-                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> Códigos por SMS</div>
+                    <div className="flex items-center gap-2 text-sm"><Lock className="h-4 w-4" /> SMS verification codes</div>
                     <Switch />
                   </div>
                 </div>
@@ -339,15 +339,15 @@ function SecurityAdmin() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dispositivo</TableHead>
-                  <TableHead>Ubicación</TableHead>
+                  <TableHead>Device</TableHead>
+                  <TableHead>Location</TableHead>
                   <TableHead>IP</TableHead>
-                  <TableHead>Estado</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {[
-                  { d: "Chrome · macOS", loc: "Ciudad de México, MX", ip: "187.190.12.4", cur: true },
+                  { d: "Chrome · macOS", loc: "Mexico City, MX", ip: "187.190.12.4", cur: true },
                   { d: "Safari · iPhone", loc: "Guadalajara, MX", ip: "201.145.9.88", cur: false },
                   { d: "Edge · Windows", loc: "Monterrey, MX", ip: "189.203.4.7", cur: false },
                 ].map((s) => (
@@ -357,31 +357,31 @@ function SecurityAdmin() {
                     <TableCell className="text-sm">{s.loc}</TableCell>
                     <TableCell className="font-mono text-xs">{s.ip}</TableCell>
                     <TableCell>
-                      {s.cur ? <Badge>Actual</Badge> : <Badge variant="secondary">Activa</Badge>}
+                      {s.cur ? <Badge>Current</Badge> : <Badge variant="secondary">Active</Badge>}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-          <p className="text-xs text-muted-foreground">Vista de referencia de sesiones activas.</p>
+          <p className="text-xs text-muted-foreground">Reference view of active sessions.</p>
         </TabsContent>
 
         {/* API KEYS */}
         <TabsContent value="keys" className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">Claves para integraciones externas.</p>
-            <Button onClick={() => setKeyDialog(true)}><Plus className="mr-1 h-4 w-4" /> Nueva clave</Button>
+            <p className="text-sm text-muted-foreground">Keys for external integrations.</p>
+            <Button onClick={() => setKeyDialog(true)}><Plus className="mr-1 h-4 w-4" /> New API key</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Clave</TableHead>
-                  <TableHead>Permisos</TableHead>
-                  <TableHead>Activa</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Key</TableHead>
+                  <TableHead>Permissions</TableHead>
+                  <TableHead>Active</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -390,14 +390,14 @@ function SecurityAdmin() {
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : keys.length === 0 ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
-                    Sin claves</TableCell></TableRow>
+                    No API keys</TableCell></TableRow>
                 ) : keys.map((k) => (
                   <TableRow key={k.id}>
                     <TableCell className="font-medium">{k.name}</TableCell>
                     <TableCell>
                       <button
                         className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => { navigator.clipboard.writeText(k.key_prefix); toast.success("Prefijo copiado"); }}
+                        onClick={() => { navigator.clipboard.writeText(k.key_prefix); toast.success("Prefix copied"); }}
                       >
                         {k.key_prefix}•••• <Copy className="h-3 w-3" />
                       </button>
@@ -405,7 +405,7 @@ function SecurityAdmin() {
                     <TableCell><Badge variant="outline">{k.scopes}</Badge></TableCell>
                     <TableCell><Switch checked={k.active} onCheckedChange={() => toggleKey(k)} /></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => toggleKey(k)} title={k.active ? "Revocar" : "Activar"}>
+                      <Button variant="ghost" size="icon" onClick={() => toggleKey(k)} title={k.active ? "Revoke" : "Activate"}>
                         {k.active ? <Ban className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}</Button>
                       <Button variant="ghost" size="icon" onClick={() => removeKey(k.id)}>
                         <Trash2 className="h-4 w-4" /></Button>
@@ -421,15 +421,15 @@ function SecurityAdmin() {
       {/* Assign role dialog */}
       <Dialog open={roleDialog} onOpenChange={setRoleDialog}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Asignar rol</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Assign Role</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>ID de usuario</Label>
-              <Input placeholder="uuid del usuario" value={roleForm.user_id}
+              <Label>User ID</Label>
+              <Input placeholder="User UUID" value={roleForm.user_id}
                 onChange={(e) => setRoleForm({ ...roleForm, user_id: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Rol</Label>
+              <Label>Role</Label>
               <Select value={roleForm.role} onValueChange={(v) => setRoleForm({ ...roleForm, role: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -439,9 +439,9 @@ function SecurityAdmin() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRoleDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setRoleDialog(false)}>Cancel</Button>
             <Button onClick={saveRole} disabled={roleSaving}>
-              {roleSaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Asignar</Button>
+              {roleSaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Assign</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -449,31 +449,31 @@ function SecurityAdmin() {
       {/* New API key dialog */}
       <Dialog open={keyDialog} onOpenChange={setKeyDialog}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Nueva API key</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>New API Key</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nombre</Label>
+              <Label>Name</Label>
               <Input value={keyForm.name} onChange={(e) => setKeyForm({ ...keyForm, name: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Permisos</Label>
+              <Label>Permissions</Label>
               <Select value={keyForm.scopes} onValueChange={(v) => setKeyForm({ ...keyForm, scopes: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="read">Solo lectura</SelectItem>
-                  <SelectItem value="read,write">Lectura y escritura</SelectItem>
+                  <SelectItem value="read">Read only</SelectItem>
+                  <SelectItem value="read,write">Read and write</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-border p-3">
-              <Label>Activa</Label>
+              <Label>Active</Label>
               <Switch checked={keyForm.active} onCheckedChange={(v) => setKeyForm({ ...keyForm, active: v })} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setKeyDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setKeyDialog(false)}>Cancel</Button>
             <Button onClick={saveKey} disabled={keySaving}>
-              {keySaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Crear</Button>
+              {keySaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Create</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

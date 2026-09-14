@@ -18,7 +18,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getTranslationHealthReport } from "@/lib/i18n.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/traducciones")({
-  head: () => ({ meta: [{ title: "Traducciones | Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Translations | Admin" }, { name: "robots", content: "noindex" }] }),
   component: TranslationsPage,
 });
 
@@ -68,10 +68,10 @@ function TranslationsPage() {
           duplicateKeys: res.duplicateKeys || [],
         });
       } else {
-        toast.error("Error al cargar reporte: " + (res?.error || "Desconocido"));
+        toast.error("Error loading health report: " + (res?.error || "Unknown"));
       }
     } catch (err: any) {
-      toast.error("Error al cargar reporte: " + err.message);
+      toast.error("Error loading health report: " + err.message);
     } finally {
       setHealthLoading(false);
     }
@@ -97,7 +97,7 @@ function TranslationsPage() {
 
   async function saveAll() {
     const changed = Object.entries(drafts).filter(([, v]) => v.trim().length > 0);
-    if (!changed.length) return toast.info("No hay cambios por guardar");
+    if (!changed.length) return toast.info("No changes to save");
     setSaving(true);
     const payload = changed.map(([key, value]) => ({ locale, key, value }));
     const { error } = await supabase.from("translations").upsert(payload, { onConflict: "locale,key" });
@@ -105,7 +105,7 @@ function TranslationsPage() {
     if (error) return toast.error(error.message);
     setOverrides((o) => ({ ...o, ...Object.fromEntries(changed) }));
     setDrafts({});
-    toast.success(`${changed.length} traducciones guardadas`);
+    toast.success(`${changed.length} translations saved`);
   }
 
   function exportJson() {
@@ -130,9 +130,9 @@ function TranslationsPage() {
           if (typeof v === "string" && BASE_KEYS.includes(k)) next[k] = v;
         }
         setDrafts((d) => ({ ...d, ...next }));
-        toast.success(`${Object.keys(next).length} claves cargadas. Revisa y guarda.`);
+        toast.success(`${Object.keys(next).length} keys loaded. Review and save.`);
       } catch {
-        toast.error("Archivo JSON inválido");
+        toast.error("Invalid JSON file");
       }
     };
     reader.readAsText(file);
@@ -147,8 +147,8 @@ function TranslationsPage() {
           <Languages className="h-5 w-5" />
         </span>
         <div>
-          <h1 className="font-display text-2xl font-semibold">Traducciones</h1>
-          <p className="text-sm text-muted-foreground">Gestiona idiomas, edita, importa/exporta y detecta traducciones faltantes.</p>
+          <h1 className="font-display text-2xl font-semibold">Translations</h1>
+          <p className="text-sm text-muted-foreground">Manage languages, edit, import/export, and detect missing translations.</p>
         </div>
       </header>
 
@@ -156,49 +156,49 @@ function TranslationsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Claves de Traducción</span>
+            <span className="text-sm font-medium text-muted-foreground">Translation Keys</span>
             <Layers className="h-5 w-5 text-primary opacity-70" />
           </div>
           <p className="mt-2 text-3xl font-bold">{BASE_KEYS.length}</p>
-          <p className="text-xs text-muted-foreground">Claves base en español</p>
+          <p className="text-xs text-muted-foreground">Base keys in Spanish</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Progreso ({locale.toUpperCase()})</span>
+            <span className="text-sm font-medium text-muted-foreground">Progress ({locale.toUpperCase()})</span>
             <CheckCircle2 className="h-5 w-5 text-emerald-500 opacity-70" />
           </div>
           <p className="mt-2 text-3xl font-bold">{pct}%</p>
-          <p className="text-xs text-muted-foreground">{missingCount} claves faltantes</p>
+          <p className="text-xs text-muted-foreground">{missingCount} missing keys</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Claves Sin Usar</span>
+            <span className="text-sm font-medium text-muted-foreground">Unused Keys</span>
             <ShieldAlert className="h-5 w-5 text-amber-500 opacity-70" />
           </div>
           <p className="mt-2 text-3xl font-bold">
             {healthLoading ? <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /> : healthData?.unusedKeys.length ?? "—"}
           </p>
-          <p className="text-xs text-muted-foreground">No encontradas en el código</p>
+          <p className="text-xs text-muted-foreground">Not found in codebase</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Valores Duplicados</span>
+            <span className="text-sm font-medium text-muted-foreground">Duplicate Values</span>
             <AlertTriangle className="h-5 w-5 text-rose-500 opacity-70" />
           </div>
           <p className="mt-2 text-3xl font-bold">
             {healthLoading ? <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /> : healthData?.duplicateKeys.length ?? "—"}
           </p>
-          <p className="text-xs text-muted-foreground">Traducciones repetidas en base</p>
+          <p className="text-xs text-muted-foreground">Repeated translations in base dictionary</p>
         </div>
       </div>
 
       <Tabs defaultValue="editor" className="space-y-5">
         <TabsList className="grid w-full grid-cols-2 max-w-xs">
           <TabsTrigger value="editor">Editor</TabsTrigger>
-          <TabsTrigger value="health">Reporte de Salud</TabsTrigger>
+          <TabsTrigger value="health">Health Report</TabsTrigger>
         </TabsList>
 
         <TabsContent value="editor" className="space-y-4">
@@ -208,36 +208,36 @@ function TranslationsPage() {
               <SelectContent>
                 {LOCALES.map((l) => (
                   <SelectItem key={l.code} value={l.code}>
-                    {l.flag} {l.label}{!l.enabled ? " (próximamente)" : ""}
+                    {l.flag} {l.label}{!l.enabled ? " (coming soon)" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <span className="text-sm text-muted-foreground">
-              {pct}% completo · {missingCount} faltantes de {BASE_KEYS.length}
+              {pct}% complete · {missingCount} missing of {BASE_KEYS.length}
             </span>
             <div className="ml-auto flex flex-wrap gap-2">
               <Button variant={onlyMissing ? "default" : "outline"} size="sm" onClick={() => setOnlyMissing((v) => !v)}>
-                <AlertTriangle className="mr-1.5 h-4 w-4" /> Faltantes
+                <AlertTriangle className="mr-1.5 h-4 w-4" /> Missing
               </Button>
               <Button variant="outline" size="sm" onClick={exportJson}>
-                <Download className="mr-1.5 h-4 w-4" /> Exportar
+                <Download className="mr-1.5 h-4 w-4" /> Export
               </Button>
               <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
-                <Upload className="mr-1.5 h-4 w-4" /> Importar
+                <Upload className="mr-1.5 h-4 w-4" /> Import
               </Button>
               <input ref={fileRef} type="file" accept="application/json" className="hidden"
                 onChange={(e) => e.target.files?.[0] && importJson(e.target.files[0])} />
               <Button size="sm" onClick={saveAll} disabled={saving || !Object.keys(drafts).length}>
                 {saving ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Save className="mr-1.5 h-4 w-4" />}
-                Guardar
+                Save
               </Button>
             </div>
           </div>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="pl-9" placeholder="Buscar por clave o texto…" value={q} onChange={(e) => setQ(e.target.value)} />
+            <Input className="pl-9" placeholder="Search by key or text…" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
 
           {loading ? (
@@ -252,31 +252,31 @@ function TranslationsPage() {
                   </div>
                   <Input
                     value={effective(k)}
-                    placeholder={isMissing(k) ? "— falta traducción —" : ""}
+                    placeholder={isMissing(k) ? "— missing translation —" : ""}
                     className={isMissing(k) && !drafts[k] ? "border-destructive/50" : ""}
                     onChange={(e) => setDrafts((d) => ({ ...d, [k]: e.target.value }))}
                     disabled={locale === "es"}
                   />
                 </div>
               ))}
-              {!rows.length && <p className="p-8 text-center text-sm text-muted-foreground">Sin resultados</p>}
+              {!rows.length && <p className="p-8 text-center text-sm text-muted-foreground">No results found</p>}
             </div>
           )}
         </TabsContent>
 
         <TabsContent value="health" className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-bold">Análisis de Integridad de Traducciones</h2>
+            <h2 className="font-display text-lg font-bold">Translation Health Analysis</h2>
             <Button size="sm" variant="outline" onClick={loadHealthReport} disabled={healthLoading}>
               <RefreshCw className={`mr-1.5 h-4 w-4 ${healthLoading ? "animate-spin" : ""}`} />
-              Escanear Código
+              Scan Codebase
             </Button>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Language Coverage */}
             <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
-              <h3 className="font-semibold text-sm">Cobertura de Idiomas</h3>
+              <h3 className="font-semibold text-sm">Language Coverage</h3>
               <div className="space-y-3.5">
                 {ENABLED_LOCALES.map((langItem) => {
                   const itemPct = langItem.code === "es" ? 100 : pct;
@@ -297,19 +297,19 @@ function TranslationsPage() {
 
             {/* General Health Status */}
             <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
-              <h3 className="font-semibold text-sm">Estado de Integridad</h3>
+              <h3 className="font-semibold text-sm">Integrity Status</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                  <span>Idiomas activos: <strong>{ENABLED_LOCALES.map((l) => l.label).join(", ")}</strong></span>
+                  <span>Active languages: <strong>{ENABLED_LOCALES.map((l) => l.label).join(", ")}</strong></span>
                 </li>
                 <li className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-rose-500 shrink-0" />
-                  <span>Traducciones pendientes en {locale.toUpperCase()}: <strong>{missingCount}</strong></span>
+                  <span>Pending translations in {locale.toUpperCase()}: <strong>{missingCount}</strong></span>
                 </li>
                 <li className="flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 text-amber-500 shrink-0" />
-                  <span>Claves no utilizadas detectadas: <strong>{healthData?.unusedKeys.length ?? "..."}</strong></span>
+                  <span>Unused keys detected: <strong>{healthData?.unusedKeys.length ?? "..."}</strong></span>
                 </li>
               </ul>
             </div>
@@ -319,8 +319,8 @@ function TranslationsPage() {
           <div className="grid gap-6 md:grid-cols-2">
             {/* Unused Keys List */}
             <div className="rounded-2xl border border-border bg-card p-5 space-y-3 flex flex-col h-[400px]">
-              <h3 className="font-semibold text-sm">Claves Sin Usar en el Código ({healthData?.unusedKeys.length ?? 0})</h3>
-              <p className="text-xs text-muted-foreground">Estas claves están definidas en el diccionario pero no se encontraron referencias en los archivos del código de la aplicación.</p>
+              <h3 className="font-semibold text-sm">Unused Keys in Codebase ({healthData?.unusedKeys.length ?? 0})</h3>
+              <p className="text-xs text-muted-foreground">These keys are defined in the dictionary but have no references in application source files.</p>
               
               <div className="flex-1 overflow-y-auto pr-1 space-y-2">
                 {healthLoading ? (
@@ -333,15 +333,15 @@ function TranslationsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-xs text-muted-foreground py-8">Ninguna clave huérfana detectada.</p>
+                  <p className="text-center text-xs text-muted-foreground py-8">No orphaned keys detected.</p>
                 )}
               </div>
             </div>
 
             {/* Duplicate values list */}
             <div className="rounded-2xl border border-border bg-card p-5 space-y-3 flex flex-col h-[400px]">
-              <h3 className="font-semibold text-sm">Valores Base Duplicados ({healthData?.duplicateKeys.length ?? 0})</h3>
-              <p className="text-xs text-muted-foreground">Estas traducciones tienen valores exactamente iguales en español y podrían consolidarse bajo una única clave genérica.</p>
+              <h3 className="font-semibold text-sm">Duplicate Base Values ({healthData?.duplicateKeys.length ?? 0})</h3>
+              <p className="text-xs text-muted-foreground">These translations have identical values in Spanish and could be consolidated under a single generic key.</p>
               
               <div className="flex-1 overflow-y-auto pr-1 space-y-3">
                 {healthLoading ? (
@@ -349,7 +349,7 @@ function TranslationsPage() {
                 ) : healthData && healthData.duplicateKeys.length > 0 ? (
                   healthData.duplicateKeys.map((item, idx) => (
                     <div key={idx} className="rounded-lg border border-border p-2 bg-secondary/20 space-y-1">
-                      <span className="text-xs font-semibold text-foreground">Valor: "{item.value}"</span>
+                      <span className="text-xs font-semibold text-foreground">Value: "{item.value}"</span>
                       <div className="flex flex-wrap gap-1">
                         {item.keys.map((k) => (
                           <code key={k} className="text-[10px] bg-background border px-1.5 py-0.5 rounded text-muted-foreground">{k}</code>
@@ -358,7 +358,7 @@ function TranslationsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-xs text-muted-foreground py-8">No se encontraron traducciones duplicadas.</p>
+                  <p className="text-center text-xs text-muted-foreground py-8">No duplicate translations found.</p>
                 )}
               </div>
             </div>
@@ -367,10 +367,10 @@ function TranslationsPage() {
       </Tabs>
 
       {locale === "es" && (
-        <p className="text-xs text-muted-foreground">El español es el idioma base y se edita en el código fuente.</p>
+        <p className="text-xs text-muted-foreground">Spanish is the base language and is edited directly in the source code.</p>
       )}
       <p className="text-xs text-muted-foreground">
-        Idiomas activos: {ENABLED_LOCALES.map((l) => l.label).join(", ")}. Los demás se activan al completar sus traducciones.
+        Active languages: {ENABLED_LOCALES.map((l) => l.label).join(", ")}. Others will be enabled upon completing their translations.
       </p>
     </div>
   );

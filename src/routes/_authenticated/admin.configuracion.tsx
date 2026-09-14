@@ -154,7 +154,7 @@ function SettingsAdmin() {
           <TabsTrigger value="languages"><Globe className="mr-1.5 h-3.5 w-3.5" />Languages</TabsTrigger>
           <TabsTrigger value="currency"><DollarSign className="mr-1.5 h-3.5 w-3.5" />Currency</TabsTrigger>
           <TabsTrigger value="flags"><Flag className="mr-1.5 h-3.5 w-3.5" />Feature flags</TabsTrigger>
-          <TabsTrigger value="legal_company"><Scale className="mr-1.5 h-3.5 w-3.5" />Legal & Empresa</TabsTrigger>
+          <TabsTrigger value="legal_company"><Scale className="mr-1.5 h-3.5 w-3.5" />Legal & Company</TabsTrigger>
           <TabsTrigger value="maintenance"><Wrench className="mr-1.5 h-3.5 w-3.5" />Maintenance</TabsTrigger>
         </TabsList>
 
@@ -302,16 +302,16 @@ function SettingsAdmin() {
         </TabsContent>
 
         <TabsContent value="legal_company">
-          <SectionCard icon={Scale} title="Legal, Empresa & Confianza" desc="Información corporativa, correos de contacto, fechas de vigencia y proveedores de infraestructura.">
+          <SectionCard icon={Scale} title="Legal, Company & Trust" desc="Corporate details, legal emails, policy effective dates, and infrastructure providers.">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Nombre Legal de la Empresa / Plataforma">
+              <Field label="Legal Company / Platform Name">
                 <Input
                   value={data.legal_company?.companyName || ""}
                   onChange={(e) => patch("legal_company", { companyName: e.target.value })}
                   placeholder="Curriculum Vitae AI"
                 />
               </Field>
-              <Field label="Nombre Comercial / Marca">
+              <Field label="Brand / Commercial Name">
                 <Input
                   value={data.legal_company?.brandName || ""}
                   onChange={(e) => patch("legal_company", { brandName: e.target.value })}
@@ -321,7 +321,7 @@ function SettingsAdmin() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              <Field label="Correo de Soporte">
+              <Field label="Support Email">
                 <Input
                   type="email"
                   value={data.legal_company?.supportEmail || ""}
@@ -329,7 +329,7 @@ function SettingsAdmin() {
                   placeholder="support@cvai.com.mx"
                 />
               </Field>
-              <Field label="Correo Legal / Privacidad (ARCO)">
+              <Field label="Legal / Privacy Email (ARCO)">
                 <Input
                   type="email"
                   value={data.legal_company?.legalEmail || ""}
@@ -337,7 +337,7 @@ function SettingsAdmin() {
                   placeholder="legal@cvai.com.mx"
                 />
               </Field>
-              <Field label="Correo de Negocios / Alianzas">
+              <Field label="Business / Partnerships Email">
                 <Input
                   type="email"
                   value={data.legal_company?.businessEmail || ""}
@@ -348,21 +348,21 @@ function SettingsAdmin() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              <Field label="Dirección / Domicilio">
+              <Field label="Address / Headquarters">
                 <Input
                   value={data.legal_company?.address || ""}
                   onChange={(e) => patch("legal_company", { address: e.target.value })}
-                  placeholder="Ciudad de México"
+                  placeholder="Mexico City"
                 />
               </Field>
-              <Field label="País">
+              <Field label="Country">
                 <Input
                   value={data.legal_company?.country || ""}
                   onChange={(e) => patch("legal_company", { country: e.target.value })}
-                  placeholder="México"
+                  placeholder="Mexico"
                 />
               </Field>
-              <Field label="URL Oficial del Sitio">
+              <Field label="Official Website URL">
                 <Input
                   value={data.legal_company?.websiteUrl || ""}
                   onChange={(e) => patch("legal_company", { websiteUrl: e.target.value })}
@@ -371,81 +371,81 @@ function SettingsAdmin() {
               </Field>
             </div>
 
-            <Field label="Descripción de Entidad Legal / Registro">
+            <Field label="Legal Entity Description / Registration">
               <Textarea
                 rows={2}
                 value={data.legal_company?.legalEntityInfo || ""}
                 onChange={(e) => patch("legal_company", { legalEntityInfo: e.target.value })}
-                placeholder="Plataforma digital independiente de desarrollo tecnológico y optimización laboral en México."
+                placeholder="Independent digital platform for tech development and career optimization in Mexico."
               />
             </Field>
 
             <div className="pt-2 border-t border-border">
-              <h3 className="text-sm font-semibold mb-3">Fechas de Última Actualización de Políticas</h3>
+              <h3 className="text-sm font-semibold mb-3">Policy Last Updated Dates</h3>
               <div className="grid gap-4 sm:grid-cols-3">
-                <Field label="Política de Privacidad">
+                <Field label="Privacy Policy">
                   <Input
                     value={data.legal_company?.privacyUpdated || ""}
                     onChange={(e) => patch("legal_company", { privacyUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
-                <Field label="Términos y Condiciones">
+                <Field label="Terms & Conditions">
                   <Input
                     value={data.legal_company?.termsUpdated || ""}
                     onChange={(e) => patch("legal_company", { termsUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
-                <Field label="Política de Reembolsos">
+                <Field label="Refund Policy">
                   <Input
                     value={data.legal_company?.refundUpdated || ""}
                     onChange={(e) => patch("legal_company", { refundUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
-                <Field label="Política de Cookies">
+                <Field label="Cookie Policy">
                   <Input
                     value={data.legal_company?.cookieUpdated || ""}
                     onChange={(e) => patch("legal_company", { cookieUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
-                <Field label="Aviso Legal / Disclaimer">
+                <Field label="Legal Notice / Disclaimer">
                   <Input
                     value={data.legal_company?.disclaimerUpdated || ""}
                     onChange={(e) => patch("legal_company", { disclaimerUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
-                <Field label="Transparencia de IA">
+                <Field label="AI Transparency">
                   <Input
                     value={data.legal_company?.aiTransparencyUpdated || ""}
                     onChange={(e) => patch("legal_company", { aiTransparencyUpdated: e.target.value })}
-                    placeholder="14 de Septiembre de 2026"
+                    placeholder="September 14, 2026"
                   />
                 </Field>
               </div>
             </div>
 
             <div className="pt-2 border-t border-border">
-              <h3 className="text-sm font-semibold mb-3">Proveedores de Infraestructura Actuales</h3>
+              <h3 className="text-sm font-semibold mb-3">Current Infrastructure Providers</h3>
               <div className="grid gap-4 sm:grid-cols-3">
-                <Field label="Pasarela de Pago">
+                <Field label="Payment Gateway">
                   <Input
                     value={data.legal_company?.paymentProvider || ""}
                     onChange={(e) => patch("legal_company", { paymentProvider: e.target.value })}
                     placeholder="Lemon Squeezy"
                   />
                 </Field>
-                <Field label="Proveedor de IA">
+                <Field label="AI Provider">
                   <Input
                     value={data.legal_company?.aiProvider || ""}
                     onChange={(e) => patch("legal_company", { aiProvider: e.target.value })}
                     placeholder="DeepSeek AI"
                   />
                 </Field>
-                <Field label="Almacenamiento en la Nube">
+                <Field label="Cloud Storage">
                   <Input
                     value={data.legal_company?.storageProvider || ""}
                     onChange={(e) => patch("legal_company", { storageProvider: e.target.value })}
@@ -456,7 +456,7 @@ function SettingsAdmin() {
             </div>
 
             <div className="pt-2 border-t border-border">
-              <h3 className="text-sm font-semibold mb-3">Redes Sociales</h3>
+              <h3 className="text-sm font-semibold mb-3">Social Media</h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="LinkedIn">
                   <Input

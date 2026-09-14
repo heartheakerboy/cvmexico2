@@ -133,7 +133,7 @@ function AiAdmin() {
       toast.error(error.message);
     } else {
       setActiveProvider(val);
-      toast.success("Proveedor DeepSeek activo configurado");
+      toast.success("Active DeepSeek provider configured");
     }
   }
 
@@ -167,7 +167,7 @@ function AiAdmin() {
   }
 
   async function savePrompt() {
-    if (!promptForm.name.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!promptForm.name.trim()) { toast.error("Prompt name is required"); return; }
     setSaving(true);
     const base = {
       name: promptForm.name.trim(),
@@ -193,7 +193,7 @@ function AiAdmin() {
       }
       setSaving(false);
       if (error) { toast.error(error.message); return; }
-      toast.success(contentChanged ? `Guardado como v${nextVersion}` : "Prompt actualizado");
+      toast.success(contentChanged ? `Saved as v${nextVersion}` : "Prompt updated");
     } else {
       const { data, error } = await supabase.from("ai_prompts").insert({ ...base, version: 1 }).select().single();
       if (!error && data) {
@@ -204,17 +204,17 @@ function AiAdmin() {
       }
       setSaving(false);
       if (error) { toast.error(error.message); return; }
-      toast.success("Prompt creado");
+      toast.success("Prompt created");
     }
     setPromptDialog(false);
     load();
   }
 
   async function removePrompt(id: string) {
-    if (!confirm("¿Eliminar este prompt y su historial?")) return;
+    if (!confirm("Delete this prompt and its version history?")) return;
     const { error } = await supabase.from("ai_prompts").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Prompt eliminado");
+    toast.success("Prompt deleted");
     setPrompts((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -245,7 +245,7 @@ function AiAdmin() {
   }
 
   async function saveModel() {
-    if (!modelForm.name.trim() || !modelForm.model_id.trim()) { toast.error("Nombre y ID del modelo son obligatorios"); return; }
+    if (!modelForm.name.trim() || !modelForm.model_id.trim()) { toast.error("Model Name and ID are required"); return; }
     setSaving(true);
     const payload = {
       name: modelForm.name.trim(),
@@ -261,16 +261,16 @@ function AiAdmin() {
       : await supabase.from("ai_models").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(modelEditId ? "Modelo actualizado" : "Modelo creado");
+    toast.success(modelEditId ? "Model updated" : "Model created");
     setModelDialog(false);
     load();
   }
 
   async function removeModel(id: string) {
-    if (!confirm("¿Eliminar este modelo?")) return;
+    if (!confirm("Delete this model?")) return;
     const { error } = await supabase.from("ai_models").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Modelo eliminado");
+    toast.success("Model deleted");
     setModels((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -283,25 +283,25 @@ function AiAdmin() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">AI management</h1>
-        <p className="text-sm text-muted-foreground">Prompts, modelos, créditos y costos.</p>
+        <h1 className="font-display text-2xl font-semibold">AI Management</h1>
+        <p className="text-sm text-muted-foreground">Prompts, models, credits, and usage costs.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={Sparkles} label="Prompts activos" value={(prompts ?? []).filter((p) => p.active).length.toString()} />
-        <Kpi icon={Cpu} label="Modelos activos" value={(models ?? []).filter((m) => m.enabled).length.toString()} />
-        <Kpi icon={CreditCard} label="Límite crédito/mes" value={monthlyCredits.toLocaleString()} />
-        <Kpi icon={DollarSign} label="Costo prom. /1k tok" value={`$${avgCost.toFixed(2)}`} />
+        <Kpi icon={Sparkles} label="Active Prompts" value={(prompts ?? []).filter((p) => p.active).length.toString()} />
+        <Kpi icon={Cpu} label="Active Models" value={(models ?? []).filter((m) => m.enabled).length.toString()} />
+        <Kpi icon={CreditCard} label="Monthly Credit Limit" value={monthlyCredits.toLocaleString()} />
+        <Kpi icon={DollarSign} label="Avg Cost / 1k Tokens" value={`$${avgCost.toFixed(2)}`} />
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h3 className="font-medium text-base flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            Proveedor de IA Principal Activo
+            Primary Active AI Engine
           </h3>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Selecciona qué motor de inteligencia artificial responderá a las peticiones del editor y simulador.
+            Select the artificial intelligence engine that responds to builder and simulator requests.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -319,8 +319,8 @@ function AiAdmin() {
       <Tabs defaultValue="prompts">
         <TabsList>
           <TabsTrigger value="prompts">Prompts</TabsTrigger>
-          <TabsTrigger value="models">Modelos</TabsTrigger>
-          <TabsTrigger value="costs">Costos y límites</TabsTrigger>
+          <TabsTrigger value="models">Models</TabsTrigger>
+          <TabsTrigger value="costs">Costs & Limits</TabsTrigger>
         </TabsList>
 
         {/* Prompts */}
@@ -328,21 +328,21 @@ function AiAdmin() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="relative max-w-sm flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Buscar prompt…" value={query}
+              <Input className="pl-9" placeholder="Search prompts…" value={query}
                 onChange={(e) => setQuery(e.target.value)} />
             </div>
-            <Button onClick={openNewPrompt}><Plus className="mr-1 h-4 w-4" /> Nuevo prompt</Button>
+            <Button onClick={openNewPrompt}><Plus className="mr-1 h-4 w-4" /> New Prompt</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Prompt</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead>Modelo</TableHead>
-                  <TableHead>Versión</TableHead>
-                  <TableHead>Activo</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Model</TableHead>
+                  <TableHead>Version</TableHead>
+                  <TableHead>Active</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -352,7 +352,7 @@ function AiAdmin() {
                   </TableCell></TableRow>
                 ) : filteredPrompts.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                    Sin prompts.
+                    No prompts found.
                   </TableCell></TableRow>
                 ) : filteredPrompts.map((p) => (
                   <TableRow key={p.id}>
@@ -365,13 +365,13 @@ function AiAdmin() {
                     <TableCell><Badge variant="secondary">v{p.version}</Badge></TableCell>
                     <TableCell><Switch checked={p.active} onCheckedChange={() => togglePrompt(p)} /></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openVersions(p)} title="Historial">
+                      <Button variant="ghost" size="icon" onClick={() => openVersions(p)} title="Version History">
                         <History className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => openEditPrompt(p)}>
+                      <Button variant="ghost" size="icon" onClick={() => openEditPrompt(p)} title="Edit">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => removePrompt(p.id)}>
+                      <Button variant="ghost" size="icon" onClick={() => removePrompt(p.id)} title="Delete">
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>
@@ -385,18 +385,18 @@ function AiAdmin() {
         {/* Models */}
         <TabsContent value="models" className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={openNewModel}><Plus className="mr-1 h-4 w-4" /> Nuevo modelo</Button>
+            <Button onClick={openNewModel}><Plus className="mr-1 h-4 w-4" /> New Model</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Modelo</TableHead>
-                  <TableHead>Proveedor</TableHead>
-                  <TableHead>Costo in / out (1k)</TableHead>
-                  <TableHead>Límite/mes</TableHead>
-                  <TableHead>Activo</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Model</TableHead>
+                  <TableHead>Provider</TableHead>
+                  <TableHead>Input / Output Cost (1k)</TableHead>
+                  <TableHead>Monthly Limit</TableHead>
+                  <TableHead>Active</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -406,7 +406,7 @@ function AiAdmin() {
                   </TableCell></TableRow>
                 ) : models.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                    Sin modelos.
+                    No models found.
                   </TableCell></TableRow>
                 ) : models.map((m) => (
                   <TableRow key={m.id}>
@@ -419,10 +419,10 @@ function AiAdmin() {
                     <TableCell>{m.monthly_credit_limit?.toLocaleString() ?? "—"}</TableCell>
                     <TableCell><Switch checked={m.enabled} onCheckedChange={() => toggleModel(m)} /></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openEditModel(m)}>
+                      <Button variant="ghost" size="icon" onClick={() => openEditModel(m)} title="Edit">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => removeModel(m.id)}>
+                      <Button variant="ghost" size="icon" onClick={() => removeModel(m.id)} title="Delete">
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </TableCell>
@@ -443,15 +443,15 @@ function AiAdmin() {
                 <div key={m.id} className="rounded-2xl border border-border bg-card p-4">
                   <div className="flex items-center justify-between">
                     <div className="font-medium">{m.name}</div>
-                    <Badge variant={m.enabled ? "default" : "outline"}>{m.enabled ? "Activo" : "Inactivo"}</Badge>
+                    <Badge variant={m.enabled ? "default" : "outline"}>{m.enabled ? "Active" : "Inactive"}</Badge>
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
                     <div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" /> Entrada</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" /> Input</div>
                       <div className="font-semibold">${m.cost_input}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" /> Salida</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1"><DollarSign className="h-3 w-3" /> Output</div>
                       <div className="font-semibold">${m.cost_output}</div>
                     </div>
                     <div>
@@ -460,13 +460,13 @@ function AiAdmin() {
                     </div>
                   </div>
                   <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
-                    <CreditCard className="h-3 w-3" /> Límite mensual: {limit ? limit.toLocaleString() + " créditos" : "sin límite"}
+                    <CreditCard className="h-3 w-3" /> Monthly limit: {limit ? limit.toLocaleString() + " credits" : "no limit"}
                   </div>
                 </div>
               );
             })}
             {(models ?? []).length === 0 && (
-              <p className="text-sm text-muted-foreground">Añade modelos para ver costos y límites.</p>
+              <p className="text-sm text-muted-foreground">Add models to view costs and limits.</p>
             )}
           </div>
         </TabsContent>
@@ -476,11 +476,11 @@ function AiAdmin() {
       <Dialog open={promptDialog} onOpenChange={setPromptDialog}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{promptEditId ? "Editar prompt" : "Nuevo prompt"}</DialogTitle>
+            <DialogTitle>{promptEditId ? "Edit Prompt" : "New Prompt"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label>Nombre</Label>
+              <Label>Name</Label>
               <Input value={promptForm.name}
                 onChange={(e) => setPromptForm((f) => ({ ...f, name: e.target.value, slug: promptEditId ? f.slug : slugify(e.target.value) }))} />
             </div>
@@ -490,41 +490,41 @@ function AiAdmin() {
                 <Input value={promptForm.slug} onChange={(e) => setPromptForm((f) => ({ ...f, slug: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Categoría</Label>
+                <Label>Category</Label>
                 <Input value={promptForm.category} onChange={(e) => setPromptForm((f) => ({ ...f, category: e.target.value }))} />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Contenido del prompt</Label>
+              <Label>Prompt Content</Label>
               <Textarea rows={5} value={promptForm.content}
                 onChange={(e) => setPromptForm((f) => ({ ...f, content: e.target.value }))} />
-              <p className="text-xs text-muted-foreground">Usa {"{{variables}}"} para valores dinámicos. Al cambiar el contenido se crea una nueva versión.</p>
+              <p className="text-xs text-muted-foreground">Use {"{{variables}}"} for dynamic injection. Changing content automatically creates a new version.</p>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label>Modelo</Label>
+                <Label>Model</Label>
                 <Input value={promptForm.model} onChange={(e) => setPromptForm((f) => ({ ...f, model: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Temperatura</Label>
+                <Label>Temperature</Label>
                 <Input type="number" step="0.1" value={promptForm.temperature}
                   onChange={(e) => setPromptForm((f) => ({ ...f, temperature: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Max tokens</Label>
+                <Label>Max Tokens</Label>
                 <Input type="number" value={promptForm.max_tokens}
                   onChange={(e) => setPromptForm((f) => ({ ...f, max_tokens: e.target.value }))} />
               </div>
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border p-3">
-              <Label>Activo</Label>
+              <Label>Active</Label>
               <Switch checked={promptForm.active} onCheckedChange={(v) => setPromptForm((f) => ({ ...f, active: v }))} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPromptDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setPromptDialog(false)}>Cancel</Button>
             <Button onClick={savePrompt} disabled={saving}>
-              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar
+              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Save
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -534,50 +534,50 @@ function AiAdmin() {
       <Dialog open={modelDialog} onOpenChange={setModelDialog}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{modelEditId ? "Editar modelo" : "Nuevo modelo"}</DialogTitle>
+            <DialogTitle>{modelEditId ? "Edit Model" : "New Model"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label>Nombre</Label>
+              <Label>Name</Label>
               <Input value={modelForm.name} onChange={(e) => setModelForm((f) => ({ ...f, name: e.target.value }))} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label>ID del modelo</Label>
+                <Label>Model ID</Label>
                 <Input value={modelForm.model_id} placeholder="deepseek-chat"
                   onChange={(e) => setModelForm((f) => ({ ...f, model_id: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Proveedor</Label>
+                <Label>Provider</Label>
                 <Input value={modelForm.provider} onChange={(e) => setModelForm((f) => ({ ...f, provider: e.target.value }))} />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label>Costo entrada /1k</Label>
+                <Label>Input Cost / 1k</Label>
                 <Input type="number" step="0.01" value={modelForm.cost_input}
                   onChange={(e) => setModelForm((f) => ({ ...f, cost_input: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Costo salida /1k</Label>
+                <Label>Output Cost / 1k</Label>
                 <Input type="number" step="0.01" value={modelForm.cost_output}
                   onChange={(e) => setModelForm((f) => ({ ...f, cost_output: e.target.value }))} />
               </div>
               <div className="space-y-1.5">
-                <Label>Límite/mes</Label>
+                <Label>Monthly Limit</Label>
                 <Input type="number" value={modelForm.monthly_credit_limit}
                   onChange={(e) => setModelForm((f) => ({ ...f, monthly_credit_limit: e.target.value }))} />
               </div>
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border p-3">
-              <Label>Activo</Label>
+              <Label>Active</Label>
               <Switch checked={modelForm.enabled} onCheckedChange={(v) => setModelForm((f) => ({ ...f, enabled: v }))} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setModelDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setModelDialog(false)}>Cancel</Button>
             <Button onClick={saveModel} disabled={saving}>
-              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Guardar
+              {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />} Save
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -587,13 +587,13 @@ function AiAdmin() {
       <Dialog open={!!versionsFor} onOpenChange={(o) => !o && setVersionsFor(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Historial de versiones — {versionsFor?.name}</DialogTitle>
+            <DialogTitle>Version History — {versionsFor?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             {versions === null ? (
               <Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" />
             ) : versions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Sin versiones registradas.</p>
+              <p className="text-sm text-muted-foreground">No versions recorded.</p>
             ) : versions.map((v) => (
               <div key={v.id} className="rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between">
@@ -601,7 +601,7 @@ function AiAdmin() {
                   <span className="text-xs text-muted-foreground">{new Date(v.created_at).toLocaleString()}</span>
                 </div>
                 <p className="mt-2 whitespace-pre-wrap text-sm">{v.content}</p>
-                {v.model && <p className="mt-1 text-xs text-muted-foreground">Modelo: {v.model}</p>}
+                {v.model && <p className="mt-1 text-xs text-muted-foreground">Model: {v.model}</p>}
               </div>
             ))}
           </div>

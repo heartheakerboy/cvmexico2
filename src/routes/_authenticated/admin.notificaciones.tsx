@@ -44,10 +44,10 @@ type Notification = {
 
 const CHANNELS = [
   { value: "push", label: "Push", icon: Bell },
-  { value: "announcement", label: "Anuncios", icon: Megaphone },
-  { value: "banner", label: "Banner mantenimiento", icon: AlertTriangle },
+  { value: "announcement", label: "Announcements", icon: Megaphone },
+  { value: "banner", label: "Maintenance Banner", icon: AlertTriangle },
   { value: "popup", label: "Popups", icon: MonitorSmartphone },
-  { value: "in_app", label: "In-app", icon: MessageSquare },
+  { value: "in_app", label: "In-App", icon: MessageSquare },
 ];
 
 const emptyForm = {
@@ -64,7 +64,10 @@ function variantBadge(v: string) {
   const map: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
     info: "secondary", success: "default", warning: "outline", critical: "destructive",
   };
-  return <Badge variant={map[v] ?? "secondary"}>{v}</Badge>;
+  const labelMap: Record<string, string> = {
+    info: "Info", success: "Success", warning: "Warning", critical: "Critical",
+  };
+  return <Badge variant={map[v] ?? "secondary"}>{labelMap[v] ?? v}</Badge>;
 }
 
 function Kpi({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
@@ -121,7 +124,7 @@ function NotificationsAdmin() {
   }
 
   async function save() {
-    if (!form.title.trim()) { toast.error("El título es obligatorio"); return; }
+    if (!form.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const payload = {
       title: form.title.trim(),
@@ -139,15 +142,15 @@ function NotificationsAdmin() {
       : await supabase.from("notifications").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(editId ? "Notificación actualizada" : "Notificación creada");
+    toast.success(editId ? "Notification updated" : "Notification created");
     setDialog(false); load();
   }
 
   async function remove(id: string) {
-    if (!confirm("¿Eliminar esta notificación?")) return;
+    if (!confirm("Delete this notification?")) return;
     const { error } = await supabase.from("notifications").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Notificación eliminada");
+    toast.success("Notification deleted");
     setItems((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -158,11 +161,11 @@ function NotificationsAdmin() {
   }
 
   async function publish(n: Notification) {
-    if (!confirm("¿Marcar como enviada/publicada?")) return;
+    if (!confirm("Mark as sent/published?")) return;
     const { error } = await supabase.from("notifications")
       .update({ active: true, sent_count: n.sent_count + 1 }).eq("id", n.id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Notificación publicada");
+    toast.success("Notification published");
     load();
   }
 
@@ -170,19 +173,19 @@ function NotificationsAdmin() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-semibold">Notifications</h1>
-        <p className="text-sm text-muted-foreground">Push, anuncios y mensajes in-app.</p>
+        <p className="text-sm text-muted-foreground">Push, announcements, and in-app messages.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi icon={Bell} label="Total" value={(items?.length ?? 0).toString()} />
-        <Kpi icon={MessageSquare} label="Activas" value={activeCount.toString()} />
-        <Kpi icon={Megaphone} label="Canales" value={CHANNELS.length.toString()} />
-        <Kpi icon={Send} label="Envíos" value={sentTotal.toString()} />
+        <Kpi icon={MessageSquare} label="Active" value={activeCount.toString()} />
+        <Kpi icon={Megaphone} label="Channels" value={CHANNELS.length.toString()} />
+        <Kpi icon={Send} label="Delivered" value={sentTotal.toString()} />
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex-wrap">
-          <TabsTrigger value="all">Todas</TabsTrigger>
+          <TabsTrigger value="all">All</TabsTrigger>
           {CHANNELS.map((c) => (
             <TabsTrigger key={c.value} value={c.value}>{c.label}</TabsTrigger>
           ))}
@@ -192,22 +195,22 @@ function NotificationsAdmin() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="relative max-w-sm flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Buscar notificación…" value={query}
+              <Input className="pl-9" placeholder="Search notifications…" value={query}
                 onChange={(e) => setQuery(e.target.value)} />
             </div>
-            <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> Nueva notificación</Button>
+            <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> New Notification</Button>
           </div>
 
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>Canal</TableHead>
-                  <TableHead>Audiencia</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Activa</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Channel</TableHead>
+                  <TableHead>Audience</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Active</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -216,7 +219,7 @@ function NotificationsAdmin() {
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    Sin notificaciones</TableCell></TableRow>
+                    No notifications found</TableCell></TableRow>
                 ) : filtered.map((n) => (
                   <TableRow key={n.id}>
                     <TableCell>
@@ -228,7 +231,7 @@ function NotificationsAdmin() {
                     <TableCell>{variantBadge(n.variant)}</TableCell>
                     <TableCell><Switch checked={n.active} onCheckedChange={() => toggle(n)} /></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => publish(n)} title="Publicar/enviar">
+                      <Button variant="ghost" size="icon" onClick={() => publish(n)} title="Publish / send">
                         <Send className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(n)}>
                         <Pencil className="h-4 w-4" /></Button>
@@ -246,20 +249,20 @@ function NotificationsAdmin() {
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editId ? "Editar notificación" : "Nueva notificación"}</DialogTitle>
+            <DialogTitle>{editId ? "Edit Notification" : "New Notification"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Título</Label>
+              <Label>Title</Label>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Mensaje</Label>
+              <Label>Message</Label>
               <Textarea rows={3} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Canal</Label>
+                <Label>Channel</Label>
                 <Select value={form.channel} onValueChange={(v) => setForm({ ...form, channel: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -268,12 +271,12 @@ function NotificationsAdmin() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Audiencia</Label>
+                <Label>Audience</Label>
                 <Select value={form.audience} onValueChange={(v) => setForm({ ...form, audience: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem value="free">Gratis</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="free">Free</SelectItem>
                     <SelectItem value="premium">Premium</SelectItem>
                   </SelectContent>
                 </Select>
@@ -281,45 +284,45 @@ function NotificationsAdmin() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Tipo</Label>
+                <Label>Type</Label>
                 <Select value={form.variant} onValueChange={(v) => setForm({ ...form, variant: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="info">Info</SelectItem>
-                    <SelectItem value="success">Éxito</SelectItem>
-                    <SelectItem value="warning">Aviso</SelectItem>
-                    <SelectItem value="critical">Crítico</SelectItem>
+                    <SelectItem value="success">Success</SelectItem>
+                    <SelectItem value="warning">Warning</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center gap-1"><ExternalLink className="h-3 w-3" /> Enlace</Label>
+                <Label className="flex items-center gap-1"><ExternalLink className="h-3 w-3" /> Link</Label>
                 <Input value={form.link_url} placeholder="https://…"
                   onChange={(e) => setForm({ ...form, link_url: e.target.value })} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Inicio</Label>
+                <Label>Start Date</Label>
                 <Input type="datetime-local" value={form.starts_at}
                   onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label>Fin</Label>
+                <Label>End Date</Label>
                 <Input type="datetime-local" value={form.ends_at}
                   onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
               </div>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-border p-3">
-              <Label>Activa</Label>
+              <Label>Active</Label>
               <Switch checked={form.active} onCheckedChange={(v) => setForm({ ...form, active: v })} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setDialog(false)}>Cancel</Button>
             <Button onClick={save} disabled={saving}>
               {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-              {editId ? "Guardar" : "Crear"}
+              {editId ? "Save" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -62,10 +62,10 @@ export function CampaignSafetyModal({
             <Send className="h-6 w-6" />
           </div>
           <DialogTitle className="text-center text-lg font-bold">
-            Confirmar Envío de Campaña
+            Confirm Campaign Dispatch
           </DialogTitle>
           <DialogDescription className="text-center text-xs text-muted-foreground">
-            Por favor revisa el resumen final antes de despachar los correos.
+            Please review the final summary before dispatching emails.
           </DialogDescription>
         </DialogHeader>
 
@@ -74,7 +74,7 @@ export function CampaignSafetyModal({
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 flex items-start gap-2.5">
             <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-              <strong className="block font-semibold">Aviso de Frecuencia de Envíos:</strong>
+              <strong className="block font-semibold">Send Frequency Advisory:</strong>
               {duplicateWarning}
             </div>
           </div>
@@ -84,13 +84,13 @@ export function CampaignSafetyModal({
         <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2.5 text-xs">
           <div className="flex justify-between border-b border-border/60 pb-2">
             <span className="text-muted-foreground flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5" /> Campaña:
+              <Mail className="h-3.5 w-3.5" /> Campaign:
             </span>
             <span className="font-semibold text-foreground text-right">{campaignName}</span>
           </div>
 
           <div className="flex justify-between border-b border-border/60 pb-2">
-            <span className="text-muted-foreground">Asunto:</span>
+            <span className="text-muted-foreground">Subject:</span>
             <span className="font-medium text-foreground text-right truncate max-w-[200px]">
               {subject}
             </span>
@@ -98,26 +98,26 @@ export function CampaignSafetyModal({
 
           <div className="flex justify-between border-b border-border/60 pb-2">
             <span className="text-muted-foreground flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5" /> Destinatarios:
+              <Users className="h-3.5 w-3.5" /> Recipients:
             </span>
-            <span className="font-bold text-primary">{recipientsCount.toLocaleString("es-MX")} usuarios</span>
+            <span className="font-bold text-primary">{recipientsCount.toLocaleString("en-US")} users</span>
           </div>
 
           <div className="flex justify-between border-b border-border/60 pb-2">
             <span className="text-muted-foreground flex items-center gap-1.5">
-              <Globe className="h-3.5 w-3.5" /> Idioma:
+              <Globe className="h-3.5 w-3.5" /> Language:
             </span>
             <span className="font-medium text-foreground capitalize">
-              {language === "both" ? "Español e Inglés" : language === "es" ? "Español (MX)" : "Inglés"}
+              {language === "both" ? "Spanish & English" : language === "es" ? "Spanish (MX)" : "English"}
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-muted-foreground flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5" /> Entrega:
+              <Calendar className="h-3.5 w-3.5" /> Delivery:
             </span>
             <span className="font-semibold text-foreground">
-              {scheduledAt ? `Programado (${scheduledAt})` : "Inmediata (Lotes en segundo plano)"}
+              {scheduledAt ? `Scheduled (${scheduledAt})` : "Immediate (Background batches)"}
             </span>
           </div>
         </div>
@@ -125,7 +125,7 @@ export function CampaignSafetyModal({
         <div className="text-[11px] text-muted-foreground bg-secondary/40 p-2.5 rounded-lg border border-border/40 flex items-start gap-2">
           <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
           <span>
-            Los usuarios en la lista de exclusión o que hayan solicitado baja voluntaria serán omitidos automáticamente.
+            Unsubscribed users or addresses in the suppression list will be skipped automatically.
           </span>
         </div>
 
@@ -136,7 +136,7 @@ export function CampaignSafetyModal({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -149,7 +149,7 @@ export function CampaignSafetyModal({
             ) : (
               <Send className="h-4 w-4" />
             )}
-            Confirmar y Enviar Campaña
+            Confirm & Send Campaign
           </Button>
         </DialogFooter>
       </DialogContent>

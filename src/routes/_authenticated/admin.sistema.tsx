@@ -40,7 +40,7 @@ type Backup = {
 
 function fmt(d: string | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" });
+  return new Date(d).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 }
 function fmtMb(n: number) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
@@ -51,13 +51,20 @@ function statusBadge(s: string) {
     success: "default", completed: "default", queued: "secondary",
     processing: "outline", pending: "secondary", error: "destructive", failed: "destructive",
   };
-  return <Badge variant={map[s] ?? "secondary"}>{s}</Badge>;
+  const labelMap: Record<string, string> = {
+    success: "Success", completed: "Completed", queued: "Queued",
+    processing: "Processing", pending: "Pending", error: "Error", failed: "Failed",
+  };
+  return <Badge variant={map[s] ?? "secondary"}>{labelMap[s] ?? s}</Badge>;
 }
 function levelBadge(l: string) {
   const map: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
     info: "secondary", warning: "outline", error: "destructive",
   };
-  return <Badge variant={map[l] ?? "secondary"}>{l}</Badge>;
+  const labelMap: Record<string, string> = {
+    info: "Info", warning: "Warning", error: "Error",
+  };
+  return <Badge variant={map[l] ?? "secondary"}>{labelMap[l] ?? l}</Badge>;
 }
 
 function Kpi({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
@@ -112,7 +119,7 @@ function SystemAdmin() {
     const { error } = await supabase.from("system_cron_jobs")
       .update({ last_run_at: new Date().toISOString(), last_status: "success" }).eq("id", c.id);
     if (error) return toast.error(error.message);
-    toast.success(`Ejecutado: ${c.name}`);
+    toast.success(`Executed: ${c.name}`);
     load();
   }
   async function deleteCron(id: string) {
@@ -121,14 +128,14 @@ function SystemAdmin() {
     setCrons((prev) => (prev ?? []).filter((x) => x.id !== id));
   }
   async function saveCron() {
-    if (!cronForm.name.trim() || !cronForm.schedule.trim()) { toast.error("Nombre y horario son obligatorios"); return; }
+    if (!cronForm.name.trim() || !cronForm.schedule.trim()) { toast.error("Name and schedule are required"); return; }
     setCronSaving(true);
     const { error } = await supabase.from("system_cron_jobs").insert({
       name: cronForm.name.trim(), schedule: cronForm.schedule.trim(), command: cronForm.command.trim(),
     });
     setCronSaving(false);
     if (error) return toast.error(error.message);
-    toast.success("Tarea programada creada");
+    toast.success("Scheduled job created");
     setCronDialog(false);
     setCronForm({ name: "", schedule: "0 * * * *", command: "" });
     load();
@@ -138,7 +145,7 @@ function SystemAdmin() {
     const { error } = await supabase.from("system_queue_jobs")
       .update({ status: "queued", attempts: j.attempts + 1, error: null }).eq("id", j.id);
     if (error) return toast.error(error.message);
-    toast.success("Trabajo reencolado");
+    toast.success("Job re-queued");
     load();
   }
   async function deleteJob(id: string) {
@@ -150,18 +157,18 @@ function SystemAdmin() {
   async function clearLogs() {
     const { error } = await supabase.from("system_logs").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     if (error) return toast.error(error.message);
-    toast.success("Logs limpiados");
+    toast.success("Logs cleared");
     setLogs([]);
   }
 
   async function createBackup() {
     setBackingUp(true);
     const { error } = await supabase.from("system_backups").insert({
-      label: "Backup manual", size_bytes: 50000000 + Math.floor(Math.random() * 5000000), status: "completed", storage_location: "cloud",
+      label: "Manual backup", size_bytes: 50000000 + Math.floor(Math.random() * 5000000), status: "completed", storage_location: "cloud",
     });
     setBackingUp(false);
     if (error) return toast.error(error.message);
-    toast.success("Backup creado");
+    toast.success("Backup created");
     load();
   }
   async function deleteBackup(id: string) {
@@ -178,28 +185,28 @@ function SystemAdmin() {
             <Server className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="font-display text-2xl font-bold">Sistema</h1>
-            <p className="text-sm text-muted-foreground">Cron, colas, logs y backups.</p>
+            <h1 className="font-display text-2xl font-bold">System</h1>
+            <p className="text-sm text-muted-foreground">Cron, queues, logs, and backups.</p>
           </div>
         </div>
         <Button variant="outline" className="gap-2" onClick={load}>
-          <RefreshCw className="h-4 w-4" /> Actualizar
+          <RefreshCw className="h-4 w-4" /> Refresh
         </Button>
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi icon={Clock} label="Cron activos" value={String(activeCrons)} />
-        <Kpi icon={ListChecks} label="Trabajos en cola" value={String(pendingJobs)} />
-        <Kpi icon={AlertTriangle} label="Errores recientes" value={String(errorLogs)} />
-        <Kpi icon={DatabaseBackup} label="Último backup" value={lastBackup === "—" ? "—" : "OK"} />
+        <Kpi icon={Clock} label="Active Crons" value={String(activeCrons)} />
+        <Kpi icon={ListChecks} label="Queued Jobs" value={String(pendingJobs)} />
+        <Kpi icon={AlertTriangle} label="Recent Errors" value={String(errorLogs)} />
+        <Kpi icon={DatabaseBackup} label="Last Backup" value={lastBackup === "—" ? "—" : "OK"} />
       </div>
 
       <Tabs value={tab} onValueChange={setTab} className="mt-8">
         <TabsList className="flex-wrap">
           <TabsTrigger value="cron"><Clock className="mr-1.5 h-4 w-4" />Cron</TabsTrigger>
-          <TabsTrigger value="queue"><ListChecks className="mr-1.5 h-4 w-4" />Cola</TabsTrigger>
-          <TabsTrigger value="api"><ScrollText className="mr-1.5 h-4 w-4" />Logs API</TabsTrigger>
-          <TabsTrigger value="errors"><AlertTriangle className="mr-1.5 h-4 w-4" />Errores</TabsTrigger>
+          <TabsTrigger value="queue"><ListChecks className="mr-1.5 h-4 w-4" />Queue</TabsTrigger>
+          <TabsTrigger value="api"><ScrollText className="mr-1.5 h-4 w-4" />API Logs</TabsTrigger>
+          <TabsTrigger value="errors"><AlertTriangle className="mr-1.5 h-4 w-4" />Errors</TabsTrigger>
           <TabsTrigger value="backup"><DatabaseBackup className="mr-1.5 h-4 w-4" />Backups</TabsTrigger>
           <TabsTrigger value="health"><Activity className="mr-1.5 h-4 w-4" />DB Health</TabsTrigger>
         </TabsList>
@@ -208,19 +215,19 @@ function SystemAdmin() {
         <TabsContent value="cron" className="mt-5">
           <div className="mb-3 flex justify-end">
             <Button className="gap-2" onClick={() => setCronDialog(true)}>
-              <Plus className="h-4 w-4" /> Nueva tarea
+              <Plus className="h-4 w-4" /> New Job
             </Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tarea</TableHead>
-                  <TableHead>Horario</TableHead>
-                  <TableHead>Última ejecución</TableHead>
-                  <TableHead>Próxima</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Job</TableHead>
+                  <TableHead>Schedule</TableHead>
+                  <TableHead>Last Run</TableHead>
+                  <TableHead>Next Run</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -232,12 +239,12 @@ function SystemAdmin() {
                     </TableCell>
                     <TableCell><code className="text-xs">{c.schedule}</code></TableCell>
                     <TableCell className="text-sm text-muted-foreground">{fmt(c.last_run_at)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{c.enabled ? fmt(c.next_run_at) : "Pausado"}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{c.enabled ? fmt(c.next_run_at) : "Paused"}</TableCell>
                     <TableCell>{statusBadge(c.last_status)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" onClick={() => runCron(c)} title="Ejecutar ahora"><Play className="h-4 w-4" /></Button>
-                        <Button size="icon" variant="ghost" onClick={() => toggleCron(c)} title={c.enabled ? "Pausar" : "Activar"}>
+                        <Button size="icon" variant="ghost" onClick={() => runCron(c)} title="Run now"><Play className="h-4 w-4" /></Button>
+                        <Button size="icon" variant="ghost" onClick={() => toggleCron(c)} title={c.enabled ? "Pause" : "Activate"}>
                           {c.enabled ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 text-primary" />}
                         </Button>
                         <Button size="icon" variant="ghost" onClick={() => deleteCron(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -246,7 +253,7 @@ function SystemAdmin() {
                   </TableRow>
                 ))}
                 {crons && crons.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Sin tareas programadas.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">No scheduled jobs found.</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
@@ -259,12 +266,12 @@ function SystemAdmin() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tipo</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Payload</TableHead>
-                  <TableHead>Intentos</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Creado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Attempts</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -280,7 +287,7 @@ function SystemAdmin() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         {j.status === "failed" && (
-                          <Button size="icon" variant="ghost" onClick={() => retryJob(j)} title="Reintentar"><RefreshCw className="h-4 w-4" /></Button>
+                          <Button size="icon" variant="ghost" onClick={() => retryJob(j)} title="Retry"><RefreshCw className="h-4 w-4" /></Button>
                         )}
                         <Button size="icon" variant="ghost" onClick={() => deleteJob(j.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       </div>
@@ -288,7 +295,7 @@ function SystemAdmin() {
                   </TableRow>
                 ))}
                 {queue && queue.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">La cola está vacía.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Queue is empty.</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
@@ -310,19 +317,19 @@ function SystemAdmin() {
           <div className="mb-3 flex justify-end">
             <Button className="gap-2" onClick={createBackup} disabled={backingUp}>
               {backingUp ? <Loader2 className="h-4 w-4 animate-spin" /> : <DatabaseBackup className="h-4 w-4" />}
-              {backingUp ? "Creando..." : "Crear backup"}
+              {backingUp ? "Creating..." : "Create Backup"}
             </Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Etiqueta</TableHead>
-                  <TableHead>Tamaño</TableHead>
-                  <TableHead>Almacenamiento</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Label</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Storage</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -335,14 +342,14 @@ function SystemAdmin() {
                     <TableCell className="text-sm text-muted-foreground">{fmt(b.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button size="icon" variant="ghost" title="Descargar"><Download className="h-4 w-4" /></Button>
+                        <Button size="icon" variant="ghost" title="Download"><Download className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" onClick={() => deleteBackup(b.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))}
                 {backups && backups.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Sin backups.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">No backups found.</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
@@ -352,40 +359,40 @@ function SystemAdmin() {
         {/* DB HEALTH */}
         <TabsContent value="health" className="mt-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <HealthCard icon={Activity} title="Estado de la base de datos" status="Operativa" value={100} tone="ok" note="Conexión saludable" />
-            <HealthCard icon={HardDrive} title="Uso de disco" status="Normal" value={38} tone="ok" note="3.8 GB de 10 GB" />
-            <HealthCard icon={Server} title="Conexiones activas" status="Estable" value={22} tone="ok" note="11 de 50 conexiones" />
-            <HealthCard icon={RefreshCw} title="Reinicios (24h)" status="0 reinicios" value={0} tone="ok" note="Sin reinicios recientes" />
-            <HealthCard icon={AlertTriangle} title="Deadlocks" status="0 detectados" value={0} tone="ok" note="Sin bloqueos" />
-            <HealthCard icon={DatabaseBackup} title="WAL (log de escritura)" status="Bajo" value={12} tone="ok" note="Rotación normal" />
+            <HealthCard icon={Activity} title="Database Status" status="Operational" value={100} tone="ok" note="Healthy connection" />
+            <HealthCard icon={HardDrive} title="Disk Usage" status="Normal" value={38} tone="ok" note="3.8 GB of 10 GB" />
+            <HealthCard icon={Server} title="Active Connections" status="Stable" value={22} tone="ok" note="11 of 50 connections" />
+            <HealthCard icon={RefreshCw} title="Restarts (24h)" status="0 restarts" value={0} tone="ok" note="No recent restarts" />
+            <HealthCard icon={AlertTriangle} title="Deadlocks" status="0 detected" value={0} tone="ok" note="No deadlocks" />
+            <HealthCard icon={DatabaseBackup} title="WAL (Write-Ahead Log)" status="Low" value={12} tone="ok" note="Normal rotation" />
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            Métricas de referencia de la infraestructura de base de datos.
+            Reference metrics for the database infrastructure.
           </p>
         </TabsContent>
       </Tabs>
 
       <Dialog open={cronDialog} onOpenChange={setCronDialog}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Nueva tarea programada</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>New Scheduled Job</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label>Nombre</Label>
-              <Input value={cronForm.name} onChange={(e) => setCronForm((f) => ({ ...f, name: e.target.value }))} placeholder="Ej. Limpieza diaria" />
+              <Label>Name</Label>
+              <Input value={cronForm.name} onChange={(e) => setCronForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Daily cleanup" />
             </div>
             <div className="space-y-1.5">
-              <Label>Horario (cron)</Label>
+              <Label>Schedule (cron)</Label>
               <Input value={cronForm.schedule} onChange={(e) => setCronForm((f) => ({ ...f, schedule: e.target.value }))} placeholder="0 * * * *" />
             </div>
             <div className="space-y-1.5">
-              <Label>Comando</Label>
+              <Label>Command</Label>
               <Input value={cronForm.command} onChange={(e) => setCronForm((f) => ({ ...f, command: e.target.value }))} placeholder="cleanup_sessions" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCronDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setCronDialog(false)}>Cancel</Button>
             <Button onClick={saveCron} disabled={cronSaving} className="gap-2">
-              {cronSaving && <Loader2 className="h-4 w-4 animate-spin" />}Crear
+              {cronSaving && <Loader2 className="h-4 w-4 animate-spin" />}Create
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -399,19 +406,19 @@ function LogTable({ logs, onClear }: { logs: SysLog[]; onClear: () => void }) {
     <>
       <div className="mb-3 flex justify-end">
         <Button variant="outline" size="sm" className="gap-2" onClick={onClear}>
-          <Trash2 className="h-4 w-4" /> Limpiar logs
+          <Trash2 className="h-4 w-4" /> Clear logs
         </Button>
       </div>
       <div className="rounded-2xl border border-border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nivel</TableHead>
-              <TableHead>Método</TableHead>
-              <TableHead>Ruta</TableHead>
-              <TableHead>Código</TableHead>
-              <TableHead>Mensaje</TableHead>
-              <TableHead>Fecha</TableHead>
+              <TableHead>Level</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>Path</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Message</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -426,7 +433,7 @@ function LogTable({ logs, onClear }: { logs: SysLog[]; onClear: () => void }) {
               </TableRow>
             ))}
             {logs.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Sin registros.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">No logs found.</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

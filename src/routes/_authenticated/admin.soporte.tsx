@@ -52,11 +52,11 @@ type Faq = {
 
 const TYPES = [
   { value: "ticket", label: "Tickets", icon: LifeBuoy },
-  { value: "live_chat", label: "Chat en vivo", icon: MessagesSquare },
+  { value: "live_chat", label: "Live Chat", icon: MessagesSquare },
   { value: "feedback", label: "Feedback", icon: Star },
   { value: "bug", label: "Bugs", icon: Bug },
-  { value: "contact", label: "Contacto", icon: Mail },
-  { value: "feature", label: "Funciones", icon: Lightbulb },
+  { value: "contact", label: "Contact", icon: Mail },
+  { value: "feature", label: "Features", icon: Lightbulb },
 ];
 
 function typeLabel(t: string) {
@@ -67,7 +67,10 @@ function statusBadge(s: string) {
   const map: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
     open: "secondary", pending: "outline", closed: "default",
   };
-  return <Badge variant={map[s] ?? "secondary"}>{s}</Badge>;
+  const labelMap: Record<string, string> = {
+    open: "Open", pending: "Pending", closed: "Closed",
+  };
+  return <Badge variant={map[s] ?? "secondary"}>{labelMap[s] ?? s}</Badge>;
 }
 
 function priorityBadge(p: string) {
@@ -75,7 +78,7 @@ function priorityBadge(p: string) {
     low: "secondary", medium: "outline", high: "destructive", urgent: "destructive", emergency: "destructive",
   };
   const labelMap: Record<string, string> = {
-    low: "Baja", medium: "Media", high: "Alta", urgent: "Urgente", emergency: "Emergencia",
+    low: "Low", medium: "Medium", high: "High", urgent: "Urgent", emergency: "Emergency",
   };
   return <Badge variant={map[p] ?? "secondary"}>{labelMap[p] ?? p}</Badge>;
 }
@@ -157,7 +160,7 @@ function SupportAdmin() {
   }
 
   async function saveTicket() {
-    if (!tForm.subject.trim()) { toast.error("El asunto es obligatorio"); return; }
+    if (!tForm.subject.trim()) { toast.error("Subject is required"); return; }
     setTSaving(true);
     const payload = {
       subject: tForm.subject.trim(),
@@ -174,15 +177,15 @@ function SupportAdmin() {
       : await supabase.from("support_tickets").insert(payload);
     setTSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(tEditId ? "Ticket actualizado" : "Ticket creado");
+    toast.success(tEditId ? "Ticket updated" : "Ticket created");
     setTDialog(false); load();
   }
 
   async function removeTicket(id: string) {
-    if (!confirm("¿Eliminar este ticket?")) return;
+    if (!confirm("Delete this ticket?")) return;
     const { error } = await supabase.from("support_tickets").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Ticket eliminado");
+    toast.success("Ticket deleted");
     setTickets((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -203,7 +206,7 @@ function SupportAdmin() {
   }
 
   async function saveFaq() {
-    if (!fForm.question.trim()) { toast.error("La pregunta es obligatoria"); return; }
+    if (!fForm.question.trim()) { toast.error("Question is required"); return; }
     setFSaving(true);
     const payload = {
       question: fForm.question.trim(),
@@ -217,15 +220,15 @@ function SupportAdmin() {
       : await supabase.from("faqs").insert(payload);
     setFSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(fEditId ? "FAQ actualizada" : "FAQ creada");
+    toast.success(fEditId ? "FAQ updated" : "FAQ created");
     setFDialog(false); load();
   }
 
   async function removeFaq(id: string) {
-    if (!confirm("¿Eliminar esta FAQ?")) return;
+    if (!confirm("Delete this FAQ?")) return;
     const { error } = await supabase.from("faqs").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("FAQ eliminada");
+    toast.success("FAQ deleted");
     setFaqs((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
@@ -238,13 +241,13 @@ function SupportAdmin() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">Support center</h1>
-        <p className="text-sm text-muted-foreground">Tickets, feedback y solicitudes.</p>
+        <h1 className="font-display text-2xl font-semibold">Support Center</h1>
+        <p className="text-sm text-muted-foreground">Tickets, feedback, and user requests.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi icon={LifeBuoy} label="Tickets" value={(tickets?.length ?? 0).toString()} />
-        <Kpi icon={MessageSquare} label="Abiertos" value={openCount.toString()} />
+        <Kpi icon={MessageSquare} label="Open" value={openCount.toString()} />
         <Kpi icon={Bug} label="Bugs" value={bugCount.toString()} />
         <Kpi icon={HelpCircle} label="FAQs" value={(faqs?.length ?? 0).toString()} />
       </div>
@@ -262,21 +265,21 @@ function SupportAdmin() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="relative max-w-sm flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input className="pl-9" placeholder="Buscar por asunto o email…" value={query}
+                <Input className="pl-9" placeholder="Search by subject or email…" value={query}
                   onChange={(e) => setQuery(e.target.value)} />
               </div>
-              <Button onClick={openNewTicket}><Plus className="mr-1 h-4 w-4" /> Nuevo</Button>
+              <Button onClick={openNewTicket}><Plus className="mr-1 h-4 w-4" /> New</Button>
             </div>
 
             <div className="rounded-2xl border border-border bg-card">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Asunto</TableHead>
-                    <TableHead>Solicitante</TableHead>
-                    <TableHead>Prioridad</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead>Subject</TableHead>
+                    <TableHead>Requester</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -285,7 +288,7 @@ function SupportAdmin() {
                       <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                   ) : filtered.length === 0 ? (
                     <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
-                      Sin registros</TableCell></TableRow>
+                      No records found</TableCell></TableRow>
                   ) : filtered.map((it) => (
                     <TableRow key={it.id}>
                       <TableCell>
@@ -299,13 +302,13 @@ function SupportAdmin() {
                       <TableCell>{priorityBadge(it.priority)}</TableCell>
                       <TableCell>{statusBadge(it.status)}</TableCell>
                       <TableCell className="text-right whitespace-nowrap">
-                        <Button variant="ghost" size="icon" onClick={() => openEditTicket(it)} title="Ver detalles">
+                        <Button variant="ghost" size="icon" onClick={() => openEditTicket(it)} title="View details">
                           <Eye className="h-4 w-4" /></Button>
                         {it.status !== "closed" && (
-                          <Button variant="ghost" size="icon" onClick={() => setStatus(it, "closed")} title="Cerrar">
+                          <Button variant="ghost" size="icon" onClick={() => setStatus(it, "closed")} title="Close">
                             <CheckCircle2 className="h-4 w-4" /></Button>
                         )}
-                        <Button variant="ghost" size="icon" onClick={() => openEditTicket(it)} title="Responder">
+                        <Button variant="ghost" size="icon" onClick={() => openEditTicket(it)} title="Reply">
                           <Reply className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="icon" onClick={() => removeTicket(it.id)}>
                           <Trash2 className="h-4 w-4" /></Button>
@@ -320,18 +323,18 @@ function SupportAdmin() {
 
         <TabsContent value="faq" className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground">Preguntas frecuentes públicas.</p>
-            <Button onClick={openNewFaq}><Plus className="mr-1 h-4 w-4" /> Nueva FAQ</Button>
+            <p className="text-sm text-muted-foreground">Public frequently asked questions.</p>
+            <Button onClick={openNewFaq}><Plus className="mr-1 h-4 w-4" /> New FAQ</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Pregunta</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead>Orden</TableHead>
-                  <TableHead>Publicada</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead>Question</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Order</TableHead>
+                  <TableHead>Published</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -340,7 +343,7 @@ function SupportAdmin() {
                     <Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : faqs.length === 0 ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
-                    Sin FAQs</TableCell></TableRow>
+                    No FAQs found</TableCell></TableRow>
                 ) : faqs.map((f) => (
                   <TableRow key={f.id}>
                     <TableCell>
@@ -367,15 +370,15 @@ function SupportAdmin() {
       <Dialog open={tDialog} onOpenChange={setTDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{tEditId ? "Editar / responder ticket" : "Nuevo ticket"}</DialogTitle>
+            <DialogTitle>{tEditId ? "Edit / Reply to Ticket" : "New Ticket"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Asunto</Label>
+              <Label>Subject</Label>
               <Input value={tForm.subject} onChange={(e) => setTForm({ ...tForm, subject: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Mensaje</Label>
+              <Label>Message</Label>
               {tEditId ? (
                 <div className="rounded-xl border border-border bg-secondary/30 p-3 text-sm text-foreground whitespace-pre-wrap max-h-48 overflow-y-auto">
                   {tForm.message}
@@ -386,7 +389,7 @@ function SupportAdmin() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Nombre</Label>
+                <Label>Name</Label>
                 <Input value={tForm.requester_name} onChange={(e) => setTForm({ ...tForm, requester_name: e.target.value })} />
               </div>
               <div className="space-y-2">
@@ -396,7 +399,7 @@ function SupportAdmin() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-2">
-                <Label>Tipo</Label>
+                <Label>Type</Label>
                 <Select value={tForm.type} onValueChange={(v) => setTForm({ ...tForm, type: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -405,41 +408,41 @@ function SupportAdmin() {
                 </Select>
               </div>
             <div className="space-y-2">
-              <Label>Prioridad</Label>
+              <Label>Priority</Label>
               <Select value={tForm.priority} onValueChange={(v) => setTForm({ ...tForm, priority: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Baja</SelectItem>
-                  <SelectItem value="medium">Media</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="urgent">Urgente</SelectItem>
-                  <SelectItem value="emergency">Emergencia</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="emergency">Emergency</SelectItem>
                 </SelectContent>
               </Select>
             </div>
               <div className="space-y-2">
-                <Label>Estado</Label>
+                <Label>Status</Label>
                 <Select value={tForm.status} onValueChange={(v) => setTForm({ ...tForm, status: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="open">Abierto</SelectItem>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="closed">Cerrado</SelectItem>
+                    <SelectItem value="open">Open</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="closed">Closed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Respuesta del equipo</Label>
+              <Label>Staff Reply</Label>
               <Textarea rows={3} value={tForm.admin_reply}
                 onChange={(e) => setTForm({ ...tForm, admin_reply: e.target.value })} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setTDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setTDialog(false)}>Cancel</Button>
             <Button onClick={saveTicket} disabled={tSaving}>
               {tSaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-              {tEditId ? "Guardar" : "Crear"}
+              {tEditId ? "Save" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -448,38 +451,38 @@ function SupportAdmin() {
       <Dialog open={fDialog} onOpenChange={setFDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>{fEditId ? "Editar FAQ" : "Nueva FAQ"}</DialogTitle>
+            <DialogTitle>{fEditId ? "Edit FAQ" : "New FAQ"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Pregunta</Label>
+              <Label>Question</Label>
               <Input value={fForm.question} onChange={(e) => setFForm({ ...fForm, question: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Respuesta</Label>
+              <Label>Answer</Label>
               <Textarea rows={4} value={fForm.answer} onChange={(e) => setFForm({ ...fForm, answer: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Categoría</Label>
+                <Label>Category</Label>
                 <Input value={fForm.category} onChange={(e) => setFForm({ ...fForm, category: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label>Orden</Label>
+                <Label>Order</Label>
                 <Input type="number" value={fForm.sort_order}
                   onChange={(e) => setFForm({ ...fForm, sort_order: Number(e.target.value) })} />
               </div>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-border p-3">
-              <Label>Publicada</Label>
+              <Label>Published</Label>
               <Switch checked={fForm.published} onCheckedChange={(v) => setFForm({ ...fForm, published: v })} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setFDialog(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setFDialog(false)}>Cancel</Button>
             <Button onClick={saveFaq} disabled={fSaving}>
               {fSaving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-              {fEditId ? "Guardar" : "Crear"}
+              {fEditId ? "Save" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>

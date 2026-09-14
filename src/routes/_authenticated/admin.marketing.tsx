@@ -113,7 +113,7 @@ function MarketingAdmin() {
     setLpDialog(true);
   }
   async function saveLp() {
-    if (!lpForm.title.trim()) { toast.error("El título es obligatorio"); return; }
+    if (!lpForm.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const payload = { ...lpForm, title: lpForm.title.trim(), slug: lpForm.slug.trim() || slugify(lpForm.title) };
     const res = lpEditId
@@ -121,11 +121,11 @@ function MarketingAdmin() {
       : await supabase.from("landing_pages").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(lpEditId ? "Landing actualizada" : "Landing creada");
+    toast.success(lpEditId ? "Landing page updated" : "Landing page created");
     setLpDialog(false); load();
   }
   async function removeLp(id: string) {
-    if (!confirm("¿Eliminar esta landing?")) return;
+    if (!confirm("Delete this landing page?")) return;
     const { error } = await supabase.from("landing_pages").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     setLandings((r) => (r ?? []).filter((x) => x.id !== id));
@@ -144,7 +144,7 @@ function MarketingAdmin() {
     setTDialog(true);
   }
   async function saveT() {
-    if (!tForm.author_name.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!tForm.author_name.trim()) { toast.error("Name is required"); return; }
     setSaving(true);
     const payload = { ...tForm, author_name: tForm.author_name.trim(), avatar_url: tForm.avatar_url.trim() || null };
     const res = tEditId
@@ -152,11 +152,11 @@ function MarketingAdmin() {
       : await supabase.from("testimonials").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(tEditId ? "Testimonio actualizado" : "Testimonio creado");
+    toast.success(tEditId ? "Testimonial updated" : "Testimonial created");
     setTDialog(false); load();
   }
   async function removeT(id: string) {
-    if (!confirm("¿Eliminar este testimonio?")) return;
+    if (!confirm("Delete this testimonial?")) return;
     const { error } = await supabase.from("testimonials").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     setTests((r) => (r ?? []).filter((x) => x.id !== id));
@@ -179,7 +179,7 @@ function MarketingAdmin() {
     setCDialog(true);
   }
   async function saveC() {
-    if (!cForm.name.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!cForm.name.trim()) { toast.error("Name is required"); return; }
     setSaving(true);
     const payload = {
       name: cForm.name.trim(), channel: cForm.channel, status: cForm.status,
@@ -192,11 +192,11 @@ function MarketingAdmin() {
       : await supabase.from("marketing_campaigns").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(cEditId ? "Campaña actualizada" : "Campaña creada");
+    toast.success(cEditId ? "Campaign updated" : "Campaign created");
     setCDialog(false); load();
   }
   async function removeC(id: string) {
-    if (!confirm("¿Eliminar esta campaña?")) return;
+    if (!confirm("Delete this campaign?")) return;
     const { error } = await supabase.from("marketing_campaigns").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     setCamps((r) => (r ?? []).filter((x) => x.id !== id));
@@ -211,45 +211,45 @@ function MarketingAdmin() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-semibold">Marketing</h1>
-        <p className="text-sm text-muted-foreground">Landing pages, testimonios y campañas.</p>
+        <p className="text-sm text-muted-foreground">Landing pages, testimonials and campaigns.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={LayoutTemplate} label="Landings" value={(landings?.length ?? 0).toString()} />
-        <Kpi icon={Star} label="Testimonios" value={(tests?.length ?? 0).toString()} />
-        <Kpi icon={Rocket} label="Campañas activas" value={activeCamps.toString()} />
-        <Kpi icon={DollarSign} label="Presupuesto" value={`$${totalBudget.toLocaleString()}`} />
+        <Kpi icon={LayoutTemplate} label="Landing Pages" value={(landings?.length ?? 0).toString()} />
+        <Kpi icon={Star} label="Testimonials" value={(tests?.length ?? 0).toString()} />
+        <Kpi icon={Rocket} label="Active Campaigns" value={activeCamps.toString()} />
+        <Kpi icon={DollarSign} label="Total Budget" value={`$${totalBudget.toLocaleString()}`} />
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Buscar…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <Input className="pl-9" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
 
       <Tabs defaultValue="landings">
         <TabsList>
-          <TabsTrigger value="landings">Landing pages</TabsTrigger>
-          <TabsTrigger value="testimonials">Testimonios</TabsTrigger>
-          <TabsTrigger value="campaigns">Campañas</TabsTrigger>
+          <TabsTrigger value="landings">Landing Pages</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
         </TabsList>
 
         {/* Landings */}
         <TabsContent value="landings" className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={openNewLp}><Plus className="mr-1 h-4 w-4" /> Nueva landing</Button>
+            <Button onClick={openNewLp}><Plus className="mr-1 h-4 w-4" /> New Landing Page</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Título</TableHead><TableHead>Slug</TableHead>
-                <TableHead>CTA</TableHead><TableHead>Publicada</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Title</TableHead><TableHead>Slug</TableHead>
+                <TableHead>CTA</TableHead><TableHead>Published</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {landings === null ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : fLandings.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin landings</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No landing pages found</TableCell></TableRow>
                 ) : fLandings.map((l) => (
                   <TableRow key={l.id}>
                     <TableCell className="font-medium">{l.title}</TableCell>
@@ -270,20 +270,20 @@ function MarketingAdmin() {
         {/* Testimonials */}
         <TabsContent value="testimonials" className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={openNewT}><Plus className="mr-1 h-4 w-4" /> Nuevo testimonio</Button>
+            <Button onClick={openNewT}><Plus className="mr-1 h-4 w-4" /> New Testimonial</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Autor</TableHead><TableHead>Cita</TableHead>
-                <TableHead>Rating</TableHead><TableHead>Destacado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Author</TableHead><TableHead>Quote</TableHead>
+                <TableHead>Rating</TableHead><TableHead>Featured</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {tests === null ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : fTests.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin testimonios</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No testimonials found</TableCell></TableRow>
                 ) : fTests.map((t) => (
                   <TableRow key={t.id}>
                     <TableCell>
@@ -307,20 +307,20 @@ function MarketingAdmin() {
         {/* Campaigns */}
         <TabsContent value="campaigns" className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={openNewC}><Plus className="mr-1 h-4 w-4" /> Nueva campaña</Button>
+            <Button onClick={openNewC}><Plus className="mr-1 h-4 w-4" /> New Campaign</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Nombre</TableHead><TableHead>Canal</TableHead>
-                <TableHead>Estado</TableHead><TableHead>Presupuesto</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Name</TableHead><TableHead>Channel</TableHead>
+                <TableHead>Status</TableHead><TableHead>Budget</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {camps === null ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : fCamps.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin campañas</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No campaigns found</TableCell></TableRow>
                 ) : fCamps.map((c) => (
                   <TableRow key={c.id}>
                     <TableCell className="font-medium">{c.name}</TableCell>
@@ -342,30 +342,30 @@ function MarketingAdmin() {
       {/* Landing dialog */}
       <Dialog open={lpDialog} onOpenChange={setLpDialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>{lpEditId ? "Editar landing" : "Nueva landing"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{lpEditId ? "Edit Landing Page" : "New Landing Page"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2"><Label>Título</Label>
+            <div className="space-y-2"><Label>Title</Label>
               <Input value={lpForm.title} onChange={(e) => setLpForm({ ...lpForm, title: e.target.value })} /></div>
             <div className="space-y-2"><Label>Slug</Label>
               <Input value={lpForm.slug} placeholder="auto" onChange={(e) => setLpForm({ ...lpForm, slug: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Titular</Label>
+            <div className="space-y-2"><Label>Headline</Label>
               <Input value={lpForm.headline} onChange={(e) => setLpForm({ ...lpForm, headline: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Subtítulo</Label>
+            <div className="space-y-2"><Label>Subheadline</Label>
               <Textarea rows={2} value={lpForm.subheadline} onChange={(e) => setLpForm({ ...lpForm, subheadline: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Texto CTA</Label>
+              <div className="space-y-2"><Label>CTA Button Text</Label>
                 <Input value={lpForm.cta_label} onChange={(e) => setLpForm({ ...lpForm, cta_label: e.target.value })} /></div>
-              <div className="space-y-2"><Label className="flex items-center gap-1"><ExternalLink className="h-3 w-3" /> URL CTA</Label>
+              <div className="space-y-2"><Label className="flex items-center gap-1"><ExternalLink className="h-3 w-3" /> CTA URL</Label>
                 <Input value={lpForm.cta_url} onChange={(e) => setLpForm({ ...lpForm, cta_url: e.target.value })} /></div>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-border p-3">
-              <Label>Publicada</Label>
+              <Label>Published</Label>
               <Switch checked={lpForm.published} onCheckedChange={(v) => setLpForm({ ...lpForm, published: v })} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setLpDialog(false)}>Cancelar</Button>
-            <Button onClick={saveLp} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{lpEditId ? "Guardar" : "Crear"}</Button>
+            <Button variant="outline" onClick={() => setLpDialog(false)}>Cancel</Button>
+            <Button onClick={saveLp} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{lpEditId ? "Save" : "Create"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -373,17 +373,17 @@ function MarketingAdmin() {
       {/* Testimonial dialog */}
       <Dialog open={tDialog} onOpenChange={setTDialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>{tEditId ? "Editar testimonio" : "Nuevo testimonio"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{tEditId ? "Edit Testimonial" : "New Testimonial"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Nombre</Label>
+              <div className="space-y-2"><Label>Name</Label>
                 <Input value={tForm.author_name} onChange={(e) => setTForm({ ...tForm, author_name: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Cargo</Label>
+              <div className="space-y-2"><Label>Role</Label>
                 <Input value={tForm.author_role} onChange={(e) => setTForm({ ...tForm, author_role: e.target.value })} /></div>
             </div>
             <div className="space-y-2"><Label>Avatar URL</Label>
               <Input value={tForm.avatar_url} placeholder="https://…" onChange={(e) => setTForm({ ...tForm, avatar_url: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Cita</Label>
+            <div className="space-y-2"><Label>Quote</Label>
               <Textarea rows={3} value={tForm.quote} onChange={(e) => setTForm({ ...tForm, quote: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-3 items-end">
               <div className="space-y-2"><Label>Rating</Label>
@@ -392,14 +392,14 @@ function MarketingAdmin() {
                   <SelectContent>{[1, 2, 3, 4, 5].map((n) => <SelectItem key={n} value={String(n)}>{n} ★</SelectItem>)}</SelectContent>
                 </Select></div>
               <div className="flex items-center justify-between rounded-xl border border-border p-3">
-                <Label>Destacado</Label>
+                <Label>Featured</Label>
                 <Switch checked={tForm.featured} onCheckedChange={(v) => setTForm({ ...tForm, featured: v })} />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setTDialog(false)}>Cancelar</Button>
-            <Button onClick={saveT} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{tEditId ? "Guardar" : "Crear"}</Button>
+            <Button variant="outline" onClick={() => setTDialog(false)}>Cancel</Button>
+            <Button onClick={saveT} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{tEditId ? "Save" : "Create"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -407,12 +407,12 @@ function MarketingAdmin() {
       {/* Campaign dialog */}
       <Dialog open={cDialog} onOpenChange={setCDialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>{cEditId ? "Editar campaña" : "Nueva campaña"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{cEditId ? "Edit Campaign" : "New Campaign"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2"><Label>Nombre</Label>
+            <div className="space-y-2"><Label>Name</Label>
               <Input value={cForm.name} onChange={(e) => setCForm({ ...cForm, name: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Canal</Label>
+              <div className="space-y-2"><Label>Channel</Label>
                 <Select value={cForm.channel} onValueChange={(v) => setCForm({ ...cForm, channel: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -420,34 +420,34 @@ function MarketingAdmin() {
                     <SelectItem value="ads">Ads</SelectItem>
                     <SelectItem value="social">Social</SelectItem>
                     <SelectItem value="seo">SEO</SelectItem>
-                    <SelectItem value="referral">Referidos</SelectItem>
+                    <SelectItem value="referral">Referrals</SelectItem>
                   </SelectContent>
                 </Select></div>
-              <div className="space-y-2"><Label>Estado</Label>
+              <div className="space-y-2"><Label>Status</Label>
                 <Select value={cForm.status} onValueChange={(v) => setCForm({ ...cForm, status: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Borrador</SelectItem>
-                    <SelectItem value="active">Activa</SelectItem>
-                    <SelectItem value="paused">Pausada</SelectItem>
-                    <SelectItem value="ended">Finalizada</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="paused">Paused</SelectItem>
+                    <SelectItem value="ended">Ended</SelectItem>
                   </SelectContent>
                 </Select></div>
             </div>
-            <div className="space-y-2"><Label>Presupuesto</Label>
+            <div className="space-y-2"><Label>Budget</Label>
               <Input type="number" value={cForm.budget} onChange={(e) => setCForm({ ...cForm, budget: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Inicio</Label>
+              <div className="space-y-2"><Label>Start Date</Label>
                 <Input type="datetime-local" value={cForm.starts_at} onChange={(e) => setCForm({ ...cForm, starts_at: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Fin</Label>
+              <div className="space-y-2"><Label>End Date</Label>
                 <Input type="datetime-local" value={cForm.ends_at} onChange={(e) => setCForm({ ...cForm, ends_at: e.target.value })} /></div>
             </div>
-            <div className="space-y-2"><Label>Notas</Label>
+            <div className="space-y-2"><Label>Notes</Label>
               <Textarea rows={2} value={cForm.notes} onChange={(e) => setCForm({ ...cForm, notes: e.target.value })} /></div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCDialog(false)}>Cancelar</Button>
-            <Button onClick={saveC} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{cEditId ? "Guardar" : "Crear"}</Button>
+            <Button variant="outline" onClick={() => setCDialog(false)}>Cancel</Button>
+            <Button onClick={saveC} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}{cEditId ? "Save" : "Create"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -58,22 +58,22 @@ function StorageAdminPage() {
   const cleanupMutation = useMutation({
     mutationFn: () => triggerCleanup(),
     onSuccess: (res) => {
-      toast.success(`Limpieza completada. Se eliminaron ${res.cleanedCount} archivos temporales.`);
+      toast.success(`Cleanup complete. Removed ${res.cleanedCount} temporary files.`);
       queryClient.invalidateQueries({ queryKey: ["admin-storage-analytics"] });
     },
     onError: (err: any) => {
-      toast.error("Error al ejecutar limpieza: " + err.message);
+      toast.error("Failed to run cleanup: " + err.message);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (path: string) => triggerDelete({ data: { storagePath: path } }),
     onSuccess: () => {
-      toast.success("Archivo eliminado correctamente");
+      toast.success("File deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["admin-storage-analytics"] });
     },
     onError: (err: any) => {
-      toast.error("Error al eliminar archivo: " + err.message);
+      toast.error("Failed to delete file: " + err.message);
     },
   });
 
@@ -106,9 +106,9 @@ function StorageAdminPage() {
             disabled={cleanupMutation.isPending}
           >
             {cleanupMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-            Limpieza automática
+            Auto Cleanup
           </Button>
-          <Button variant="outline" size="icon" onClick={() => refetch()} title="Recargar">
+          <Button variant="outline" size="icon" onClick={() => refetch()} title="Reload">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
@@ -120,7 +120,7 @@ function StorageAdminPage() {
         </div>
       ) : error || !data ? (
         <div className="rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-          No se pudieron cargar las métricas de almacenamiento.
+          Could not load storage metrics.
         </div>
       ) : (
         <>
@@ -128,27 +128,27 @@ function StorageAdminPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Kpi
               icon={HardDrive}
-              label="Almacenamiento total"
+              label="Total Storage"
               value={humanSize(data.totalBytes)}
-              sub={`${data.activeFilesCount} archivos activos`}
+              sub={`${data.activeFilesCount} active files`}
             />
             <Kpi
               icon={Coins}
-              label="Costo mensual estimado"
+              label="Estimated Monthly Cost"
               value={`$${data.costEstimate.toFixed(3)} USD`}
-              sub="Tarifas Cloudflare R2 ($0.015/GB)"
+              sub="Cloudflare R2 rates ($0.015/GB)"
             />
             <Kpi
               icon={ShieldAlert}
-              label="Errores de carga"
+              label="Upload Errors"
               value={String(data.failedFilesCount)}
-              sub="Intentos fallidos / cancelados"
+              sub="Failed / cancelled attempts"
             />
             <Kpi
               icon={Users}
-              label="Usuarios con almacenamiento"
+              label="Users with Storage"
               value={String(data.storagePerUser.length)}
-              sub="Cuentas activas utilizando R2"
+              sub="Active accounts using R2"
             />
           </div>
 
@@ -158,7 +158,7 @@ function StorageAdminPage() {
             <div className="rounded-2xl border border-border bg-card p-5">
               <div className="mb-4 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <h2 className="font-display text-base font-semibold">Crecimiento de Almacenamiento (Últimos 30 días)</h2>
+                <h2 className="font-display text-base font-semibold">Storage Growth (Last 30 days)</h2>
               </div>
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={data.growth}>
@@ -175,8 +175,8 @@ function StorageAdminPage() {
                     stroke="hsl(var(--muted-foreground))"
                     tickFormatter={(v) => humanSize(v)}
                   />
-                  <Tooltip formatter={(value: any) => [humanSize(Number(value)), "Tamaño"]} />
-                  <Area type="monotone" dataKey="bytes" stroke="hsl(var(--primary))" fill="url(#growthGrad)" name="Almacenamiento" />
+                  <Tooltip formatter={(value: any) => [humanSize(Number(value)), "Size"]} />
+                  <Area type="monotone" dataKey="bytes" stroke="hsl(var(--primary))" fill="url(#growthGrad)" name="Storage" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -185,7 +185,7 @@ function StorageAdminPage() {
             <div className="rounded-2xl border border-border bg-card p-5">
               <div className="mb-4 flex items-center gap-2">
                 <FileCode className="h-4 w-4 text-primary" />
-                <h2 className="font-display text-base font-semibold">Uso de Almacenamiento por Tipo de Archivo</h2>
+                <h2 className="font-display text-base font-semibold">Storage Usage by File Type</h2>
               </div>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={data.storagePerType}>
@@ -196,8 +196,8 @@ function StorageAdminPage() {
                     stroke="hsl(var(--muted-foreground))"
                     tickFormatter={(v) => humanSize(v)}
                   />
-                  <Tooltip formatter={(value: any) => [humanSize(Number(value)), "Uso"]} />
-                  <Bar dataKey="size" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Tamaño" />
+                  <Tooltip formatter={(value: any) => [humanSize(Number(value)), "Usage"]} />
+                  <Bar dataKey="size" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Size" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -207,15 +207,15 @@ function StorageAdminPage() {
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="font-display text-base font-semibold">Archivos recientes</h2>
-                <p className="text-xs text-muted-foreground">Listado de las cargas realizadas a Cloudflare R2.</p>
+                <h2 className="font-display text-base font-semibold">Recent Files</h2>
+                <p className="text-xs text-muted-foreground">List of uploads stored in Cloudflare R2.</p>
               </div>
               <div className="relative w-full max-w-xs">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar archivo por nombre..."
+                  placeholder="Search file by name..."
                   className="pl-9"
                 />
               </div>
@@ -223,19 +223,19 @@ function StorageAdminPage() {
 
             {filteredUploads.length === 0 ? (
               <div className="py-12 text-center text-sm text-muted-foreground">
-                No se encontraron archivos cargados.
+                No uploaded files found.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-muted-foreground">
                   <thead>
                     <tr className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground/80">
-                      <th className="py-3 px-4 font-semibold">Nombre</th>
-                      <th className="py-3 px-4 font-semibold">Ruta</th>
-                      <th className="py-3 px-4 font-semibold">Tipo</th>
-                      <th className="py-3 px-4 font-semibold">Tamaño</th>
-                      <th className="py-3 px-4 font-semibold">Fecha</th>
-                      <th className="py-3 px-4 font-semibold text-right">Acción</th>
+                      <th className="py-3 px-4 font-semibold">Name</th>
+                      <th className="py-3 px-4 font-semibold">Path</th>
+                      <th className="py-3 px-4 font-semibold">Type</th>
+                      <th className="py-3 px-4 font-semibold">Size</th>
+                      <th className="py-3 px-4 font-semibold">Date</th>
+                      <th className="py-3 px-4 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -250,9 +250,9 @@ function StorageAdminPage() {
                         <td className="py-3 px-4 text-xs">{f.file_type}</td>
                         <td className="py-3 px-4 text-xs">{humanSize(f.file_size)}</td>
                         <td className="py-3 px-4 text-xs">
-                          {new Date(f.created_at).toLocaleDateString("es-MX", {
+                          {new Date(f.created_at).toLocaleDateString("en-US", {
                             day: "2-digit",
-                            month: "2-digit",
+                            month: "short",
                             year: "numeric",
                           })}
                         </td>
@@ -262,7 +262,7 @@ function StorageAdminPage() {
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-destructive"
                             onClick={() => {
-                              if (confirm(`¿Estás seguro de eliminar permanentemente ${f.file_name}?`)) {
+                              if (confirm(`Are you sure you want to permanently delete ${f.file_name}?`)) {
                                 deleteMutation.mutate(f.storage_path);
                               }
                             }}
@@ -280,16 +280,16 @@ function StorageAdminPage() {
 
           {/* Largest Files Panel */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            <h2 className="mb-4 font-display text-base font-semibold">Archivos de mayor tamaño</h2>
+            <h2 className="mb-4 font-display text-base font-semibold">Largest Files</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-muted-foreground">
                 <thead>
                   <tr className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground/80">
-                    <th className="py-3 px-4 font-semibold">Nombre</th>
-                    <th className="py-3 px-4 font-semibold">Usuario (Propietario)</th>
-                    <th className="py-3 px-4 font-semibold">Tipo</th>
-                    <th className="py-3 px-4 font-semibold">Tamaño</th>
-                    <th className="py-3 px-4 font-semibold">Fecha de carga</th>
+                    <th className="py-3 px-4 font-semibold">Name</th>
+                    <th className="py-3 px-4 font-semibold">User (Owner)</th>
+                    <th className="py-3 px-4 font-semibold">Type</th>
+                    <th className="py-3 px-4 font-semibold">Size</th>
+                    <th className="py-3 px-4 font-semibold">Upload Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -298,11 +298,11 @@ function StorageAdminPage() {
                       <td className="py-3 px-4 font-medium text-foreground truncate max-w-[200px]" title={f.file_name}>
                         {f.file_name}
                       </td>
-                      <td className="py-3 px-4 text-xs font-mono">{f.owner_id || "Sistema"}</td>
+                      <td className="py-3 px-4 text-xs font-mono">{f.owner_id || "System"}</td>
                       <td className="py-3 px-4 text-xs">{f.file_type}</td>
                       <td className="py-3 px-4 text-xs font-bold text-foreground">{humanSize(f.file_size)}</td>
                       <td className="py-3 px-4 text-xs">
-                        {new Date(f.created_at).toLocaleDateString("es-MX")}
+                        {new Date(f.created_at).toLocaleDateString("en-US")}
                       </td>
                     </tr>
                   ))}

@@ -84,7 +84,7 @@ function SubscriptionsAdmin() {
       setTotalUsers(data.profiles.length);
       setProCount(data.profiles.filter((p: any) => (p.plan ?? "").toLowerCase() === "pro").length);
     } catch (err: any) {
-      toast.error("Error al cargar datos: " + err.message);
+      toast.error("Error loading data: " + err.message);
     }
   }
 
@@ -96,7 +96,7 @@ function SubscriptionsAdmin() {
   );
 
   async function createPlan() {
-    if (!planForm.name.trim()) return toast.error("Escribe un nombre");
+    if (!planForm.name.trim()) return toast.error("Enter a plan name");
     setSavingPlan(true);
     const features = planForm.features.split("\n").map((f) => f.trim()).filter(Boolean);
     try {
@@ -109,9 +109,9 @@ function SubscriptionsAdmin() {
           sort_order: (plans?.length ?? 0),
         }
       });
-      setPlanForm({ name: "", price: 0, interval: "mensual", features: "" });
+      setPlanForm({ name: "", price: 0, interval: "monthly", features: "" });
       setPlanDialog(false);
-      toast.success("Plan creado");
+      toast.success("Plan created");
       load();
     } catch (err: any) {
       toast.error(err.message);
@@ -132,7 +132,7 @@ function SubscriptionsAdmin() {
   async function removePlan(id: string) {
     try {
       await removePlanFn({ data: { id } });
-      toast.success("Plan eliminado");
+      toast.success("Plan deleted");
       load();
     } catch (err: any) {
       toast.error(err.message);
@@ -140,7 +140,7 @@ function SubscriptionsAdmin() {
   }
 
   async function createCoupon() {
-    if (!form.code.trim()) return toast.error("Escribe un código");
+    if (!form.code.trim()) return toast.error("Enter a coupon code");
     setSaving(true);
     try {
       await createCouponFn({
@@ -151,7 +151,7 @@ function SubscriptionsAdmin() {
         }
       });
       setForm({ code: "", description: "", percent_off: 20 });
-      toast.success("Cupón creado");
+      toast.success("Coupon created");
       load();
     } catch (err: any) {
       toast.error(err.message);
@@ -172,7 +172,7 @@ function SubscriptionsAdmin() {
   async function removeCoupon(id: string) {
     try {
       await removeCouponFn({ data: { id } });
-      toast.success("Cupón eliminado");
+      toast.success("Coupon deleted");
       load();
     } catch (err: any) {
       toast.error(err.message);
@@ -200,50 +200,50 @@ function SubscriptionsAdmin() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Kpi icon={Users} label="Usuarios totales" value={String(totalUsers)} />
-            <Kpi icon={Crown} label="Suscriptores Pro" value={String(proCount)} />
-            <Kpi icon={DollarSign} label="Ingresos cobrados" value={mxn(revenue)} />
-            <Kpi icon={Ticket} label="Cupones activos" value={String(coupons!.filter((c) => c.active).length)} />
+            <Kpi icon={Users} label="Total users" value={String(totalUsers)} />
+            <Kpi icon={Crown} label="Pro subscribers" value={String(proCount)} />
+            <Kpi icon={DollarSign} label="Revenue collected" value={mxn(revenue)} />
+            <Kpi icon={Ticket} label="Active coupons" value={String(coupons!.filter((c) => c.active).length)} />
           </div>
 
           <Tabs defaultValue="plans">
             <TabsList>
-              <TabsTrigger value="plans">Planes</TabsTrigger>
-              <TabsTrigger value="coupons">Cupones</TabsTrigger>
-              <TabsTrigger value="invoices">Facturas</TabsTrigger>
+              <TabsTrigger value="plans">Plans</TabsTrigger>
+              <TabsTrigger value="coupons">Coupons</TabsTrigger>
+              <TabsTrigger value="invoices">Invoices</TabsTrigger>
             </TabsList>
 
             <TabsContent value="plans" className="mt-4">
               <div className="mb-4 flex justify-end">
                 <Dialog open={planDialog} onOpenChange={setPlanDialog}>
                   <DialogTrigger asChild>
-                    <Button><Plus className="mr-2 h-4 w-4" />Agregar plan</Button>
+                    <Button><Plus className="mr-2 h-4 w-4" />Add plan</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>Nuevo plan</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>New Plan</DialogTitle></DialogHeader>
                     <div className="space-y-3">
                       <div className="space-y-1.5">
-                        <Label className="text-xs">Nombre</Label>
+                        <Label className="text-xs">Name</Label>
                         <Input value={planForm.name} onChange={(e) => setPlanForm((s) => ({ ...s, name: e.target.value }))} placeholder="Business" />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
-                          <Label className="text-xs">Precio (MXN)</Label>
+                          <Label className="text-xs">Price (MXN)</Label>
                           <Input type="number" min={0} value={planForm.price} onChange={(e) => setPlanForm((s) => ({ ...s, price: Number(e.target.value) }))} />
                         </div>
                         <div className="space-y-1.5">
-                          <Label className="text-xs">Intervalo</Label>
-                          <Input value={planForm.interval} onChange={(e) => setPlanForm((s) => ({ ...s, interval: e.target.value }))} placeholder="mensual" />
+                          <Label className="text-xs">Interval</Label>
+                          <Input value={planForm.interval} onChange={(e) => setPlanForm((s) => ({ ...s, interval: e.target.value }))} placeholder="monthly" />
                         </div>
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs">Características (una por línea)</Label>
-                        <Textarea rows={4} value={planForm.features} onChange={(e) => setPlanForm((s) => ({ ...s, features: e.target.value }))} placeholder={"CV ilimitados\nSoporte prioritario"} />
+                        <Label className="text-xs">Features (one per line)</Label>
+                        <Textarea rows={4} value={planForm.features} onChange={(e) => setPlanForm((s) => ({ ...s, features: e.target.value }))} placeholder={"Unlimited resumes\nPriority support"} />
                       </div>
                     </div>
                     <DialogFooter>
                       <Button onClick={createPlan} disabled={savingPlan}>
-                        {savingPlan && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Crear plan
+                        {savingPlan && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Create Plan
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -251,7 +251,7 @@ function SubscriptionsAdmin() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {plans!.length === 0 && (
-                  <p className="text-sm text-muted-foreground">Aún no hay planes. Agrega el primero.</p>
+                  <p className="text-sm text-muted-foreground">No plans yet. Add your first plan.</p>
                 )}
                 {plans!.map((p) => (
                   <div key={p.id} className={`relative rounded-2xl border p-5 ${p.active ? "border-border bg-card" : "border-dashed border-border bg-card/50 opacity-70"}`}>
@@ -281,24 +281,24 @@ function SubscriptionsAdmin() {
 
             <TabsContent value="coupons" className="mt-4 space-y-4">
               <div className="rounded-2xl border border-border bg-card p-5">
-                <h3 className="mb-4 font-display text-base font-semibold">Nuevo cupón</h3>
+                <h3 className="mb-4 font-display text-base font-semibold">New Coupon</h3>
                 <div className="grid gap-3 sm:grid-cols-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Código</Label>
+                    <Label className="text-xs">Code</Label>
                     <Input value={form.code} onChange={(e) => setForm((s) => ({ ...s, code: e.target.value }))} placeholder="PROMO20" />
                   </div>
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs">Descripción</Label>
-                    <Input value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} placeholder="20% de descuento" />
+                    <Label className="text-xs">Description</Label>
+                    <Input value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} placeholder="20% off discount" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs">% descuento</Label>
+                    <Label className="text-xs">% Discount</Label>
                     <Input type="number" min={1} max={100} value={form.percent_off} onChange={(e) => setForm((s) => ({ ...s, percent_off: Number(e.target.value) }))} />
                   </div>
                 </div>
                 <Button className="mt-4" onClick={createCoupon} disabled={saving}>
                   {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
-                  Crear cupón
+                  Create Coupon
                 </Button>
               </div>
 
@@ -306,16 +306,16 @@ function SubscriptionsAdmin() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Descripción</TableHead>
-                      <TableHead>Descuento</TableHead>
-                      <TableHead>Activo</TableHead>
-                      <TableHead className="text-right">Acción</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Discount</TableHead>
+                      <TableHead>Active</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {coupons!.length === 0 && (
-                      <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin cupones aún</TableCell></TableRow>
+                      <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No coupons yet</TableCell></TableRow>
                     )}
                     {coupons!.map((c) => (
                       <TableRow key={c.id}>
@@ -340,16 +340,16 @@ function SubscriptionsAdmin() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Número</TableHead>
-                      <TableHead>Concepto</TableHead>
-                      <TableHead>Monto</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Fecha</TableHead>
+                      <TableHead>Number</TableHead>
+                      <TableHead>Concept</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {invoices!.length === 0 && (
-                      <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin facturas aún</TableCell></TableRow>
+                      <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No invoices yet</TableCell></TableRow>
                     )}
                     {invoices!.map((i) => (
                       <TableRow key={i.id}>
@@ -359,10 +359,10 @@ function SubscriptionsAdmin() {
                         <TableCell>
                           <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${statusStyle[i.status] ?? "bg-muted text-muted-foreground"}`}>
                             {i.status === "pagado" ? <CheckCircle2 className="h-3 w-3" /> : i.status === "cancelado" ? <XCircle className="h-3 w-3" /> : <Receipt className="h-3 w-3" />}
-                            {i.status}
+                            {i.status === "pagado" ? "Paid" : i.status === "pendiente" ? "Pending" : i.status === "cancelado" ? "Cancelled" : i.status === "reembolsado" ? "Refunded" : i.status}
                           </span>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{new Date(i.issued_at).toLocaleDateString("es-MX")}</TableCell>
+                        <TableCell className="text-muted-foreground">{new Date(i.issued_at).toLocaleDateString("en-US")}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

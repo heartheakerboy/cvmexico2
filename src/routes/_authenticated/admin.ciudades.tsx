@@ -139,7 +139,7 @@ function CitiesAdmin() {
         setRows(data as CityRow[]);
       }
     } catch (e) {
-      toast.error("Error al conectar con la base de datos.");
+      toast.error("Error connecting to database.");
     }
   }
 
@@ -185,20 +185,20 @@ function CitiesAdmin() {
   }
 
   async function save() {
-    if (!form.name.trim()) { toast.error("El nombre es obligatorio"); return; }
+    if (!form.name.trim()) { toast.error("City name is required"); return; }
     
     let salaryObj = {};
     let faqArr = [];
     try {
       salaryObj = JSON.parse(form.salary_info);
     } catch {
-      toast.error("El formato de Salarios (JSON) es inválido");
+      toast.error("Salary information (JSON) is invalid");
       return;
     }
     try {
       faqArr = JSON.parse(form.faqs);
     } catch {
-      toast.error("El formato de FAQs (JSON) es inválido");
+      toast.error("FAQs format (JSON) is invalid");
       return;
     }
 
@@ -231,36 +231,36 @@ function CitiesAdmin() {
 
     setSaving(false);
     if (res.error) { 
-      toast.error("Error al guardar: " + res.error.message); 
+      toast.error("Error saving: " + res.error.message); 
       return; 
     }
     
-    toast.success(editId && !isStaticMock ? "Ciudad actualizada en base de datos" : "Ciudad creada en base de datos");
+    toast.success(editId && !isStaticMock ? "City updated in database" : "City created in database");
     setDialog(false);
     load();
   }
 
   async function remove(id: string) {
     if (id.startsWith("static-")) {
-      toast.error("No se pueden eliminar las ciudades del fallback estático. Ejecuta primero las migraciones SQL en Supabase.");
+      toast.error("Cannot delete static fallback cities. Run database SQL migrations first.");
       return;
     }
-    if (!confirm("¿Eliminar esta ciudad de la base de datos?")) return;
+    if (!confirm("Delete this city from the database?")) return;
     const { error } = await supabase.from("cities").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Ciudad eliminada");
+    toast.success("City deleted");
     setRows((r) => (r ?? []).filter((x) => x.id !== id));
   }
 
   async function toggleActive(c: CityRow) {
     if (c.id.startsWith("static-")) {
-      toast.error("Crea la tabla en base de datos para habilitar/deshabilitar de forma persistente.");
+      toast.error("Create the database table to toggle active states persistently.");
       return;
     }
     const { error } = await supabase.from("cities").update({ is_active: !c.is_active }).eq("id", c.id);
     if (error) { toast.error(error.message); return; }
     setRows((r) => (r ?? []).map((x) => x.id === c.id ? { ...x, is_active: !x.is_active } : x));
-    toast.success(`${c.name} ${!c.is_active ? "habilitada" : "deshabilitada"}`);
+    toast.success(`${c.name} ${!c.is_active ? "enabled" : "disabled"}`);
   }
 
   return (
@@ -268,21 +268,21 @@ function CitiesAdmin() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold">City Management (SEO)</h1>
-          <p className="text-sm text-muted-foreground">Administra páginas de aterrizaje locales y personalización de CVs por ciudad.</p>
+          <p className="text-sm text-muted-foreground">Manage local landing pages and resume customization by Mexican city.</p>
         </div>
-        <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> Nueva ciudad</Button>
+        <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> New City</Button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={MapPin} label="Ciudades registradas" value={(rows?.length ?? 0).toString()} />
-        <Kpi icon={Globe} label="Ciudades activas" value={(rows ?? []).filter((r) => r.is_active).length.toString()} />
-        <Kpi icon={Building2} label="Promedio empresas/ciudad" value={(rows?.length ? Math.round(rows.reduce((a, r) => a + (r.companies?.length || 0), 0) / rows.length) : 0).toString()} />
-        <Kpi icon={GraduationCap} label="Promedio univs/ciudad" value={(rows?.length ? Math.round(rows.reduce((a, r) => a + (r.universities?.length || 0), 0) / rows.length) : 0).toString()} />
+        <Kpi icon={MapPin} label="Registered cities" value={(rows?.length ?? 0).toString()} />
+        <Kpi icon={Globe} label="Active cities" value={(rows ?? []).filter((r) => r.is_active).length.toString()} />
+        <Kpi icon={Building2} label="Avg companies/city" value={(rows?.length ? Math.round(rows.reduce((a, r) => a + (r.companies?.length || 0), 0) / rows.length) : 0).toString()} />
+        <Kpi icon={GraduationCap} label="Avg univs/city" value={(rows?.length ? Math.round(rows.reduce((a, r) => a + (r.universities?.length || 0), 0) / rows.length) : 0).toString()} />
       </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input className="pl-9" placeholder="Buscar ciudad por nombre o slug..."
+        <Input className="pl-9" placeholder="Search city by name or slug..."
           value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
 
@@ -290,12 +290,12 @@ function CitiesAdmin() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Ciudad</TableHead>
-              <TableHead>Slug / Estado</TableHead>
-              <TableHead>Lada</TableHead>
-              <TableHead>Empresas & Univs</TableHead>
-              <TableHead>Activa</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead>Slug / State</TableHead>
+              <TableHead>Area Code</TableHead>
+              <TableHead>Companies & Universities</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -308,7 +308,7 @@ function CitiesAdmin() {
             ) : filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="py-10 text-center text-sm text-muted-foreground">
-                  Sin resultados.
+                  No cities found.
                 </TableCell>
               </TableRow>
             ) : (
@@ -324,17 +324,17 @@ function CitiesAdmin() {
                   </TableCell>
                   <TableCell className="text-sm font-medium text-foreground">+{c.phone_area_code}</TableCell>
                   <TableCell className="text-xs text-muted-foreground font-medium">
-                    {c.companies?.length || 0} empresas / {c.universities?.length || 0} univs
+                    {c.companies?.length || 0} companies / {c.universities?.length || 0} universities
                   </TableCell>
                   <TableCell>
                     <Switch checked={c.is_active} onCheckedChange={() => toggleActive(c)} />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1.5">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(c)} title="Editar">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(c)} title="Edit">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => remove(c.id)} title="Eliminar">
+                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => remove(c.id)} title="Delete">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -349,29 +349,29 @@ function CitiesAdmin() {
       <Dialog open={dialog} onOpenChange={setDialog}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editId ? "Editar Ciudad" : "Nueva Ciudad"}</DialogTitle>
+            <DialogTitle>{editId ? "Edit City" : "New City"}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-name">Nombre de la Ciudad</Label>
-                <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ej. Monterrey" />
+                <Label htmlFor="c-name">City Name</Label>
+                <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Monterrey" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-slug">Slug URL (vacío para autogenerar)</Label>
-                <Input id="c-slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Ej. monterrey" />
+                <Label htmlFor="c-slug">Slug URL (leave empty to autogenerate)</Label>
+                <Input id="c-slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. monterrey" />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-state">Abreviatura del Estado</Label>
-                <Input id="c-state" value={form.state_code} onChange={(e) => setForm({ ...form, state_code: e.target.value })} placeholder="Ej. N.L." />
+                <Label htmlFor="c-state">State Abbreviation</Label>
+                <Input id="c-state" value={form.state_code} onChange={(e) => setForm({ ...form, state_code: e.target.value })} placeholder="e.g. N.L." />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-lada">Código de Área Telefónico (Lada)</Label>
-                <Input id="c-lada" value={form.phone_area_code} onChange={(e) => setForm({ ...form, phone_area_code: e.target.value })} placeholder="Ej. 81" />
+                <Label htmlFor="c-lada">Phone Area Code</Label>
+                <Input id="c-lada" value={form.phone_area_code} onChange={(e) => setForm({ ...form, phone_area_code: e.target.value })} placeholder="e.g. 81" />
               </div>
             </div>
 
@@ -382,49 +382,49 @@ function CitiesAdmin() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-companies">Empresas Locales (separadas por comas)</Label>
+                <Label htmlFor="c-companies">Local Companies (comma separated)</Label>
                 <Input id="c-companies" value={form.companies} onChange={(e) => setForm({ ...form, companies: e.target.value })} placeholder="Cemex, Femsa, Ternium" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-univs">Universidades Locales (separadas por comas)</Label>
+                <Label htmlFor="c-univs">Local Universities (comma separated)</Label>
                 <Input id="c-univs" value={form.universities} onChange={(e) => setForm({ ...form, universities: e.target.value })} placeholder="UANL, Tec de Monterrey" />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-industries">Industrias Populares (separadas por comas)</Label>
-                <Input id="c-industries" value={form.industries} onChange={(e) => setForm({ ...form, industries: e.target.value })} placeholder="Manufactura, Siderurgia, Logística" />
+                <Label htmlFor="c-industries">Popular Industries (comma separated)</Label>
+                <Input id="c-industries" value={form.industries} onChange={(e) => setForm({ ...form, industries: e.target.value })} placeholder="Manufacturing, Steel, Logistics" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-sectors">Sectores de Mayor Contratación (separados por comas)</Label>
-                <Input id="c-sectors" value={form.hiring_sectors} onChange={(e) => setForm({ ...form, hiring_sectors: e.target.value })} placeholder="Ingeniería, Ventas, Finanzas" />
+                <Label htmlFor="c-sectors">Top Hiring Sectors (comma separated)</Label>
+                <Input id="c-sectors" value={form.hiring_sectors} onChange={(e) => setForm({ ...form, hiring_sectors: e.target.value })} placeholder="Engineering, Sales, Finance" />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="c-resume-tips">Consejos para Currículum (uno por línea)</Label>
-              <Textarea id="c-resume-tips" rows={3} value={form.resume_tips} onChange={(e) => setForm({ ...form, resume_tips: e.target.value })} placeholder="Describe tus logros con verbos de acción..." />
+              <Label htmlFor="c-resume-tips">Resume Tips (one per line)</Label>
+              <Textarea id="c-resume-tips" rows={3} value={form.resume_tips} onChange={(e) => setForm({ ...form, resume_tips: e.target.value })} placeholder="Describe accomplishments with action verbs..." />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-cl-tips">Consejos Carta de Presentación (uno por línea)</Label>
-                <Textarea id="c-cl-tips" rows={3} value={form.cover_letter_tips} onChange={(e) => setForm({ ...form, cover_letter_tips: e.target.value })} placeholder="Dirígete al reclutador local..." />
+                <Label htmlFor="c-cl-tips">Cover Letter Tips (one per line)</Label>
+                <Textarea id="c-cl-tips" rows={3} value={form.cover_letter_tips} onChange={(e) => setForm({ ...form, cover_letter_tips: e.target.value })} placeholder="Address the local hiring manager..." />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-int-tips">Consejos para Entrevistas (uno por línea)</Label>
-                <Textarea id="c-int-tips" rows={3} value={form.interview_tips} onChange={(e) => setForm({ ...form, interview_tips: e.target.value })} placeholder="Investiga los proyectos locales de la empresa..." />
+                <Label htmlFor="c-int-tips">Interview Tips (one per line)</Label>
+                <Textarea id="c-int-tips" rows={3} value={form.interview_tips} onChange={(e) => setForm({ ...form, interview_tips: e.target.value })} placeholder="Research the local regional projects..." />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="c-salaries">Información de Salarios (JSON Map)</Label>
+                <Label htmlFor="c-salaries">Salary Information (JSON Map)</Label>
                 <Textarea id="c-salaries" className="font-mono text-xs" rows={5} value={form.salary_info} onChange={(e) => setForm({ ...form, salary_info: e.target.value })} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="c-faqs">Preguntas Frecuentes (JSON Array)</Label>
+                <Label htmlFor="c-faqs">Frequently Asked Questions (JSON Array)</Label>
                 <Textarea id="c-faqs" className="font-mono text-xs" rows={5} value={form.faqs} onChange={(e) => setForm({ ...form, faqs: e.target.value })} />
               </div>
             </div>
@@ -432,25 +432,25 @@ function CitiesAdmin() {
             <div className="border-t pt-3 mt-3 grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="c-seo-title">SEO Title</Label>
-                <Input id="c-seo-title" value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder="Plantillas de Currículum en..." />
+                <Input id="c-seo-title" value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder="Professional Resume Templates in..." />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="c-seo-desc">SEO Meta Description</Label>
-                <Input id="c-seo-desc" value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} placeholder="Crea tu currículum optimizado para..." />
+                <Input id="c-seo-desc" value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} placeholder="Create your ATS-optimized resume for..." />
               </div>
             </div>
 
             <div className="flex items-center gap-2 pt-2">
               <Switch id="c-active" checked={form.is_active} onCheckedChange={(val) => setForm({ ...form, is_active: val })} />
-              <Label htmlFor="c-active">Habilitar página de aterrizaje de esta ciudad</Label>
+              <Label htmlFor="c-active">Enable landing page for this city</Label>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(false)} disabled={saving}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setDialog(false)} disabled={saving}>Cancel</Button>
             <Button onClick={save} disabled={saving}>
               {saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-              Guardar Ciudad
+              Save City
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -114,7 +114,7 @@ function TemplatesAdmin() {
   );
 
   async function createTemplate() {
-    if (!form.name.trim()) return toast.error("Escribe un nombre");
+    if (!form.name.trim()) return toast.error("Name is required");
     setSaving(true);
     const { error } = await supabase.from("templates").insert({
       name: form.name.trim(),
@@ -129,13 +129,13 @@ function TemplatesAdmin() {
     if (error) return toast.error(error.message);
     setForm(emptyForm);
     setDialog(false);
-    toast.success("Plantilla creada");
+    toast.success("Template created");
     load();
   }
 
   async function duplicate(t: Template) {
     const { error } = await supabase.from("templates").insert({
-      name: `${t.name} (copia)`,
+      name: `${t.name} (copy)`,
       category: t.category,
       description: t.description,
       thumbnail_url: t.thumbnail_url,
@@ -146,7 +146,7 @@ function TemplatesAdmin() {
       sort_order: items?.length ?? 0,
     });
     if (error) return toast.error(error.message);
-    toast.success("Plantilla duplicada");
+    toast.success("Template duplicated");
     load();
   }
 
@@ -159,7 +159,7 @@ function TemplatesAdmin() {
   async function remove(id: string) {
     const { error } = await supabase.from("templates").delete().eq("id", id);
     if (error) return toast.error(error.message);
-    toast.success("Plantilla eliminada");
+    toast.success("Template deleted");
     load();
   }
 
@@ -172,8 +172,8 @@ function TemplatesAdmin() {
           <LayoutTemplate className="h-5 w-5" />
         </span>
         <div>
-          <h1 className="font-display text-2xl font-bold">Resume templates</h1>
-          <p className="text-sm text-muted-foreground">Manage templates, categories and featured.</p>
+          <h1 className="font-display text-2xl font-bold">Resume Templates</h1>
+          <p className="text-sm text-muted-foreground">Manage templates, categories, and featured designs.</p>
         </div>
       </header>
 
@@ -184,41 +184,41 @@ function TemplatesAdmin() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Kpi icon={LayoutTemplate} label="Plantillas" value={String(items!.length)} />
-            <Kpi icon={Shapes} label="Categorías" value={String(categories.length)} />
-            <Kpi icon={Star} label="Destacadas" value={String(items!.filter((t) => t.featured).length)} />
+            <Kpi icon={LayoutTemplate} label="Templates" value={String(items!.length)} />
+            <Kpi icon={Shapes} label="Categories" value={String(categories.length)} />
+            <Kpi icon={Star} label="Featured" value={String(items!.filter((t) => t.featured).length)} />
             <Kpi icon={Crown} label="Premium" value={String(items!.filter((t) => t.premium).length)} />
           </div>
 
           <div className="flex justify-end">
             <Dialog open={dialog} onOpenChange={setDialog}>
               <DialogTrigger asChild>
-                <Button><Plus className="mr-2 h-4 w-4" />Crear plantilla</Button>
+                <Button><Plus className="mr-2 h-4 w-4" />Create template</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>Nueva plantilla</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>New Template</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Nombre</Label>
-                      <Input value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} placeholder="Moderno" />
+                      <Label className="text-xs">Name</Label>
+                      <Input value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} placeholder="Modern" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Categoría</Label>
-                      <Input value={form.category} onChange={(e) => setForm((s) => ({ ...s, category: e.target.value }))} placeholder="moderno" />
+                      <Label className="text-xs">Category</Label>
+                      <Input value={form.category} onChange={(e) => setForm((s) => ({ ...s, category: e.target.value }))} placeholder="modern" />
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs">Descripción</Label>
-                    <Textarea rows={2} value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} placeholder="Diseño limpio y compatible con ATS" />
+                    <Label className="text-xs">Description</Label>
+                    <Textarea rows={2} value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} placeholder="Clean layout, fully ATS compliant" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs">URL de miniatura</Label>
+                    <Label className="text-xs">Thumbnail URL</Label>
                     <Input value={form.thumbnail_url} onChange={(e) => setForm((s) => ({ ...s, thumbnail_url: e.target.value }))} placeholder="https://..." />
                   </div>
                   <div className="grid grid-cols-2 items-end gap-3">
                     <div className="space-y-1.5">
-                      <Label className="text-xs">Puntuación ATS (0-100)</Label>
+                      <Label className="text-xs">ATS Score (0-100)</Label>
                       <Input type="number" min={0} max={100} value={form.ats_score} onChange={(e) => setForm((s) => ({ ...s, ats_score: Number(e.target.value) }))} />
                     </div>
                     <div className="flex items-center gap-2 pb-2">
@@ -229,7 +229,7 @@ function TemplatesAdmin() {
                 </div>
                 <DialogFooter>
                   <Button onClick={createTemplate} disabled={saving}>
-                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Crear
+                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Create
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -238,7 +238,7 @@ function TemplatesAdmin() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items!.length === 0 && (
-              <p className="text-sm text-muted-foreground">Aún no hay plantillas. Crea la primera.</p>
+              <p className="text-sm text-muted-foreground">No templates yet. Create the first one.</p>
             )}
             {items!.map((t) => (
               <div key={t.id} className={`rounded-2xl border p-5 ${t.active ? "border-border bg-card" : "border-dashed border-border bg-card/50 opacity-70"}`}>
@@ -266,18 +266,18 @@ function TemplatesAdmin() {
                     <Switch checked={t.premium} onCheckedChange={(v) => patch(t.id, { premium: v })} />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-muted-foreground"><Star className="h-3.5 w-3.5" />Destacada</span>
+                    <span className="flex items-center gap-1.5 text-muted-foreground"><Star className="h-3.5 w-3.5" />Featured</span>
                     <Switch checked={t.featured} onCheckedChange={(v) => patch(t.id, { featured: v })} />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-muted-foreground"><LayoutTemplate className="h-3.5 w-3.5" />Activa</span>
+                    <span className="flex items-center gap-1.5 text-muted-foreground"><LayoutTemplate className="h-3.5 w-3.5" />Active</span>
                     <Switch checked={t.active} onCheckedChange={(v) => patch(t.id, { active: v })} />
                   </div>
                 </div>
 
                 <div className="mt-4 flex gap-2">
                   <Button variant="outline" size="sm" className="flex-1" onClick={() => duplicate(t)}>
-                    <Copy className="mr-2 h-4 w-4" />Duplicar
+                    <Copy className="mr-2 h-4 w-4" />Duplicate
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => remove(t.id)}>
                     <Trash2 className="h-4 w-4 text-destructive" />

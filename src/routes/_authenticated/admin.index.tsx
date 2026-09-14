@@ -81,7 +81,7 @@ function DashboardPage() {
       d.setDate(d.getDate() - i);
       const key = d.toISOString().slice(0, 10);
       days.push({
-        label: d.toLocaleDateString("es-MX", { day: "2-digit", month: "short" }),
+        label: d.toLocaleDateString("en-US", { day: "2-digit", month: "short" }),
         value: rows.filter((r) => r.created_at.slice(0, 10) === key).length,
       });
     }

@@ -20,8 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 interface EmailVisualEditorProps {
@@ -42,15 +40,15 @@ interface EmailVisualEditorProps {
 }
 
 const PERSONALIZATION_VARIABLES = [
-  { tag: "{{first_name}}", label: "Nombre", example: "Juan" },
-  { tag: "{{last_name}}", label: "Apellido", example: "Pérez" },
-  { tag: "{{email}}", label: "Correo", example: "usuario@ejemplo.com" },
+  { tag: "{{first_name}}", label: "First Name", example: "John" },
+  { tag: "{{last_name}}", label: "Last Name", example: "Doe" },
+  { tag: "{{email}}", label: "Email", example: "user@example.com" },
   { tag: "{{plan_name}}", label: "Plan", example: "Pro" },
-  { tag: "{{registration_date}}", label: "Fecha Registro", example: "14/09/2026" },
-  { tag: "{{resume_count}}", label: "Nº de CVs", example: "2" },
-  { tag: "{{ai_usage}}", label: "Uso de IA", example: "8 consultas" },
-  { tag: "{{website_name}}", label: "Nombre Sitio", example: "CVAI" },
-  { tag: "{{website_url}}", label: "URL Sitio", example: "https://cvai.com.mx" },
+  { tag: "{{registration_date}}", label: "Registration Date", example: "14/09/2026" },
+  { tag: "{{resume_count}}", label: "Resume Count", example: "2" },
+  { tag: "{{ai_usage}}", label: "AI Usage", example: "8 queries" },
+  { tag: "{{website_name}}", label: "Site Name", example: "CVAI" },
+  { tag: "{{website_url}}", label: "Site URL", example: "https://cvai.com.mx" },
 ];
 
 export function EmailVisualEditor({
@@ -68,23 +66,23 @@ export function EmailVisualEditor({
 
   function insertVariable(tag: string) {
     onChange({ bodyHtml: bodyHtml + (bodyHtml.endsWith(" ") ? "" : " ") + tag + " " });
-    toast.info(`Variable ${tag} agregada`);
+    toast.info(`Variable ${tag} inserted`);
   }
 
   function insertSnippet(type: string) {
     let snippet = "";
     switch (type) {
       case "h1":
-        snippet = "\n\n<h1 style=\"color: #0f172a; font-size: 24px; font-weight: 800; margin: 16px 0 8px 0;\">Título Principal</h1>\n";
+        snippet = "\n\n<h1 style=\"color: #0f172a; font-size: 24px; font-weight: 800; margin: 16px 0 8px 0;\">Main Heading</h1>\n";
         break;
       case "h2":
-        snippet = "\n\n<h2 style=\"color: #1e293b; font-size: 19px; font-weight: 700; margin: 16px 0 8px 0;\">Subtítulo Destacado</h2>\n";
+        snippet = "\n\n<h2 style=\"color: #1e293b; font-size: 19px; font-weight: 700; margin: 16px 0 8px 0;\">Featured Subheading</h2>\n";
         break;
       case "p":
-        snippet = "\n<p style=\"margin: 0 0 14px 0; line-height: 1.6;\">Escribe aquí tu párrafo explicativo...</p>\n";
+        snippet = "\n<p style=\"margin: 0 0 14px 0; line-height: 1.6;\">Write your explanatory paragraph here...</p>\n";
         break;
       case "list":
-        snippet = "\n<ul style=\"margin: 12px 0; padding-left: 20px; line-height: 1.6;\">\n  <li>Punto clave 1</li>\n  <li>Punto clave 2</li>\n  <li>Punto clave 3</li>\n</ul>\n";
+        snippet = "\n<ul style=\"margin: 12px 0; padding-left: 20px; line-height: 1.6;\">\n  <li>Key highlight 1</li>\n  <li>Key highlight 2</li>\n  <li>Key highlight 3</li>\n</ul>\n";
         break;
       case "divider":
         snippet = "\n<hr style=\"border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;\" />\n";
@@ -93,21 +91,20 @@ export function EmailVisualEditor({
     onChange({ bodyHtml: bodyHtml + snippet });
   }
 
-  // Render finalized preview HTML
   const renderedPreview = (bodyHtml || "")
-    .replace(/{{first_name}}/g, "Firoz")
-    .replace(/{{last_name}}/g, "Pérez")
-    .replace(/{{email}}/g, "firoz@cvai.com.mx")
-    .replace(/{{plan_name}}/g, "Plan Pro")
+    .replace(/{{first_name}}/g, "John")
+    .replace(/{{last_name}}/g, "Doe")
+    .replace(/{{email}}/g, "john.doe@example.com")
+    .replace(/{{plan_name}}/g, "Pro Plan")
     .replace(/{{registration_date}}/g, "14/09/2026")
     .replace(/{{resume_count}}/g, "3")
-    .replace(/{{ai_usage}}/g, "15 consultas")
+    .replace(/{{ai_usage}}/g, "15 queries")
     .replace(/{{website_name}}/g, "CVAI")
     .replace(/{{website_url}}/g, "https://cvai.com.mx");
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      {/* Left Column: Visual Editor & Controls (6 cols) */}
+      {/* Left Column: Visual Editor & Controls */}
       <div className="lg:col-span-6 space-y-4">
         {/* Editor Sub-tabs */}
         <div className="flex items-center justify-between border-b border-border pb-2">
@@ -119,7 +116,7 @@ export function EmailVisualEditor({
               onClick={() => setActiveTab("content")}
             >
               <Pilcrow className="h-3.5 w-3.5 mr-1.5" />
-              Contenido
+              Content
             </Button>
             <Button
               type="button"
@@ -128,7 +125,7 @@ export function EmailVisualEditor({
               onClick={() => setActiveTab("cta")}
             >
               <MousePointerClick className="h-3.5 w-3.5 mr-1.5" />
-              Botón CTA
+              CTA Button
             </Button>
             <Button
               type="button"
@@ -150,23 +147,23 @@ export function EmailVisualEditor({
               className="gap-1.5 text-xs"
             >
               <Save className="h-3.5 w-3.5" />
-              Guardar Plantilla
+              Save Template
             </Button>
           )}
         </div>
 
         {activeTab === "content" && (
           <div className="space-y-4">
-            {/* Snippet Insertion Toolbar */}
+            {/* Snippet Toolbar */}
             <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-muted/40 border border-border">
-              <span className="text-[11px] font-semibold text-muted-foreground mr-1">Insertar:</span>
+              <span className="text-[11px] font-semibold text-muted-foreground mr-1">Insert:</span>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => insertSnippet("h1")}
-                title="Título H1"
+                title="H1 Heading"
               >
                 <Heading1 className="h-3.5 w-3.5 mr-1" /> H1
               </Button>
@@ -176,7 +173,7 @@ export function EmailVisualEditor({
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => insertSnippet("h2")}
-                title="Subtítulo H2"
+                title="H2 Subheading"
               >
                 <Heading2 className="h-3.5 w-3.5 mr-1" /> H2
               </Button>
@@ -186,9 +183,9 @@ export function EmailVisualEditor({
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => insertSnippet("p")}
-                title="Párrafo"
+                title="Paragraph"
               >
-                <Pilcrow className="h-3.5 w-3.5 mr-1" /> Párrafo
+                <Pilcrow className="h-3.5 w-3.5 mr-1" /> Paragraph
               </Button>
               <Button
                 type="button"
@@ -196,9 +193,9 @@ export function EmailVisualEditor({
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => insertSnippet("list")}
-                title="Lista"
+                title="Bullet List"
               >
-                <List className="h-3.5 w-3.5 mr-1" /> Lista
+                <List className="h-3.5 w-3.5 mr-1" /> List
               </Button>
               <Button
                 type="button"
@@ -206,9 +203,9 @@ export function EmailVisualEditor({
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => insertSnippet("divider")}
-                title="Separador"
+                title="Divider"
               >
-                <Minus className="h-3.5 w-3.5 mr-1" /> Separador
+                <Minus className="h-3.5 w-3.5 mr-1" /> Divider
               </Button>
             </div>
 
@@ -216,7 +213,7 @@ export function EmailVisualEditor({
             <div className="space-y-1.5">
               <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
                 <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                Variables Dinámicas de Personalización (haz clic para insertar):
+                Dynamic Personalization Tags (click to insert):
               </div>
               <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1.5 bg-muted/20 border border-border/70 rounded-lg">
                 {PERSONALIZATION_VARIABLES.map((v) => (
@@ -225,7 +222,7 @@ export function EmailVisualEditor({
                     type="button"
                     onClick={() => insertVariable(v.tag)}
                     className="inline-flex items-center gap-1 px-2 py-1 rounded bg-card hover:bg-primary/10 hover:text-primary hover:border-primary/40 border border-border text-[11px] font-medium text-foreground transition-all"
-                    title={`Ejemplo: ${v.example}`}
+                    title={`Example: ${v.example}`}
                   >
                     <span>{v.label}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">{v.tag}</span>
@@ -237,16 +234,16 @@ export function EmailVisualEditor({
             {/* Main Email Content Textarea */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="email-body">Cuerpo del Correo (HTML / Texto)</Label>
+                <Label htmlFor="email-body">Email Body (HTML / Text)</Label>
                 <span className="text-[11px] text-muted-foreground">
-                  Soporta etiquetas HTML (&lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, etc.)
+                  Supports HTML tags (&lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, etc.)
                 </span>
               </div>
               <Textarea
                 id="email-body"
                 rows={12}
                 className="font-mono text-xs leading-relaxed"
-                placeholder="Escribe el mensaje de tu campaña aquí..."
+                placeholder="Write your campaign message here..."
                 value={bodyHtml}
                 onChange={(e) => onChange({ bodyHtml: e.target.value })}
               />
@@ -257,24 +254,24 @@ export function EmailVisualEditor({
         {activeTab === "cta" && (
           <div className="space-y-4 rounded-xl border border-border bg-card p-4">
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm">Botón de Llamado a la Acción (CTA)</h4>
+              <h4 className="font-semibold text-sm">Call-To-Action (CTA) Button</h4>
               <p className="text-xs text-muted-foreground">
-                Un botón principal destacado en el centro del correo para maximizar conversiones.
+                A prominent primary button centered in the email to maximize clicks and conversions.
               </p>
             </div>
 
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <Label htmlFor="cta-text">Texto del Botón</Label>
+                <Label htmlFor="cta-text">Button Label</Label>
                 <Input
                   id="cta-text"
-                  placeholder="Ej: Crear mi CV con Descuento →"
+                  placeholder="e.g. Upgrade to Pro with 30% Off →"
                   value={ctaText}
                   onChange={(e) => onChange({ ctaText: e.target.value })}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="cta-url">URL de Destino</Label>
+                <Label htmlFor="cta-url">Destination URL</Label>
                 <div className="relative">
                   <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -293,14 +290,14 @@ export function EmailVisualEditor({
         {activeTab === "banner" && (
           <div className="space-y-4 rounded-xl border border-border bg-card p-4">
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm">Banner Superior / Imagen Destacada</h4>
+              <h4 className="font-semibold text-sm">Top Banner / Featured Image</h4>
               <p className="text-xs text-muted-foreground">
-                Imagen opcional de cabecera para darle un aspecto visual moderno a tu campaña.
+                Optional header visual to give your campaign a branded, professional look.
               </p>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="banner-url">URL de la Imagen del Banner</Label>
+              <Label htmlFor="banner-url">Banner Image URL</Label>
               <div className="relative">
                 <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -322,13 +319,12 @@ export function EmailVisualEditor({
         )}
       </div>
 
-      {/* Right Column: Live Multi-Device Email Preview (6 cols) */}
+      {/* Right Column: Live Multi-Device Email Preview */}
       <div className="lg:col-span-6 space-y-3">
-        {/* Device Mode Switcher */}
         <div className="flex items-center justify-between border-b border-border pb-2">
           <div className="flex items-center gap-1.5">
             <Eye className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold">Vista Previa en Tiempo Real</span>
+            <span className="text-sm font-semibold">Live Multi-Device Preview</span>
           </div>
 
           <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
@@ -340,7 +336,7 @@ export function EmailVisualEditor({
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
-              title="Vista de escritorio"
+              title="Desktop View"
             >
               <Monitor className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Desktop</span>
@@ -353,10 +349,10 @@ export function EmailVisualEditor({
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
-              title="Vista móvil"
+              title="Mobile View"
             >
               <Smartphone className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Móvil</span>
+              <span className="hidden sm:inline">Mobile</span>
             </button>
             <button
               type="button"
@@ -366,7 +362,7 @@ export function EmailVisualEditor({
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
-              title="Código HTML"
+              title="HTML Source Code"
             >
               <Code className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">HTML</span>
@@ -374,11 +370,11 @@ export function EmailVisualEditor({
           </div>
         </div>
 
-        {/* Email Container Frame */}
+        {/* Email Preview Frame */}
         <div className="rounded-xl border border-border bg-muted/30 p-4 min-h-[500px] flex items-center justify-center overflow-x-auto">
           {viewMode === "html" ? (
             <div className="w-full bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-[520px]">
-              <pre>{bodyHtml || "<!-- Escribe contenido para ver el HTML resultante -->"}</pre>
+              <pre>{bodyHtml || "<!-- Type email content to inspect the resulting HTML -->"}</pre>
             </div>
           ) : (
             <div
@@ -386,19 +382,18 @@ export function EmailVisualEditor({
                 viewMode === "mobile" ? "w-[360px]" : "w-full max-w-[560px]"
               }`}
             >
-              {/* Email Client Simulated Header */}
+              {/* Email Simulated Header */}
               <div className="bg-slate-100/90 border-b border-slate-200 px-4 py-2.5 text-xs text-slate-600 flex flex-col gap-0.5">
                 <div className="truncate font-semibold text-slate-900">
-                  {subject || "Asunto de la campaña..."}
+                  {subject || "Campaign Subject Line..."}
                 </div>
                 <div className="text-[11px] text-slate-500 truncate">
-                  De: CVAI &lt;soporte@cvai.com.mx&gt;
+                  From: CVAI &lt;support@cvai.com.mx&gt;
                 </div>
               </div>
 
-              {/* Email Content Container */}
+              {/* Email Body */}
               <div className="p-6 space-y-4 text-sm font-sans">
-                {/* Logo / Header */}
                 <div className="text-center pb-2 border-b border-slate-100">
                   <span className="font-extrabold text-xl tracking-tight text-blue-600">
                     CV<span className="text-slate-900">AI</span>
@@ -408,24 +403,21 @@ export function EmailVisualEditor({
                   </div>
                 </div>
 
-                {/* Banner */}
                 {bannerUrl && (
                   <div className="rounded-lg overflow-hidden max-h-48 border border-slate-100">
                     <img src={bannerUrl} alt="Banner" className="w-full h-full object-cover" />
                   </div>
                 )}
 
-                {/* Body Content */}
                 <div
                   className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-[14px]"
                   dangerouslySetInnerHTML={{
                     __html:
                       renderedPreview ||
-                      "<p class='text-slate-400 italic text-center py-6'>Escribe el cuerpo de tu campaña para previsualizarlo aquí...</p>",
+                      "<p class='text-slate-400 italic text-center py-6'>Write your campaign body to preview it in real time...</p>",
                   }}
                 />
 
-                {/* CTA Button */}
                 {ctaText && ctaUrl && (
                   <div className="text-center pt-3 pb-2">
                     <a
@@ -439,21 +431,20 @@ export function EmailVisualEditor({
                   </div>
                 )}
 
-                {/* Legal Compliance Footer with Unsubscribe Link */}
                 <div className="mt-8 pt-4 border-t border-slate-200/80 text-center text-[11px] text-slate-400 leading-relaxed space-y-1">
                   <p className="margin-0">
-                    CVAI (cvai.com.mx) — Plataforma inteligente de optimización laboral en México.
+                    CVAI (cvai.com.mx) — AI-powered career optimization platform.
                   </p>
                   <p className="margin-0">
-                    Ciudad de México, México. Has recibido este correo por estar registrado en CVAI.
+                    Mexico City, Mexico. You are receiving this email as a registered CVAI user.
                   </p>
                   <p className="pt-1">
                     <span className="text-slate-500 underline cursor-pointer">
-                      Darme de baja de estos correos
+                      Unsubscribe from these emails
                     </span>
                     {" • "}
                     <span className="text-slate-500 underline cursor-pointer">
-                      Preferencias de Correo
+                      Email Preferences
                     </span>
                   </p>
                 </div>

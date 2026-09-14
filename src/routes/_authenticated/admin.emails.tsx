@@ -72,8 +72,8 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     port: 465,
     secure: true,
     userHint: "support@cvai.com.mx",
-    passHint: "Contraseña de la cuenta de correo en SiteCountry",
-    tip: "Servidor oficial de correo de SiteCountry para cvai.com.mx. Ingresa tu correo completo y su contraseña.",
+    passHint: "Password for the SiteCountry email account",
+    tip: "Official email server for cvai.com.mx on SiteCountry. Enter your full email address and account password.",
     domains: ["sitecountry.net", "cvai.com.mx"],
   },
   {
@@ -84,9 +84,9 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    userHint: "tu-correo@gmail.com",
-    passHint: "Contraseña de aplicación de 16 letras",
-    tip: "En tu cuenta de Google activa la 'Verificación en 2 pasos' y genera una 'Contraseña de aplicación'.",
+    userHint: "your-email@gmail.com",
+    passHint: "16-character App Password",
+    tip: "In your Google account, enable 2-Step Verification and generate an App Password.",
     domains: ["gmail.com", "googlemail.com"],
   },
   {
@@ -98,8 +98,8 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     port: 465,
     secure: true,
     userHint: "resend",
-    passHint: "re_123456789... (API Key de Resend)",
-    tip: "Usa 'resend' como usuario y tu API Key generada en resend.com como contraseña.",
+    passHint: "re_123456789... (Resend API Key)",
+    tip: "Use 'resend' as username and your API Key generated on resend.com as password.",
     domains: ["resend.com"],
   },
   {
@@ -110,22 +110,22 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
     host: "email-smtp.us-east-1.amazonaws.com",
     port: 587,
     secure: false,
-    userHint: "Usuario SMTP de AWS SES (AKIA...)",
-    passHint: "Contraseña SMTP de AWS SES",
-    tip: "Genera credenciales SMTP dedicadas en AWS Console > SES > SMTP Settings.",
+    userHint: "AWS SES SMTP Username (AKIA...)",
+    passHint: "AWS SES SMTP Password",
+    tip: "Generate dedicated SMTP credentials in AWS Console > SES > SMTP Settings.",
     domains: ["amazonaws.com"],
   },
   {
     id: "custom",
-    name: "Servidor Personalizado / Cualquier otro SMTP",
-    badge: "Personalizado",
+    name: "Custom SMTP Server / Any other SMTP",
+    badge: "Custom",
     category: "custom",
     host: "",
     port: 465,
     secure: true,
-    userHint: "usuario@servidor.com",
-    passHint: "Contraseña del servidor SMTP",
-    tip: "Compatible con cualquier servidor SMTP del mundo.",
+    userHint: "user@server.com",
+    passHint: "SMTP server password",
+    tip: "Compatible with any SMTP server worldwide.",
     domains: [],
   },
 ];
@@ -242,8 +242,8 @@ function EmailMarketingAdmin() {
     senderName: "CVAI - Currículum Vitae AI",
     senderEmail: "support@cvai.com.mx",
     replyTo: "support@cvai.com.mx",
-    bodyHtml: "<p>Hola {{first_name}},</p><p>Tenemos noticias importantes para impulsar tu carrera profesional.</p>",
-    ctaText: "Acceder a mi panel →",
+    bodyHtml: "<p>Hello {{first_name}},</p><p>We have important updates to advance your professional career.</p>",
+    ctaText: "Go to my dashboard →",
     ctaUrl: "https://cvai.com.mx/panel",
     bannerUrl: "",
     audienceType: "all",
@@ -320,25 +320,25 @@ function EmailMarketingAdmin() {
   // Save or Create Campaign
   async function handleSaveDraft() {
     if (!campaignForm.name.trim() || !campaignForm.subject.trim()) {
-      toast.error("Por favor ingresa al menos el Nombre y Asunto de la campaña.");
+      toast.error("Please provide at least a Campaign Name and Subject.");
       return;
     }
     try {
       const res = await saveCampaign({ data: { ...campaignForm, status: "draft" } });
       if (res.ok) {
-        toast.success("Campaña guardada como borrador");
+        toast.success("Campaign saved as draft");
         loadData();
         setActiveTab("history");
       }
     } catch (err: any) {
-      toast.error(err.message || "Error al guardar campaña");
+      toast.error(err.message || "Error saving campaign");
     }
   }
 
   // Pre-dispatch Safety Check
   async function handleOpenSafetyModal() {
     if (!campaignForm.name.trim() || !campaignForm.subject.trim()) {
-      toast.error("Ingresa el Nombre y Asunto de la campaña antes de enviar.");
+      toast.error("Please provide Campaign Name and Subject before sending.");
       return;
     }
 
@@ -346,13 +346,13 @@ function EmailMarketingAdmin() {
       // Save campaign first
       const saveRes = await saveCampaign({ data: { ...campaignForm, status: "draft" } });
       const currentCampaignId = saveRes.campaign?.id;
-      if (!currentCampaignId) throw new Error("No se pudo obtener el ID de la campaña.");
+      if (!currentCampaignId) throw new Error("Could not obtain campaign ID.");
 
       setCampaignForm((prev) => ({ ...prev, id: currentCampaignId }));
       setTargetRecipientsCount(stats.subscriberCount || 1);
       setSafetyOpen(true);
     } catch (err: any) {
-      toast.error(err.message || "Error al preparar la campaña");
+      toast.error(err.message || "Error preparing campaign");
     }
   }
 
@@ -374,19 +374,19 @@ function EmailMarketingAdmin() {
       }
 
       if (res.ok) {
-        toast.success(res.message || "¡Campaña despachada con éxito!");
+        toast.success(res.message || "Campaign dispatched successfully!");
         loadData();
         setActiveTab("history");
       }
     } catch (err: any) {
-      toast.error(err.message || "Error al enviar la campaña");
+      toast.error(err.message || "Error sending campaign");
     }
   }
 
   // Send Test Email in Wizard
   async function handleSendWizardTest() {
     if (!wizardTestEmail.trim() || !wizardTestEmail.includes("@")) {
-      toast.error("Ingresa una dirección de correo válida para la prueba.");
+      toast.error("Please enter a valid email address for testing.");
       return;
     }
     setSendingWizardTest(true);
@@ -399,7 +399,7 @@ function EmailMarketingAdmin() {
       });
       if (res.ok) toast.success(res.message);
     } catch (err: any) {
-      toast.error(err.message || "Error al enviar correo de prueba");
+      toast.error(err.message || "Error sending test email");
     } finally {
       setSendingWizardTest(false);
     }
@@ -408,20 +408,20 @@ function EmailMarketingAdmin() {
   // Save SMTP Settings
   async function handleSaveSmtp() {
     if (!smtpForm.host.trim()) {
-      toast.error("El servidor SMTP (Host) es obligatorio");
+      toast.error("SMTP server host is required");
       return;
     }
     setSavingSmtp(true);
     try {
       const res: any = await saveAdminSmtpConfig({ data: smtpForm });
       if (res?.success || res?.ok) {
-        toast.success(res.message || "Configuración SMTP guardada exitosamente");
+        toast.success(res.message || "SMTP configuration saved successfully");
         loadData();
       } else {
-        toast.error(res?.message || "Error al guardar SMTP");
+        toast.error(res?.message || "Error saving SMTP settings");
       }
     } catch (err: any) {
-      toast.error(err.message || "Error al comunicarse con el servidor");
+      toast.error(err.message || "Error communicating with server");
     } finally {
       setSavingSmtp(false);
     }
@@ -430,7 +430,7 @@ function EmailMarketingAdmin() {
   // Test SMTP Connection
   async function handleTestSmtp() {
     if (!smtpTestEmail.trim()) {
-      toast.error("Ingresa un correo destinatario para la prueba SMTP");
+      toast.error("Please enter a recipient email for the SMTP test");
       return;
     }
     setSendingSmtpTest(true);
@@ -443,10 +443,10 @@ function EmailMarketingAdmin() {
         },
       });
       if (res.success || res.ok) {
-        toast.success(res.message || "¡Conexión SMTP exitosa!");
+        toast.success(res.message || "SMTP connection successful!");
       }
     } catch (err: any) {
-      toast.error(err.message || "Error en la prueba SMTP");
+      toast.error(err.message || "SMTP test failed");
     } finally {
       setSendingSmtpTest(false);
     }
@@ -456,27 +456,27 @@ function EmailMarketingAdmin() {
   function handleUseTemplate(tpl: any) {
     setCampaignForm((prev) => ({
       ...prev,
-      name: `Campaña: ${tpl.name}`,
+      name: `Campaign: ${tpl.name}`,
       subject: tpl.subject,
       bodyHtml: tpl.body,
-      ctaText: tpl.ctaText || "Ver más →",
+      ctaText: tpl.ctaText || "Learn more →",
       ctaUrl: tpl.ctaUrl || "https://cvai.com.mx/panel",
     }));
     setActiveTab("create");
-    toast.success(`Plantilla '${tpl.name}' cargada en el editor`);
+    toast.success(`Template '${tpl.name}' loaded into editor`);
   }
 
   // Delete Campaign
   async function handleDeleteCampaign(id: string) {
-    if (!confirm("¿Seguro que deseas eliminar esta campaña?")) return;
+    if (!confirm("Are you sure you want to delete this campaign?")) return;
     try {
       const res = await deleteCampaign({ data: { id } });
       if (res.ok) {
-        toast.success("Campaña eliminada");
+        toast.success("Campaign deleted");
         loadData();
       }
     } catch (err: any) {
-      toast.error(err.message || "Error al eliminar");
+      toast.error(err.message || "Error deleting campaign");
     }
   }
 
@@ -494,7 +494,7 @@ function EmailMarketingAdmin() {
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Diseña, segmenta y despacha campañas masivas a los usuarios registrados de CVAI.
+            Design, segment, and dispatch bulk email campaigns to registered CVAI users.
           </p>
         </div>
 
@@ -507,7 +507,7 @@ function EmailMarketingAdmin() {
             className="gap-1.5 text-xs"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-            Actualizar
+            Refresh
           </Button>
           <Button
             size="sm"
@@ -515,7 +515,7 @@ function EmailMarketingAdmin() {
             className="gap-1.5 text-xs font-semibold shadow-sm"
           >
             <Plus className="h-4 w-4" />
-            Nueva Campaña
+            New Campaign
           </Button>
         </div>
       </div>
@@ -529,27 +529,27 @@ function EmailMarketingAdmin() {
           </TabsTrigger>
           <TabsTrigger value="create" className="text-xs py-2 gap-1.5">
             <Plus className="h-3.5 w-3.5 text-primary" />
-            <span>Crear Campaña</span>
+            <span>Create Campaign</span>
           </TabsTrigger>
           <TabsTrigger value="history" className="text-xs py-2 gap-1.5">
             <Clock className="h-3.5 w-3.5" />
-            <span>Historial</span>
+            <span>History</span>
           </TabsTrigger>
           <TabsTrigger value="templates" className="text-xs py-2 gap-1.5">
             <FileText className="h-3.5 w-3.5" />
-            <span>Plantillas</span>
+            <span>Templates</span>
           </TabsTrigger>
           <TabsTrigger value="subscribers" className="text-xs py-2 gap-1.5">
             <Users className="h-3.5 w-3.5" />
-            <span>Suscriptores</span>
+            <span>Subscribers</span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="text-xs py-2 gap-1.5">
             <Sliders className="h-3.5 w-3.5" />
-            <span>SMTP / Config</span>
+            <span>Email Settings</span>
           </TabsTrigger>
           <TabsTrigger value="analytics" className="text-xs py-2 gap-1.5">
             <BarChart3 className="h-3.5 w-3.5" />
-            <span>Analítica</span>
+            <span>Analytics</span>
           </TabsTrigger>
         </TabsList>
 
@@ -559,47 +559,47 @@ function EmailMarketingAdmin() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-                <span>Campañas Creadas</span>
+                <span>Campaigns Created</span>
                 <Megaphone className="h-4 w-4 text-primary" />
               </div>
               <div className="text-3xl font-bold text-foreground">{stats.totalCampaigns}</div>
-              <div className="text-[11px] text-muted-foreground">Envíos totales y borradores</div>
+              <div className="text-[11px] text-muted-foreground">Total dispatches and drafts</div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-                <span>Correos Entregados</span>
+                <span>Emails Delivered</span>
                 <Send className="h-4 w-4 text-blue-500" />
               </div>
               <div className="text-3xl font-bold text-foreground">
-                {stats.totalSent.toLocaleString("es-MX")}
+                {stats.totalSent.toLocaleString("en-US")}
               </div>
               <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                Despachados sin interrupción
+                Dispatched successfully
               </div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-                <span>Tasa de Apertura</span>
+                <span>Open Rate</span>
                 <Eye className="h-4 w-4 text-emerald-500" />
               </div>
               <div className="text-3xl font-bold text-foreground">{stats.avgOpenRate}</div>
               <div className="text-[11px] text-muted-foreground">
-                {stats.totalOpened} aperturas registradas
+                {stats.totalOpened} recorded opens
               </div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-                <span>Suscriptores Activos</span>
+                <span>Active Subscribers</span>
                 <Users className="h-4 w-4 text-purple-500" />
               </div>
               <div className="text-3xl font-bold text-foreground">
-                {stats.subscriberCount.toLocaleString("es-MX")}
+                {stats.subscriberCount.toLocaleString("en-US")}
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {suppressedCount} en lista de exclusión
+                {suppressedCount} in suppression list
               </div>
             </div>
           </div>
@@ -609,17 +609,17 @@ function EmailMarketingAdmin() {
             <div className="space-y-1">
               <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                Lanza una nueva campaña segmentada en minutos
+                Launch a targeted campaign in minutes
               </h3>
               <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
-                Elige entre usuarios gratuitos, suscriptores Pro, creadores de currículum o usuarios inactivos. Personaliza dinámicamente con su nombre y previsualiza en desktop y móvil.
+                Choose between free users, Pro subscribers, resume creators, or inactive users. Dynamically personalize with tags and preview across desktop and mobile.
               </p>
             </div>
             <Button
               onClick={() => setActiveTab("create")}
               className="gap-2 shrink-0 font-semibold shadow"
             >
-              Comenzar Campaña
+              Start Campaign
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
@@ -627,23 +627,23 @@ function EmailMarketingAdmin() {
           {/* Recent Campaigns Table */}
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
             <div className="p-4 border-b border-border flex items-center justify-between">
-              <h3 className="font-semibold text-sm">Campañas Recientes</h3>
+              <h3 className="font-semibold text-sm">Recent Campaigns</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-xs gap-1"
                 onClick={() => setActiveTab("history")}
               >
-                Ver todas <ChevronRight className="h-3.5 w-3.5" />
+                View all <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>
 
             {campaigns.length === 0 ? (
               <div className="p-10 text-center text-muted-foreground text-xs space-y-2">
                 <Mail className="h-8 w-8 mx-auto text-muted-foreground/50" />
-                <p>No has creado ninguna campaña aún.</p>
+                <p>You haven't created any campaigns yet.</p>
                 <Button size="sm" variant="outline" onClick={() => setActiveTab("create")}>
-                  Crear mi primera campaña
+                  Create your first campaign
                 </Button>
               </div>
             ) : (
@@ -651,12 +651,12 @@ function EmailMarketingAdmin() {
                 <table className="w-full text-xs text-left">
                   <thead className="bg-muted/30 border-b border-border text-muted-foreground font-semibold">
                     <tr>
-                      <th className="py-3 px-4">Campaña</th>
-                      <th className="py-3 px-4">Estado</th>
-                      <th className="py-3 px-4">Audiencia</th>
-                      <th className="py-3 px-4">Enviados</th>
-                      <th className="py-3 px-4">Aperturas</th>
-                      <th className="py-3 px-4 text-right">Acciones</th>
+                      <th className="py-3 px-4">Campaign</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4">Audience</th>
+                      <th className="py-3 px-4">Sent</th>
+                      <th className="py-3 px-4">Opens</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -680,14 +680,14 @@ function EmailMarketingAdmin() {
                             className="text-[10px] capitalize"
                           >
                             {c.status === "sent"
-                              ? "Enviado"
+                              ? "Sent"
                               : c.status === "sending"
-                              ? "Enviando..."
+                              ? "Sending..."
                               : c.status}
                           </Badge>
                         </td>
                         <td className="py-3 px-4 capitalize text-muted-foreground">
-                          {c.audience === "all" ? "Todos los usuarios" : c.audience}
+                          {c.audience === "all" ? "All users" : c.audience}
                         </td>
                         <td className="py-3 px-4 font-mono font-medium">{c.sentCount}</td>
                         <td className="py-3 px-4 font-mono">
@@ -703,7 +703,7 @@ function EmailMarketingAdmin() {
                               setActiveTab("create");
                             }}
                           >
-                            Editar
+                            Edit
                           </Button>
                         </td>
                       </tr>
@@ -722,16 +722,16 @@ function EmailMarketingAdmin() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
               <div>
                 <h2 className="text-lg font-bold text-foreground">
-                  {campaignForm.id ? "Editar Campaña" : "Crear Nueva Campaña de Correo"}
+                  {campaignForm.id ? "Edit Campaign" : "Create New Email Campaign"}
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Configura el contenido visual, segmenta tu público y envía una prueba antes del lanzamiento.
+                  Configure visual content, segment your audience, and test before broadcasting.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={handleSaveDraft} className="text-xs">
-                  Guardar Borrador
+                  Save Draft
                 </Button>
                 <Button
                   size="sm"
@@ -739,7 +739,7 @@ function EmailMarketingAdmin() {
                   className="gap-1.5 text-xs font-semibold bg-primary"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  Revisar y Enviar
+                  Review & Send
                 </Button>
               </div>
             </div>
@@ -747,37 +747,37 @@ function EmailMarketingAdmin() {
             {/* Campaign Metadata Fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="camp-name">Nombre Interno de la Campaña *</Label>
+                <Label htmlFor="camp-name">Campaign Name *</Label>
                 <Input
                   id="camp-name"
-                  placeholder="Ej: Promo Septiembre Pro 30%"
+                  placeholder="e.g. September Pro 30% Promo"
                   value={campaignForm.name}
                   onChange={(e) => setCampaignForm((p) => ({ ...p, name: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="camp-subject">Asunto del Correo (Subject) *</Label>
+                <Label htmlFor="camp-subject">Email Subject *</Label>
                 <Input
                   id="camp-subject"
-                  placeholder="Ej: Acelera tu búsqueda de empleo con CVAI Pro ✨"
+                  placeholder="e.g. Accelerate your career search with CVAI Pro ✨"
                   value={campaignForm.subject}
                   onChange={(e) => setCampaignForm((p) => ({ ...p, subject: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="camp-preview">Texto de Previsualización (Preheader)</Label>
+                <Label htmlFor="camp-preview">Preview Text (Preheader)</Label>
                 <Input
                   id="camp-preview"
-                  placeholder="Texto visible antes de abrir el correo..."
+                  placeholder="Inbox snippet before opening..."
                   value={campaignForm.previewText}
                   onChange={(e) => setCampaignForm((p) => ({ ...p, previewText: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="camp-sender-name">Nombre del Remitente</Label>
+                <Label htmlFor="camp-sender-name">Sender Name</Label>
                 <Input
                   id="camp-sender-name"
                   placeholder="CVAI - Currículum Vitae AI"
@@ -787,7 +787,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="camp-sender-email">Correo Remitente</Label>
+                <Label htmlFor="camp-sender-email">Sender Email</Label>
                 <Input
                   id="camp-sender-email"
                   type="email"
@@ -798,7 +798,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="camp-reply-to">Responder a (Reply-To)</Label>
+                <Label htmlFor="camp-reply-to">Reply-To Email</Label>
                 <Input
                   id="camp-reply-to"
                   type="email"
@@ -824,7 +824,7 @@ function EmailMarketingAdmin() {
                     ...prev,
                     {
                       id: `tpl-${Date.now()}`,
-                      name: campaignForm.name || "Plantilla Personalizada",
+                      name: campaignForm.name || "Custom Template",
                       slug: `custom-${Date.now()}`,
                       subject: campaignForm.subject,
                       body: campaignForm.bodyHtml,
@@ -832,7 +832,7 @@ function EmailMarketingAdmin() {
                       ctaUrl: campaignForm.ctaUrl,
                     },
                   ]);
-                  toast.success("Campaña guardada en la lista de Plantillas");
+                  toast.success("Campaign saved to Template library");
                 }}
               />
             </div>
@@ -840,9 +840,9 @@ function EmailMarketingAdmin() {
             {/* Audience Targeting Builder Component */}
             <div className="pt-6 border-t border-border">
               <div className="mb-4">
-                <h3 className="font-bold text-base text-foreground">Segmentación de la Audiencia</h3>
+                <h3 className="font-bold text-base text-foreground">Audience Segmentation</h3>
                 <p className="text-xs text-muted-foreground">
-                  Elige a quién se entregará esta campaña y previsualiza los destinatarios reales.
+                  Select recipient criteria and preview matching users.
                 </p>
               </div>
 
@@ -856,14 +856,14 @@ function EmailMarketingAdmin() {
             <div className="rounded-xl border border-border/80 bg-muted/30 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-xs font-semibold">Probar antes del envío masivo:</span>
+                <span className="text-xs font-semibold">Test before broadcasting:</span>
               </div>
 
               <div className="flex gap-2 w-full sm:w-auto">
                 <Input
                   type="email"
                   className="text-xs h-9 w-full sm:w-64"
-                  placeholder="tu-correo@ejemplo.com"
+                  placeholder="your-email@example.com"
                   value={wizardTestEmail}
                   onChange={(e) => setWizardTestEmail(e.target.value)}
                 />
@@ -879,7 +879,7 @@ function EmailMarketingAdmin() {
                   ) : (
                     <Send className="h-3.5 w-3.5" />
                   )}
-                  Enviar Prueba
+                  Send Test Email
                 </Button>
               </div>
             </div>
@@ -891,31 +891,31 @@ function EmailMarketingAdmin() {
           <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-foreground">Historial Completo de Campañas</h3>
+                <h3 className="font-bold text-base text-foreground">Complete Campaign History</h3>
                 <p className="text-xs text-muted-foreground">
-                  Monitorea el progreso de entrega, aperturas, clics y estado de cada envío.
+                  Monitor delivery progress, open rates, clicks, and dispatch statuses.
                 </p>
               </div>
-              <Badge variant="outline">{campaigns.length} campañas registradas</Badge>
+              <Badge variant="outline">{campaigns.length} campaigns recorded</Badge>
             </div>
 
             {campaigns.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground text-xs">
-                No hay historial de campañas registradas aún.
+                No campaign history recorded yet.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
                   <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
                     <tr>
-                      <th className="py-3 px-4">Campaña y Asunto</th>
-                      <th className="py-3 px-4">Fecha</th>
-                      <th className="py-3 px-4">Estado</th>
-                      <th className="py-3 px-4">Destinatarios</th>
-                      <th className="py-3 px-4">Enviados</th>
-                      <th className="py-3 px-4">Aperturas</th>
-                      <th className="py-3 px-4">Clics</th>
-                      <th className="py-3 px-4 text-right">Acciones</th>
+                      <th className="py-3 px-4">Campaign & Subject</th>
+                      <th className="py-3 px-4">Date</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4">Target Recipients</th>
+                      <th className="py-3 px-4">Delivered</th>
+                      <th className="py-3 px-4">Opens</th>
+                      <th className="py-3 px-4">Clicks</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -926,7 +926,7 @@ function EmailMarketingAdmin() {
                           <div className="text-[11px] text-muted-foreground truncate">{c.subject}</div>
                         </td>
                         <td className="py-3 px-4 text-muted-foreground whitespace-nowrap">
-                          {c.createdAt ? new Date(c.createdAt).toLocaleDateString("es-MX") : "—"}
+                          {c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US") : "—"}
                         </td>
                         <td className="py-3 px-4">
                           <Badge
@@ -962,7 +962,7 @@ function EmailMarketingAdmin() {
                               setActiveTab("create");
                             }}
                           >
-                            Editar
+                            Edit
                           </Button>
                           <Button
                             variant="ghost"
@@ -987,9 +987,9 @@ function EmailMarketingAdmin() {
           <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
               <div>
-                <h3 className="font-bold text-base text-foreground">Biblioteca de Plantillas de Correo</h3>
+                <h3 className="font-bold text-base text-foreground">Email Templates Library</h3>
                 <p className="text-xs text-muted-foreground">
-                  Plantillas pre-diseñadas y personalizadas listas para usar en cualquier campaña.
+                  Pre-designed and custom templates ready to use in any broadcast campaign.
                 </p>
               </div>
             </div>
@@ -1023,7 +1023,7 @@ function EmailMarketingAdmin() {
                       className="text-xs h-7 gap-1"
                       onClick={() => handleUseTemplate(tpl)}
                     >
-                      <Copy className="h-3 w-3" /> Usar en Campaña
+                      <Copy className="h-3 w-3" /> Use in Campaign
                     </Button>
                   </div>
                 </div>
@@ -1037,18 +1037,18 @@ function EmailMarketingAdmin() {
           <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
               <div>
-                <h3 className="font-bold text-base text-foreground">Audiencia y Lista de Exclusión (Supresión)</h3>
+                <h3 className="font-bold text-base text-foreground">Audience & Suppression List</h3>
                 <p className="text-xs text-muted-foreground">
-                  Usuarios registrados y estado de consentimiento de marketing según las normas de privacidad.
+                  Registered users and marketing consent status according to privacy guidelines.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
-                  {subscribers.length} usuarios registrados
+                  {subscribers.length} registered users
                 </Badge>
                 <Badge variant="secondary" className="text-xs text-amber-600 dark:text-amber-400">
-                  {suppressedCount} bajas voluntarias
+                  {suppressedCount} unsubscribed / suppressed
                 </Badge>
               </div>
             </div>
@@ -1057,12 +1057,12 @@ function EmailMarketingAdmin() {
               <table className="w-full text-xs text-left">
                 <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
                   <tr>
-                    <th className="py-2.5 px-3">Usuario</th>
-                    <th className="py-2.5 px-3">Correo</th>
+                    <th className="py-2.5 px-3">User</th>
+                    <th className="py-2.5 px-3">Email</th>
                     <th className="py-2.5 px-3">Plan</th>
-                    <th className="py-2.5 px-3">Fecha Registro</th>
-                    <th className="py-2.5 px-3">Estado Marketing</th>
-                    <th className="py-2.5 px-3 text-right">Acción</th>
+                    <th className="py-2.5 px-3">Registration Date</th>
+                    <th className="py-2.5 px-3">Marketing Status</th>
+                    <th className="py-2.5 px-3 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -1072,18 +1072,18 @@ function EmailMarketingAdmin() {
                       <td className="py-2.5 px-3 font-mono text-muted-foreground">{s.email}</td>
                       <td className="py-2.5 px-3">
                         <Badge variant={s.plan === "pro" ? "default" : "secondary"} className="text-[10px]">
-                          {s.plan === "pro" ? "Pro" : "Gratis"}
+                          {s.plan === "pro" ? "Pro" : "Free"}
                         </Badge>
                       </td>
                       <td className="py-2.5 px-3 text-muted-foreground">
-                        {s.createdAt ? new Date(s.createdAt).toLocaleDateString("es-MX") : "—"}
+                        {s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US") : "—"}
                       </td>
                       <td className="py-2.5 px-3">
                         <Badge
                           variant={s.isSuppressed ? "destructive" : "outline"}
                           className="text-[10px]"
                         >
-                          {s.isSuppressed ? "Baja / Excluido" : "Suscrito Activo"}
+                          {s.isSuppressed ? "Unsubscribed / Suppressed" : "Active Subscriber"}
                         </Badge>
                       </td>
                       <td className="py-2.5 px-3 text-right">
@@ -1095,11 +1095,11 @@ function EmailMarketingAdmin() {
                             await toggleSuppression({
                               data: { email: s.email, suppress: !s.isSuppressed },
                             });
-                            toast.success("Estado actualizado");
+                            toast.success("Status updated");
                             loadData();
                           }}
                         >
-                          {s.isSuppressed ? "Reactivar" : "Excluir"}
+                          {s.isSuppressed ? "Reactivate" : "Suppress"}
                         </Button>
                       </td>
                     </tr>
@@ -1115,9 +1115,9 @@ function EmailMarketingAdmin() {
           <div className="rounded-2xl border border-border bg-card p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
               <div>
-                <h3 className="font-bold text-base text-foreground">Configuración del Servidor SMTP</h3>
+                <h3 className="font-bold text-base text-foreground">SMTP Server Configuration</h3>
                 <p className="text-xs text-muted-foreground">
-                  Configura el proveedor de entrega (SiteCountry, Resend, Gmail, SES, etc.) para despachar correos.
+                  Configure the outbound email delivery provider (SiteCountry, Resend, Gmail, SES, etc.) to dispatch emails.
                 </p>
               </div>
 
@@ -1127,13 +1127,13 @@ function EmailMarketingAdmin() {
                 className="gap-1.5 font-semibold text-xs shadow-sm"
               >
                 {savingSmtp ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-                Guardar Configuración
+                Save Settings
               </Button>
             </div>
 
             {/* Provider presets */}
             <div className="space-y-2">
-              <Label className="text-xs font-semibold">Seleccionar Proveedor Predeterminado</Label>
+              <Label className="text-xs font-semibold">Select Provider Preset</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                 {EMAIL_PROVIDERS.map((p) => (
                   <button
@@ -1147,7 +1147,7 @@ function EmailMarketingAdmin() {
                         port: p.port,
                         secure: p.secure,
                       }));
-                      toast.info(`Configuración para ${p.name} cargada`);
+                      toast.info(`Preset configuration for ${p.name} loaded`);
                     }}
                     className={`p-3 rounded-xl border text-left transition-all ${
                       selectedProviderId === p.id
@@ -1165,7 +1165,7 @@ function EmailMarketingAdmin() {
             {/* SMTP Input Fields */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-host">Host / Servidor SMTP *</Label>
+                <Label htmlFor="smtp-host">SMTP Host / Server *</Label>
                 <Input
                   id="smtp-host"
                   placeholder="mailadmin.sitecountry.net"
@@ -1175,11 +1175,11 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-port">Puerto</Label>
+                <Label htmlFor="smtp-port">Port</Label>
                 <Input
                   id="smtp-port"
                   type="number"
-                  placeholder="465 o 587"
+                  placeholder="465 or 587"
                   value={smtpForm.port}
                   onChange={(e) => {
                     const port = Number(e.target.value) || 465;
@@ -1193,7 +1193,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-user">Usuario / Correo Completo *</Label>
+                <Label htmlFor="smtp-user">Username / Full Email *</Label>
                 <Input
                   id="smtp-user"
                   placeholder="support@cvai.com.mx"
@@ -1203,7 +1203,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-pass">Contraseña SMTP</Label>
+                <Label htmlFor="smtp-pass">SMTP Password</Label>
                 <div className="relative">
                   <Input
                     id="smtp-pass"
@@ -1223,7 +1223,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-from-email">Correo Remitente (From)</Label>
+                <Label htmlFor="smtp-from-email">Sender Email (From)</Label>
                 <Input
                   id="smtp-from-email"
                   type="email"
@@ -1234,7 +1234,7 @@ function EmailMarketingAdmin() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="smtp-from-name">Nombre Remitente</Label>
+                <Label htmlFor="smtp-from-name">Sender Name</Label>
                 <Input
                   id="smtp-from-name"
                   placeholder="CVAI - Currículum Vitae AI"
@@ -1247,9 +1247,9 @@ function EmailMarketingAdmin() {
             {/* Test Connection Bar */}
             <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="text-xs">
-                <div className="font-semibold text-foreground">Probar Conexión SMTP en Tiempo Real</div>
+                <div className="font-semibold text-foreground">Test SMTP Connection in Real-Time</div>
                 <div className="text-muted-foreground">
-                  Envía un correo de prueba para verificar que el servidor responde correctamente.
+                  Send a test email to verify that your SMTP credentials and server respond successfully.
                 </div>
               </div>
 
@@ -1257,7 +1257,7 @@ function EmailMarketingAdmin() {
                 <Input
                   type="email"
                   className="text-xs h-9 w-full sm:w-64"
-                  placeholder="tu-correo@ejemplo.com"
+                  placeholder="your-email@example.com"
                   value={smtpTestEmail}
                   onChange={(e) => setSmtpTestEmail(e.target.value)}
                 />
@@ -1269,7 +1269,7 @@ function EmailMarketingAdmin() {
                   className="gap-1.5 shrink-0 text-xs"
                 >
                   {sendingSmtpTest ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-                  Probar Conexión
+                  Test Connection
                 </Button>
               </div>
             </div>
@@ -1281,52 +1281,52 @@ function EmailMarketingAdmin() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Total Envíos
+                Total Sent
               </div>
               <div className="text-3xl font-bold text-foreground">{stats.totalSent}</div>
-              <div className="text-[11px] text-muted-foreground">Envíos acumulados</div>
+              <div className="text-[11px] text-muted-foreground">Cumulative emails sent</div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Aperturas Registradas
+                Registered Opens
               </div>
               <div className="text-3xl font-bold text-emerald-600">{stats.totalOpened}</div>
-              <div className="text-[11px] text-muted-foreground">Tasa promedio: {stats.avgOpenRate}</div>
+              <div className="text-[11px] text-muted-foreground">Average rate: {stats.avgOpenRate}</div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Clics en Enlaces
+                Link Clicks
               </div>
               <div className="text-3xl font-bold text-blue-600">{stats.totalClicked}</div>
-              <div className="text-[11px] text-muted-foreground">Tasa promedio: {stats.avgClickRate}</div>
+              <div className="text-[11px] text-muted-foreground">Average rate: {stats.avgClickRate}</div>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-5 space-y-1">
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Tasa de Bajas
+                Unsubscribe Rate
               </div>
               <div className="text-3xl font-bold text-amber-600">
                 {stats.totalSent > 0
                   ? ((suppressedCount / stats.totalSent) * 100).toFixed(1) + "%"
                   : "0.0%"}
               </div>
-              <div className="text-[11px] text-muted-foreground">Dentro del umbral saludable (&lt; 2%)</div>
+              <div className="text-[11px] text-muted-foreground">Within healthy threshold (&lt; 2%)</div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-            <h3 className="font-bold text-base text-foreground">Embudo de Desempeño de Campañas</h3>
+            <h3 className="font-bold text-base text-foreground">Campaign Performance Funnel</h3>
             <p className="text-xs text-muted-foreground">
-              Desglose visual del flujo de entrega y engagement de las comunicaciones enviadas.
+              Visual breakdown of delivery flow and recipient engagement across all campaigns.
             </p>
 
             <div className="space-y-4 pt-3">
               <div>
                 <div className="flex justify-between text-xs font-medium mb-1">
-                  <span>Enviados con Éxito (100%)</span>
-                  <span>{stats.totalSent} correos</span>
+                  <span>Successfully Delivered (100%)</span>
+                  <span>{stats.totalSent} emails</span>
                 </div>
                 <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
                   <div className="h-full bg-blue-500 rounded-full" style={{ width: "100%" }} />
@@ -1335,8 +1335,8 @@ function EmailMarketingAdmin() {
 
               <div>
                 <div className="flex justify-between text-xs font-medium mb-1">
-                  <span>Aperturas Estimadas ({stats.avgOpenRate})</span>
-                  <span>{stats.totalOpened} abiertos</span>
+                  <span>Estimated Opens ({stats.avgOpenRate})</span>
+                  <span>{stats.totalOpened} opened</span>
                 </div>
                 <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
                   <div
@@ -1348,8 +1348,8 @@ function EmailMarketingAdmin() {
 
               <div>
                 <div className="flex justify-between text-xs font-medium mb-1">
-                  <span>Clics en el Botón CTA ({stats.avgClickRate})</span>
-                  <span>{stats.totalClicked} clics</span>
+                  <span>Clicks on CTA Button ({stats.avgClickRate})</span>
+                  <span>{stats.totalClicked} clicks</span>
                 </div>
                 <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
                   <div

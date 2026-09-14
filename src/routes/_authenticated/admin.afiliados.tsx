@@ -63,7 +63,12 @@ function statusBadge(s: string) {
     pending: "secondary", requested: "secondary", processing: "outline",
     suspended: "destructive", rejected: "destructive", failed: "destructive",
   };
-  return <Badge variant={map[s] ?? "secondary"}>{s}</Badge>;
+  const labelMap: Record<string, string> = {
+    active: "Active", paid: "Paid", approved: "Approved",
+    pending: "Pending", requested: "Requested", processing: "Processing",
+    suspended: "Suspended", rejected: "Rejected", failed: "Failed",
+  };
+  return <Badge variant={map[s] ?? "secondary"}>{labelMap[s] ?? s}</Badge>;
 }
 
 function AffiliatesAdmin() {
@@ -120,7 +125,7 @@ function AffiliatesAdmin() {
     setADialog(true);
   }
   async function saveA() {
-    if (!aForm.name.trim() || !aForm.code.trim()) { toast.error("Nombre y código son obligatorios"); return; }
+    if (!aForm.name.trim() || !aForm.code.trim()) { toast.error("Name and code are required"); return; }
     setSaving(true);
     const payload = {
       name: aForm.name.trim(), email: aForm.email.trim(), code: aForm.code.trim().toUpperCase(),
@@ -131,11 +136,11 @@ function AffiliatesAdmin() {
       : await supabase.from("affiliates").insert(payload);
     setSaving(false);
     if (res.error) { toast.error(res.error.message); return; }
-    toast.success(aEditId ? "Afiliado actualizado" : "Afiliado creado");
+    toast.success(aEditId ? "Affiliate updated" : "Affiliate created");
     setADialog(false); load();
   }
   async function removeA(id: string) {
-    if (!confirm("¿Eliminar este afiliado y sus registros?")) return;
+    if (!confirm("Delete this affiliate and their records?")) return;
     const { error } = await supabase.from("affiliates").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     load();
@@ -151,7 +156,7 @@ function AffiliatesAdmin() {
   // Payout CRUD
   function openNewP() { setPForm({ ...emptyPayout, affiliate_id: (affs ?? [])[0]?.id ?? "" }); setPDialog(true); }
   async function saveP() {
-    if (!pForm.affiliate_id) { toast.error("Selecciona un afiliado"); return; }
+    if (!pForm.affiliate_id) { toast.error("Please select an affiliate"); return; }
     setSaving(true);
     const payload = {
       affiliate_id: pForm.affiliate_id, amount: pForm.amount ? Number(pForm.amount) : 0,
@@ -160,7 +165,7 @@ function AffiliatesAdmin() {
     const { error } = await supabase.from("affiliate_payouts").insert(payload);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Pago registrado");
+    toast.success("Payout recorded");
     setPDialog(false); load();
   }
   async function setPayoutStatus(p: Payout, status: string) {
@@ -169,7 +174,7 @@ function AffiliatesAdmin() {
     setPayouts((r) => (r ?? []).map((x) => x.id === p.id ? { ...x, status } : x));
   }
   async function removeP(id: string) {
-    if (!confirm("¿Eliminar este pago?")) return;
+    if (!confirm("Delete this payout?")) return;
     const { error } = await supabase.from("affiliate_payouts").delete().eq("id", id);
     if (error) { toast.error(error.message); return; }
     setPayouts((r) => (r ?? []).filter((x) => x.id !== id));
@@ -181,45 +186,45 @@ function AffiliatesAdmin() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">Sistema de afiliados</h1>
-        <p className="text-sm text-muted-foreground">Comisiones, referidos y pagos.</p>
+        <h1 className="font-display text-2xl font-semibold">Affiliate System</h1>
+        <p className="text-sm text-muted-foreground">Commissions, referrals, and payouts.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={Users} label="Afiliados activos" value={activeAffs.toString()} />
-        <Kpi icon={MousePointerClick} label="Clics totales" value={totalClicks.toLocaleString()} />
-        <Kpi icon={DollarSign} label="Comisión pendiente" value={`$${pendingComm.toLocaleString()}`} />
-        <Kpi icon={Wallet} label="Pagado" value={`$${paidOut.toLocaleString()}`} />
+        <Kpi icon={Users} label="Active Affiliates" value={activeAffs.toString()} />
+        <Kpi icon={MousePointerClick} label="Total Clicks" value={totalClicks.toLocaleString()} />
+        <Kpi icon={DollarSign} label="Pending Commission" value={`$${pendingComm.toLocaleString()}`} />
+        <Kpi icon={Wallet} label="Paid Out" value={`$${paidOut.toLocaleString()}`} />
       </div>
 
       <Tabs defaultValue="dashboard">
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
-          <TabsTrigger value="commissions">Comisiones</TabsTrigger>
-          <TabsTrigger value="payouts">Pagos</TabsTrigger>
-          <TabsTrigger value="leaderboard">Ranking</TabsTrigger>
+          <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
+          <TabsTrigger value="commissions">Commissions</TabsTrigger>
+          <TabsTrigger value="payouts">Payouts</TabsTrigger>
+          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
         </TabsList>
 
         {/* Dashboard */}
         <TabsContent value="dashboard" className="space-y-4">
           <div className="rounded-2xl border border-border bg-card">
-            <div className="border-b border-border px-4 py-3 text-sm font-medium">Referidos recientes</div>
+            <div className="border-b border-border px-4 py-3 text-sm font-medium">Recent Referrals</div>
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Afiliado</TableHead><TableHead>Email referido</TableHead>
-                <TableHead>Convertido</TableHead><TableHead>Importe</TableHead>
+                <TableHead>Affiliate</TableHead><TableHead>Referred Email</TableHead>
+                <TableHead>Converted</TableHead><TableHead>Amount</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {refs === null ? (
                   <TableRow><TableCell colSpan={4} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : refs.length === 0 ? (
-                  <TableRow><TableCell colSpan={4} className="py-8 text-center text-muted-foreground">Sin referidos</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="py-8 text-center text-muted-foreground">No referrals found</TableCell></TableRow>
                 ) : refs.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="font-medium">{affName(r.affiliate_id)}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">{r.referred_email}</TableCell>
-                    <TableCell>{r.converted ? <Badge>Sí</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
+                    <TableCell>{r.converted ? <Badge>Yes</Badge> : <Badge variant="secondary">No</Badge>}</TableCell>
                     <TableCell className="text-sm">${Number(r.order_amount).toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
@@ -233,22 +238,22 @@ function AffiliatesAdmin() {
           <div className="flex items-center justify-between gap-3">
             <div className="relative max-w-sm flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Buscar…" value={query} onChange={(e) => setQuery(e.target.value)} />
+              <Input className="pl-9" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
-            <Button onClick={openNewA}><Plus className="mr-1 h-4 w-4" /> Nuevo afiliado</Button>
+            <Button onClick={openNewA}><Plus className="mr-1 h-4 w-4" /> New Affiliate</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Afiliado</TableHead><TableHead>Código</TableHead><TableHead>Comisión</TableHead>
-                <TableHead>Clics/Registros</TableHead><TableHead>Ganado</TableHead>
-                <TableHead>Estado</TableHead><TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Affiliate</TableHead><TableHead>Code</TableHead><TableHead>Commission</TableHead>
+                <TableHead>Clicks / Signups</TableHead><TableHead>Earned</TableHead>
+                <TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {affs === null ? (
                   <TableRow><TableCell colSpan={7} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : fAffs.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">Sin afiliados</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">No affiliates found</TableCell></TableRow>
                 ) : fAffs.map((a) => (
                   <TableRow key={a.id}>
                     <TableCell>
@@ -276,15 +281,15 @@ function AffiliatesAdmin() {
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Afiliado</TableHead><TableHead>Fuente</TableHead>
-                <TableHead>Importe</TableHead><TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Affiliate</TableHead><TableHead>Source</TableHead>
+                <TableHead>Amount</TableHead><TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {comms === null ? (
                   <TableRow><TableCell colSpan={5} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : comms.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Sin comisiones</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No commissions found</TableCell></TableRow>
                 ) : comms.map((c) => (
                   <TableRow key={c.id}>
                     <TableCell className="font-medium">{affName(c.affiliate_id)}</TableCell>
@@ -293,10 +298,10 @@ function AffiliatesAdmin() {
                     <TableCell>{statusBadge(c.status)}</TableCell>
                     <TableCell className="text-right">
                       {c.status !== "approved" && c.status !== "paid" && (
-                        <Button variant="ghost" size="sm" onClick={() => setCommStatus(c, "approved")}>Aprobar</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setCommStatus(c, "approved")}>Approve</Button>
                       )}
                       {c.status === "approved" && (
-                        <Button variant="ghost" size="sm" onClick={() => setCommStatus(c, "paid")}><Check className="mr-1 h-4 w-4" />Pagar</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setCommStatus(c, "paid")}><Check className="mr-1 h-4 w-4" />Pay</Button>
                       )}
                     </TableCell>
                   </TableRow>
@@ -309,20 +314,20 @@ function AffiliatesAdmin() {
         {/* Payouts */}
         <TabsContent value="payouts" className="space-y-4">
           <div className="flex justify-end">
-            <Button onClick={openNewP}><Plus className="mr-1 h-4 w-4" /> Registrar pago</Button>
+            <Button onClick={openNewP}><Plus className="mr-1 h-4 w-4" /> Record Payout</Button>
           </div>
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead>Afiliado</TableHead><TableHead>Método</TableHead>
-                <TableHead>Importe</TableHead><TableHead>Referencia</TableHead>
-                <TableHead>Estado</TableHead><TableHead className="text-right">Acciones</TableHead>
+                <TableHead>Affiliate</TableHead><TableHead>Method</TableHead>
+                <TableHead>Amount</TableHead><TableHead>Reference</TableHead>
+                <TableHead>Status</TableHead><TableHead className="text-right">Actions</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {payouts === null ? (
                   <TableRow><TableCell colSpan={6} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : payouts.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">Sin pagos</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">No payouts found</TableCell></TableRow>
                 ) : payouts.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{affName(p.affiliate_id)}</TableCell>
@@ -332,7 +337,7 @@ function AffiliatesAdmin() {
                     <TableCell>{statusBadge(p.status)}</TableCell>
                     <TableCell className="text-right">
                       {p.status !== "paid" && (
-                        <Button variant="ghost" size="sm" onClick={() => setPayoutStatus(p, "paid")}><Check className="mr-1 h-4 w-4" />Marcar pagado</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setPayoutStatus(p, "paid")}><Check className="mr-1 h-4 w-4" />Mark Paid</Button>
                       )}
                       <Button variant="ghost" size="icon" onClick={() => removeP(p.id)}><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
@@ -348,14 +353,14 @@ function AffiliatesAdmin() {
           <div className="rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader><TableRow>
-                <TableHead className="w-12">#</TableHead><TableHead>Afiliado</TableHead>
-                <TableHead>Registros</TableHead><TableHead>Ganado</TableHead>
+                <TableHead className="w-12">#</TableHead><TableHead>Affiliate</TableHead>
+                <TableHead>Signups</TableHead><TableHead>Earned</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {affs === null ? (
                   <TableRow><TableCell colSpan={4} className="py-8 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></TableCell></TableRow>
                 ) : leaderboard.length === 0 ? (
-                  <TableRow><TableCell colSpan={4} className="py-8 text-center text-muted-foreground">Sin datos</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={4} className="py-8 text-center text-muted-foreground">No data available</TableCell></TableRow>
                 ) : leaderboard.map((a, i) => (
                   <TableRow key={a.id}>
                     <TableCell>
@@ -375,36 +380,36 @@ function AffiliatesAdmin() {
       {/* Affiliate dialog */}
       <Dialog open={aDialog} onOpenChange={setADialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>{aEditId ? "Editar afiliado" : "Nuevo afiliado"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{aEditId ? "Edit Affiliate" : "New Affiliate"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Nombre</Label>
+              <div className="space-y-2"><Label>Name</Label>
                 <Input value={aForm.name} onChange={(e) => setAForm({ ...aForm, name: e.target.value })} /></div>
               <div className="space-y-2"><Label>Email</Label>
                 <Input value={aForm.email} onChange={(e) => setAForm({ ...aForm, email: e.target.value })} /></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Código</Label>
+              <div className="space-y-2"><Label>Code</Label>
                 <Input value={aForm.code} onChange={(e) => setAForm({ ...aForm, code: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Comisión (%)</Label>
+              <div className="space-y-2"><Label>Commission (%)</Label>
                 <Input type="number" value={aForm.commission_rate} onChange={(e) => setAForm({ ...aForm, commission_rate: e.target.value })} /></div>
             </div>
-            <div className="space-y-2"><Label>Estado</Label>
+            <div className="space-y-2"><Label>Status</Label>
               <Select value={aForm.status} onValueChange={(v) => setAForm({ ...aForm, status: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pendiente</SelectItem>
-                  <SelectItem value="active">Activo</SelectItem>
-                  <SelectItem value="suspended">Suspendido</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2"><Label>Notas</Label>
+            <div className="space-y-2"><Label>Notes</Label>
               <Textarea rows={2} value={aForm.notes} onChange={(e) => setAForm({ ...aForm, notes: e.target.value })} /></div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setADialog(false)}>Cancelar</Button>
-            <Button onClick={saveA} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Guardar</Button>
+            <Button variant="outline" onClick={() => setADialog(false)}>Cancel</Button>
+            <Button onClick={saveA} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -412,49 +417,49 @@ function AffiliatesAdmin() {
       {/* Payout dialog */}
       <Dialog open={pDialog} onOpenChange={setPDialog}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Registrar pago</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Record Payout</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2"><Label>Afiliado</Label>
+            <div className="space-y-2"><Label>Affiliate</Label>
               <Select value={pForm.affiliate_id} onValueChange={(v) => setPForm({ ...pForm, affiliate_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Selecciona…" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
                 <SelectContent>
                   {(affs ?? []).map((a) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Importe</Label>
+              <div className="space-y-2"><Label>Amount</Label>
                 <Input type="number" value={pForm.amount} onChange={(e) => setPForm({ ...pForm, amount: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Método</Label>
+              <div className="space-y-2"><Label>Method</Label>
                 <Select value={pForm.method} onValueChange={(v) => setPForm({ ...pForm, method: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="paypal">PayPal</SelectItem>
-                    <SelectItem value="transfer">Transferencia</SelectItem>
+                    <SelectItem value="transfer">Bank Transfer</SelectItem>
                     <SelectItem value="stripe">Stripe</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2"><Label>Estado</Label>
+              <div className="space-y-2"><Label>Status</Label>
                 <Select value={pForm.status} onValueChange={(v) => setPForm({ ...pForm, status: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="requested">Solicitado</SelectItem>
-                    <SelectItem value="processing">Procesando</SelectItem>
-                    <SelectItem value="paid">Pagado</SelectItem>
-                    <SelectItem value="failed">Fallido</SelectItem>
+                    <SelectItem value="requested">Requested</SelectItem>
+                    <SelectItem value="processing">Processing</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2"><Label>Referencia</Label>
+              <div className="space-y-2"><Label>Reference</Label>
                 <Input value={pForm.reference} onChange={(e) => setPForm({ ...pForm, reference: e.target.value })} /></div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPDialog(false)}>Cancelar</Button>
-            <Button onClick={saveP} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Guardar</Button>
+            <Button variant="outline" onClick={() => setPDialog(false)}>Cancel</Button>
+            <Button onClick={saveP} disabled={saving}>{saving && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
