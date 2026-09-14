@@ -48,6 +48,7 @@ import { Route as ActualizarPasswordRouteImport } from './routes/actualizar-pass
 import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ResumeCitySlugRouteImport } from './routes/resume.$citySlug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
@@ -298,6 +299,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogRoute,
 } as any)
 const ResumeCitySlugRoute = ResumeCitySlugRouteImport.update({
   id: '/resume/$citySlug',
@@ -604,6 +610,7 @@ export interface FileRoutesByFullPath {
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -652,7 +659,6 @@ export interface FileRoutesByTo {
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/blog': typeof BlogRouteWithChildren
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -688,6 +694,7 @@ export interface FileRoutesByTo {
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
+  '/blog': typeof BlogIndexRoute
   '/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -776,6 +783,7 @@ export interface FileRoutesById {
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/afiliados': typeof AuthenticatedAdminAfiliadosRoute
   '/_authenticated/admin/almacenamiento': typeof AuthenticatedAdminAlmacenamientoRoute
   '/_authenticated/admin/analitica': typeof AuthenticatedAdminAnaliticaRoute
@@ -864,6 +872,7 @@ export interface FileRouteTypes {
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
+    | '/blog/'
     | '/admin/afiliados'
     | '/admin/almacenamiento'
     | '/admin/analitica'
@@ -912,7 +921,6 @@ export interface FileRouteTypes {
     | '/architect-resume-template'
     | '/auth'
     | '/aviso-legal'
-    | '/blog'
     | '/ceo-resume-template'
     | '/contacto'
     | '/cookies'
@@ -948,6 +956,7 @@ export interface FileRouteTypes {
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
+    | '/blog'
     | '/admin/afiliados'
     | '/admin/almacenamiento'
     | '/admin/analitica'
@@ -1035,6 +1044,7 @@ export interface FileRouteTypes {
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
+    | '/blog/'
     | '/_authenticated/admin/afiliados'
     | '/_authenticated/admin/almacenamiento'
     | '/_authenticated/admin/analitica'
@@ -1396,6 +1406,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/resume/$citySlug': {
       id: '/resume/$citySlug'
@@ -1836,10 +1853,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 const BlogRouteChildren: BlogRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)

@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar, Clock, Share2, CheckCircle2, XCircle, Sparkles, Check,
   ChevronRight, HelpCircle, Lightbulb, Bookmark, ArrowRight, Briefcase,
   GraduationCap, Laptop, TrendingUp, Palette, Calculator, Users, Award,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -143,9 +145,21 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostDetail,
 });
 
+type DbPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  category: string;
+  author: string | null;
+  published_at: string | null;
+};
+
 function BlogPostDetail() {
   const { slug } = Route.useParams();
   const [copied, setCopied] = useState(false);
+  const [dbPost, setDbPost] = useState<DbPost | null | undefined>(undefined);
 
   function copyLink() {
     navigator.clipboard.writeText(window.location.href);
@@ -154,11 +168,271 @@ function BlogPostDetail() {
     setTimeout(() => setCopied(false), 2500);
   }
 
+  useEffect(() => {
+    if (
+      slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" ||
+      slug === "como-hacer-un-curriculum-vitae-mexico"
+    ) {
+      return;
+    }
+
+    let isMounted = true;
+    supabase
+      .from("blog_posts")
+      .select("id, title, slug, excerpt, content, category, author, published_at")
+      .eq("slug", slug)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (!isMounted) return;
+        if (error || !data) {
+          setDbPost(null);
+        } else {
+          setDbPost(data as DbPost);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setDbPost(null);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]);
+
   if (slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos") {
     return <DiezEjemplosArticle copyLink={copyLink} copied={copied} />;
   }
 
-  return <GuiaHacerCvArticle copyLink={copyLink} copied={copied} />;
+  if (slug === "como-hacer-un-curriculum-vitae-mexico") {
+    return <GuiaHacerCvArticle copyLink={copyLink} copied={copied} />;
+  }
+
+  if (dbPost === undefined) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
+        <SiteHeader />
+        <main className="flex-1 flex items-center justify-center py-24">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Cargando artículo...</p>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  if (dbPost === null) {
+    return <NotFoundArticleView />;
+  }
+
+  return <DynamicArticleView post={dbPost} copyLink={copyLink} copied={copied} />;
+}
+
+function NotFoundArticleView() {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <SiteHeader />
+      <main className="flex-1 max-w-2xl mx-auto px-4 py-20 text-center space-y-6">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+          <Bookmark className="h-8 w-8" />
+        </div>
+        <h1 className="font-display text-3xl font-bold">Artículo no encontrado</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          El artículo o guía que buscas no está disponible o ha cambiado de dirección. Te invitamos a consultar nuestras guías destacadas.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3 pt-2">
+          <Link to="/blog">
+            <Button variant="default" className="gap-2">
+              Volver al blog <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link to="/blog/$slug" params={{ slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" }}>
+            <Button variant="outline">Ver 10 ejemplos de CV</Button>
+          </Link>
+        </div>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
+function DynamicArticleView({
+  post,
+  copyLink,
+  copied,
+}: {
+  post: DbPost;
+  copyLink: () => void;
+  copied: boolean;
+}) {
+  const paragraphs = (post.content ?? "")
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <SiteHeader />
+
+      <div className="border-b border-border/40 bg-secondary/20">
+        <div className="mx-auto max-w-4xl px-4 py-3 text-xs text-muted-foreground">
+          <nav className="flex items-center gap-1.5 flex-wrap">
+            <Link to="/" className="hover:text-foreground transition-colors">Inicio</Link>
+            <ChevronRight className="h-3 w-3" />
+            <Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-foreground font-medium truncate max-w-xs sm:max-w-md">
+              {post.title}
+            </span>
+          </nav>
+        </div>
+      </div>
+
+      <header className="border-b border-border/50 bg-gradient-to-b from-secondary/40 to-background py-10 md:py-14">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <Badge variant="default" className="rounded-full px-3 py-0.5 text-xs font-semibold">
+              {post.category || "Artículo"}
+            </Badge>
+            {post.published_at && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Calendar className="h-3.5 w-3.5" />
+                {new Date(post.published_at).toLocaleDateString("es-MX", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+            )}
+          </div>
+
+          <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl leading-tight">
+            {post.title}
+          </h1>
+
+          {post.excerpt && (
+            <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">
+              {post.excerpt}
+            </p>
+          )}
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/50 pt-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                CV
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{post.author || "Equipo Editorial CVAI"}</p>
+                <p className="text-xs text-muted-foreground">Especialistas en Empleabilidad México</p>
+              </div>
+            </div>
+
+            <Button variant="outline" size="sm" onClick={copyLink} className="gap-1.5 text-xs">
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Share2 className="h-3.5 w-3.5" />}
+              {copied ? "Enlace copiado" : "Compartir"}
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-4 py-12">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <article className="lg:col-span-8 space-y-6 text-foreground/90 leading-relaxed text-sm sm:text-base">
+            {paragraphs.map((p, idx) => {
+              if (p.startsWith("# ")) {
+                return (
+                  <h2 key={idx} className="font-display text-2xl sm:text-3xl font-bold text-foreground mt-8 mb-4">
+                    {p.replace(/^#\s+/, "")}
+                  </h2>
+                );
+              }
+              if (p.startsWith("## ")) {
+                return (
+                  <h3 key={idx} className="font-display text-xl sm:text-2xl font-bold text-foreground mt-6 mb-3">
+                    {p.replace(/^##\s+/, "")}
+                  </h3>
+                );
+              }
+              if (p.startsWith("### ")) {
+                return (
+                  <h4 key={idx} className="font-display text-lg font-semibold text-foreground mt-4 mb-2">
+                    {p.replace(/^###\s+/, "")}
+                  </h4>
+                );
+              }
+              if (p.startsWith("- ") || p.startsWith("* ")) {
+                const items = p.split("\n").filter((l) => l.trim().startsWith("- ") || l.trim().startsWith("* "));
+                return (
+                  <ul key={idx} className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+                    {items.map((it, i) => (
+                      <li key={i}>{it.replace(/^[-*]\s+/, "")}</li>
+                    ))}
+                  </ul>
+                );
+              }
+              return (
+                <p key={idx} className="text-muted-foreground leading-relaxed">
+                  {p}
+                </p>
+              );
+            })}
+
+            <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 sm:p-8 space-y-4 text-center mt-12">
+              <h3 className="font-display text-xl font-bold text-foreground">
+                Optimiza tu Currículum con CVAI
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+                Crea un CV en minutos con formato probado para reclutadores en México y optimizado para pasar filtros ATS.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
+                <Link to="/plantillas">
+                  <Button variant="outline" size="sm">Ver plantillas</Button>
+                </Link>
+                <Link to="/curriculum-vitae">
+                  <Button size="sm" className="gap-1.5">
+                    Crear mi CV <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </article>
+
+          <aside className="lg:col-span-4 space-y-6">
+            <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Bookmark className="h-3.5 w-3.5 text-primary" /> Recursos recomendados
+              </h3>
+              <div className="space-y-2.5 text-xs">
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" }}
+                  className="block font-medium text-foreground hover:text-primary transition-colors"
+                >
+                  → 10 Ejemplos de CV profesionales
+                </Link>
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: "como-hacer-un-curriculum-vitae-mexico" }}
+                  className="block font-medium text-foreground hover:text-primary transition-colors"
+                >
+                  → Guía paso a paso para hacer un CV
+                </Link>
+                <Link to="/ats-checker" className="block text-muted-foreground hover:text-primary transition-colors">
+                  → Verificador ATS Gratuito
+                </Link>
+                <Link to="/plantillas" className="block text-muted-foreground hover:text-primary transition-colors">
+                  → Plantillas de CV México
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
 }
 
 /* =======================================================================
