@@ -278,14 +278,14 @@ export const EMAIL_PROVIDERS: EmailProviderDef[] = [
 ];
 
 const defaultSmtpForm: SmtpFormState = {
-  host: "smtp.resend.com",
+  host: "mailadmin.sitecountry.net",
   port: 465,
   secure: true,
-  user: "resend",
+  user: "",
   pass: "",
-  fromEmail: "contacto@cvai.com.mx",
+  fromEmail: "support@cvai.com.mx",
   fromName: "CVAI - Currículum Vitae AI",
-  replyTo: "soporte@cvai.com.mx",
+  replyTo: "support@cvai.com.mx",
   ignoreTlsErrors: false,
 };
 
@@ -357,18 +357,19 @@ function EmailsAdmin() {
   async function loadSmtp() {
     setLoadingSmtp(true);
     try {
-      const res = await getAdminSmtpConfig();
-      if (res.data) {
+      const res: any = await getAdminSmtpConfig();
+      const cfg = res?.data ?? res;
+      if (cfg && typeof cfg === "object" && (cfg.host || cfg.user || cfg.fromEmail)) {
         const loaded: SmtpFormState = {
-          host: res.data.host || "",
-          port: Number(res.data.port) || 465,
-          secure: Boolean(res.data.secure),
-          user: res.data.user || "",
-          pass: res.data.pass || "",
-          fromEmail: res.data.fromEmail || "contacto@cvai.com.mx",
-          fromName: res.data.fromName || "CVAI - Currículum Vitae AI",
-          replyTo: res.data.replyTo || "soporte@cvai.com.mx",
-          ignoreTlsErrors: Boolean((res.data as any).ignoreTlsErrors),
+          host: (cfg.host || "").trim(),
+          port: Number(cfg.port) || 465,
+          secure: Boolean(cfg.secure),
+          user: (cfg.user || "").trim(),
+          pass: cfg.pass || "",
+          fromEmail: (cfg.fromEmail || "support@cvai.com.mx").trim(),
+          fromName: (cfg.fromName || "CVAI - Currículum Vitae AI").trim(),
+          replyTo: (cfg.replyTo || "support@cvai.com.mx").trim(),
+          ignoreTlsErrors: Boolean(cfg.ignoreTlsErrors),
         };
         setSmtpForm(loaded);
 
@@ -403,11 +404,20 @@ function EmailsAdmin() {
     }
     setSavingSmtp(true);
     try {
-      const res = await saveAdminSmtpConfig({ data: smtpForm });
-      if (res.success || res.ok) {
-        toast.success(res.message || "Configuración SMTP guardada");
+      const cleanForm: SmtpFormState = {
+        ...smtpForm,
+        host: smtpForm.host.trim(),
+        user: smtpForm.user.trim(),
+        fromEmail: smtpForm.fromEmail.trim(),
+        replyTo: smtpForm.replyTo.trim(),
+        fromName: smtpForm.fromName.trim(),
+      };
+      const res: any = await saveAdminSmtpConfig({ data: cleanForm });
+      if (res?.success || res?.ok) {
+        toast.success(res.message || "Configuración SMTP guardada exitosamente");
+        await loadSmtp();
       } else {
-        toast.error(res.message || "Error al guardar SMTP");
+        toast.error(res?.message || "Error al guardar SMTP");
       }
     } catch (err: any) {
       toast.error(err.message || "Error al comunicarse con el servidor");

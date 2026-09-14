@@ -53,8 +53,16 @@ export async function saveSmtpSettings(settings: Partial<SmtpSettings>): Promise
   const next: SmtpSettings = {
     ...current,
     ...settings,
+    host: (settings.host !== undefined ? settings.host : current.host).trim(),
+    user: (settings.user !== undefined ? settings.user : current.user).trim(),
+    fromEmail: (settings.fromEmail !== undefined ? settings.fromEmail : current.fromEmail).trim(),
+    replyTo: (settings.replyTo !== undefined ? settings.replyTo : current.replyTo).trim(),
+    fromName: (settings.fromName !== undefined ? settings.fromName : current.fromName).trim(),
+    port: Number(settings.port) || current.port || 465,
+    secure: settings.secure !== undefined ? Boolean(settings.secure) : current.secure,
+    enabled: true,
     // Preserve existing password if user submitted a placeholder or empty password
-    pass: settings.pass && settings.pass !== "••••••••" ? settings.pass : current.pass,
+    pass: settings.pass && settings.pass !== "••••••••" ? settings.pass.trim() : current.pass,
   };
 
   const { error } = await supabaseAdmin
