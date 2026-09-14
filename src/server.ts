@@ -89,14 +89,25 @@ async function serveSitemap(): Promise<Response> {
     console.error("Error fetching SEO pages for sitemap in server.ts:", e);
   }
 
-  let blogPages: string[] = [];
+  const defaultBlogPages = [
+    "/blog/como-hacer-un-curriculum-vitae-mexico",
+    "/blog/10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos",
+    "/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible",
+    "/blog/errores-carta-presentacion",
+  ];
+
+  let blogPages: string[] = [...defaultBlogPages];
   try {
     const { data: posts } = await supabase
       .from("blog_posts")
       .select("slug")
       .eq("published", true);
-    if (posts) {
-      blogPages = posts.map((p) => `/blog/${p.slug}`);
+    if (posts && posts.length > 0) {
+      for (const p of posts) {
+        if (p.slug && !blogPages.includes(`/blog/${p.slug}`)) {
+          blogPages.push(`/blog/${p.slug}`);
+        }
+      }
     }
   } catch (e) {
     console.error("Error fetching blog posts for sitemap in server.ts:", e);
@@ -106,12 +117,16 @@ async function serveSitemap(): Promise<Response> {
 
   const allPaths = Array.from(
     new Set([...staticPages, ...templatePages, ...blogPages, ...dbPages, ...cityPages])
-  );
+  ).filter((path) => !path.startsWith("/guias"));
+
+  const today = new Date().toISOString().split("T")[0];
 
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
-    ...allPaths.map((path) => `  <url><loc>${base}${path}</loc></url>`),
+    ...allPaths.map(
+      (path) => `  <url>\n    <loc>${base}${path}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`
+    ),
     `</urlset>`,
   ].join("\n");
 
@@ -280,6 +295,26 @@ export default {
     }
     try {
       const url = new URL(request.url);
+      const normalizedPath = url.pathname.replace(/\/+$/, "") || "/";
+
+      // 301 Permanent Redirects for retired legacy guide pages
+      const LEGACY_GUIDE_REDIRECTS: Record<string, string> = {
+        "/guias/como-hacer-un-cv": "/blog/como-hacer-un-curriculum-vitae-mexico",
+        "/guias/cv-sin-experiencia": "/blog/10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos",
+        "/guias/cv-ats": "/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible",
+      };
+
+      if (LEGACY_GUIDE_REDIRECTS[normalizedPath]) {
+        const destination = LEGACY_GUIDE_REDIRECTS[normalizedPath] + url.search;
+        return new Response(null, {
+          status: 301,
+          headers: {
+            Location: destination,
+            "Cache-Control": "public, max-age=31536000, immutable",
+          },
+        });
+      }
+
       if (url.pathname === "/sitemap.xml") {
         return await serveSitemap();
       }
