@@ -2,12 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Search, Plus, Trash2, Loader2, Pencil, Globe, Tag, ArrowRightLeft,
-  AlertTriangle, FileCode, Gauge, Copy, Check,
+  AlertTriangle, FileCode, Gauge, Copy, Check, Send, Zap, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  submitToIndexNow,
+  INDEXNOW_KEY,
+  INDEXNOW_HOST,
+  INDEXNOW_KEY_LOCATION,
+} from "@/lib/indexnow";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -206,6 +212,57 @@ function SeoAdmin() {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  const [indexNowSubmitting, setIndexNowSubmitting] = useState(false);
+  const [customIndexNowUrl, setCustomIndexNowUrl] = useState("");
+
+  async function handleIndexNowSubmitAll() {
+    setIndexNowSubmitting(true);
+    const coreRoutes = [
+      "/",
+      "/plantillas",
+      "/curriculum-vitae",
+      "/ats-checker",
+      "/blog",
+      "/precios",
+      "/contacto",
+      "/sobre-nosotros",
+      "/ejemplos",
+      "/herramientas",
+      "/blog/como-hacer-un-curriculum-vitae-mexico",
+      "/blog/10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos",
+      "/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible",
+      "/blog/errores-carta-presentacion",
+    ];
+
+    const dbUrls = (pages ?? []).filter((p) => !p.noindex).map((p) => p.path);
+    const combinedUrls = Array.from(new Set([...coreRoutes, ...dbUrls]));
+
+    const res = await submitToIndexNow(combinedUrls);
+    setIndexNowSubmitting(false);
+
+    if (res.success) {
+      toast.success(res.message);
+    } else {
+      toast.error(res.message);
+    }
+  }
+
+  async function handleIndexNowSubmitSingle() {
+    if (!customIndexNowUrl.trim()) {
+      return toast.error("Por favor ingresa una URL o ruta para indexar");
+    }
+    setIndexNowSubmitting(true);
+    const res = await submitToIndexNow([customIndexNowUrl.trim()]);
+    setIndexNowSubmitting(false);
+
+    if (res.success) {
+      toast.success(res.message);
+      setCustomIndexNowUrl("");
+    } else {
+      toast.error(res.message);
+    }
+  }
+
   const loading = pages === null || redirects === null;
   const broken = useMemo(() => (redirects ?? []).filter((r) => r.is_404), [redirects]);
   const indexed = useMemo(() => (pages ?? []).filter((p) => !p.noindex).length, [pages]);
@@ -397,6 +454,72 @@ function SeoAdmin() {
                 <p className="mt-3 text-xs text-muted-foreground">
                   Benchmark metrics. Connect Search Console for real-world field data.
                 </p>
+              </div>
+
+              {/* IndexNow Integration */}
+              <div className="rounded-2xl border border-border bg-card p-5 sm:col-span-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Zap className="h-5 w-5 text-amber-500" />
+                    <h3 className="font-display text-lg font-semibold">Protocolo IndexNow</h3>
+                    <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600">
+                      Activo &amp; Configurado
+                    </span>
+                  </div>
+                  <a
+                    href={`https://www.cvai.com.mx/${INDEXNOW_KEY}.txt`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline decoration-dotted"
+                  >
+                    Ver archivo de verificación <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Notifica instantáneamente a los motores de búsqueda compatibles (Bing, Yandex, Naver, Seznam, etc.) cada vez que se crea, actualiza o modifica una URL en CVAI sin esperar a que el robot rastreador la descubra.
+                </p>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-border bg-muted/40 p-3">
+                    <span className="text-[11px] font-medium text-muted-foreground">Clave API</span>
+                    <p className="font-mono text-xs font-semibold text-foreground truncate">{INDEXNOW_KEY}</p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-muted/40 p-3">
+                    <span className="text-[11px] font-medium text-muted-foreground">Host Autorizado</span>
+                    <p className="font-mono text-xs font-semibold text-foreground">{INDEXNOW_HOST}</p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-muted/40 p-3">
+                    <span className="text-[11px] font-medium text-muted-foreground">Endpoint Global</span>
+                    <p className="font-mono text-xs font-semibold text-foreground truncate">api.indexnow.org/indexnow</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-1 items-center gap-2">
+                    <Input
+                      placeholder="/ruta-a-indexar o https://..."
+                      value={customIndexNowUrl}
+                      onChange={(e) => setCustomIndexNowUrl(e.target.value)}
+                      className="max-w-md"
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={handleIndexNowSubmitSingle}
+                      disabled={indexNowSubmitting}
+                    >
+                      {indexNowSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="mr-1.5 h-4 w-4" />}
+                      Indexar URL
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={handleIndexNowSubmitAll}
+                    disabled={indexNowSubmitting}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    {indexNowSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+                    Indexar URLs del sitio ({indexed + 14})
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

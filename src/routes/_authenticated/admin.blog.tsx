@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { submitSingleUrlToIndexNow } from "@/lib/indexnow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -135,6 +136,14 @@ function BlogAdmin() {
     setDialog(false);
     toast.success(editId ? "Article updated" : "Article created");
     load();
+
+    if (payload.status === "publicado") {
+      submitSingleUrlToIndexNow(`/blog/${payload.slug}`).then((res) => {
+        if (res.success) {
+          toast.success("Notificación IndexNow enviada a Bing y motores asociados");
+        }
+      }).catch(() => {});
+    }
   }
 
   async function remove(id: string) {

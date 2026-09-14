@@ -49,6 +49,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStaticCities } from "@/lib/cities-data";
 import { TEMPLATES } from "@/lib/resume/registry";
 import { getTemplateUrl } from "@/lib/resume/template-routes";
+import { submitToIndexNow, INDEXNOW_KEY } from "@/lib/indexnow";
 
 async function serveSitemap(): Promise<Response> {
   const base = "https://www.cvai.com.mx";
@@ -313,6 +314,55 @@ export default {
             "Cache-Control": "public, max-age=31536000, immutable",
           },
         });
+      }
+
+      if (url.pathname === `/${INDEXNOW_KEY}.txt` || url.pathname === "/3df992ba5d7d458f8bc3663211f2a46f.txt") {
+        return new Response(INDEXNOW_KEY, {
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "public, max-age=86400",
+          },
+        });
+      }
+
+      if (url.pathname === "/api/indexnow") {
+        if (request.method === "POST") {
+          try {
+            const body = (await request.json()) as any;
+            const urls = Array.isArray(body?.urls)
+              ? body.urls
+              : body?.url
+              ? [body.url]
+              : [];
+            const host = body?.host || "www.cvai.com.mx";
+            const result = await submitToIndexNow(urls, host);
+            return new Response(JSON.stringify(result), {
+              status: result.success ? 200 : (result.status || 500),
+              headers: { "Content-Type": "application/json; charset=utf-8" },
+            });
+          } catch (err: any) {
+            return new Response(
+              JSON.stringify({ success: false, message: err?.message || "Invalid JSON payload" }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json; charset=utf-8" },
+              }
+            );
+          }
+        }
+
+        return new Response(
+          JSON.stringify({
+            status: "active",
+            protocol: "IndexNow",
+            key: INDEXNOW_KEY,
+            keyLocation: `https://www.cvai.com.mx/${INDEXNOW_KEY}.txt`,
+            endpoints: ["https://api.indexnow.org/indexnow", "https://www.bing.com/indexnow"],
+          }),
+          {
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+          }
+        );
       }
 
       if (url.pathname === "/sitemap.xml") {
