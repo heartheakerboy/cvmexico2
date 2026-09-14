@@ -10,25 +10,26 @@ const columns = [
       { to: "/ejemplos", labelKey: "site.footer.cvExamples" },
       { to: "/precios", labelKey: "site.nav.pricing" },
       { to: "/herramientas", labelKey: "site.footer.freeTools" },
-    ],
-  },
-  {
-    titleKey: "site.footer.resources",
-    links: [
-      { to: "/blog", labelKey: "site.footer.howToCv" },
-      { to: "/blog", labelKey: "site.footer.noExperience" },
-      { to: "/blog", labelKey: "site.footer.atsCv" },
       { to: "/blog", labelKey: "site.footer.blog" },
     ],
   },
   {
-    titleKey: "site.footer.company",
+    titleKey: "site.footer.trust",
     links: [
       { to: "/sobre-nosotros", labelKey: "site.footer.about" },
       { to: "/contacto", labelKey: "site.footer.contact" },
+      { to: "/transparencia-ia", labelKey: "site.footer.aiTransparency" },
+      { to: "/facturacion-pagos", labelKey: "site.footer.billing" },
+    ],
+  },
+  {
+    titleKey: "site.footer.legal",
+    links: [
       { to: "/privacidad", labelKey: "site.footer.privacy" },
       { to: "/terminos", labelKey: "site.footer.terms" },
+      { to: "/aviso-legal", labelKey: "site.footer.disclaimer" },
       { to: "/reembolso", labelKey: "site.footer.refunds" },
+      { to: "/cookies", labelKey: "site.footer.cookies" },
     ],
   },
 ] as const;

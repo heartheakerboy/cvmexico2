@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TransparenciaIaRouteImport } from './routes/transparencia-ia'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as TeacherResumeTemplateRouteImport } from './routes/teacher-resume-template'
 import { Route as StudentResumeTemplateRouteImport } from './routes/student-resume-template'
@@ -31,12 +32,15 @@ import { Route as GraphicDesignerResumeTemplateRouteImport } from './routes/grap
 import { Route as GovernmentResumeTemplateRouteImport } from './routes/government-resume-template'
 import { Route as FresherResumeTemplateRouteImport } from './routes/fresher-resume-template'
 import { Route as FreelancerResumeTemplateRouteImport } from './routes/freelancer-resume-template'
+import { Route as FacturacionPagosRouteImport } from './routes/facturacion-pagos'
 import { Route as ExecutiveResumeTemplateRouteImport } from './routes/executive-resume-template'
 import { Route as EntryLevelResumeTemplateRouteImport } from './routes/entry-level-resume-template'
 import { Route as EjemplosRouteImport } from './routes/ejemplos'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as CeoResumeTemplateRouteImport } from './routes/ceo-resume-template'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArchitectResumeTemplateRouteImport } from './routes/architect-resume-template'
 import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
@@ -87,6 +91,11 @@ import { Route as AuthenticatedAdminAnaliticaRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminAlmacenamientoRouteImport } from './routes/_authenticated/admin.almacenamiento'
 import { Route as AuthenticatedAdminAfiliadosRouteImport } from './routes/_authenticated/admin.afiliados'
 
+const TransparenciaIaRoute = TransparenciaIaRouteImport.update({
+  id: '/transparencia-ia',
+  path: '/transparencia-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TerminosRoute = TerminosRouteImport.update({
   id: '/terminos',
   path: '/terminos',
@@ -205,6 +214,11 @@ const FreelancerResumeTemplateRoute =
     path: '/freelancer-resume-template',
     getParentRoute: () => rootRouteImport,
   } as any)
+const FacturacionPagosRoute = FacturacionPagosRouteImport.update({
+  id: '/facturacion-pagos',
+  path: '/facturacion-pagos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExecutiveResumeTemplateRoute = ExecutiveResumeTemplateRouteImport.update({
   id: '/executive-resume-template',
   path: '/executive-resume-template',
@@ -221,6 +235,11 @@ const EjemplosRoute = EjemplosRouteImport.update({
   path: '/ejemplos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactoRoute = ContactoRouteImport.update({
   id: '/contacto',
   path: '/contacto',
@@ -234,6 +253,11 @@ const CeoResumeTemplateRoute = CeoResumeTemplateRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvisoLegalRoute = AvisoLegalRouteImport.update({
+  id: '/aviso-legal',
+  path: '/aviso-legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -515,12 +539,15 @@ export interface FileRoutesByFullPath {
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/ejemplos': typeof EjemplosRoute
   '/entry-level-resume-template': typeof EntryLevelResumeTemplateRoute
   '/executive-resume-template': typeof ExecutiveResumeTemplateRoute
+  '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
@@ -543,6 +570,7 @@ export interface FileRoutesByFullPath {
   '/student-resume-template': typeof StudentResumeTemplateRoute
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
+  '/transparencia-ia': typeof TransparenciaIaRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
@@ -593,12 +621,15 @@ export interface FileRoutesByTo {
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/ejemplos': typeof EjemplosRoute
   '/entry-level-resume-template': typeof EntryLevelResumeTemplateRoute
   '/executive-resume-template': typeof ExecutiveResumeTemplateRoute
+  '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
@@ -621,6 +652,7 @@ export interface FileRoutesByTo {
   '/student-resume-template': typeof StudentResumeTemplateRoute
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
+  '/transparencia-ia': typeof TransparenciaIaRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
@@ -671,12 +703,15 @@ export interface FileRoutesById {
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/ejemplos': typeof EjemplosRoute
   '/entry-level-resume-template': typeof EntryLevelResumeTemplateRoute
   '/executive-resume-template': typeof ExecutiveResumeTemplateRoute
+  '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
@@ -699,6 +734,7 @@ export interface FileRoutesById {
   '/student-resume-template': typeof StudentResumeTemplateRoute
   '/teacher-resume-template': typeof TeacherResumeTemplateRoute
   '/terminos': typeof TerminosRoute
+  '/transparencia-ia': typeof TransparenciaIaRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
   '/guias/$slug': typeof GuiasSlugRoute
@@ -751,12 +787,15 @@ export interface FileRouteTypes {
     | '/accountant-resume-template'
     | '/architect-resume-template'
     | '/auth'
+    | '/aviso-legal'
     | '/blog'
     | '/ceo-resume-template'
     | '/contacto'
+    | '/cookies'
     | '/ejemplos'
     | '/entry-level-resume-template'
     | '/executive-resume-template'
+    | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
     | '/government-resume-template'
@@ -779,6 +818,7 @@ export interface FileRouteTypes {
     | '/student-resume-template'
     | '/teacher-resume-template'
     | '/terminos'
+    | '/transparencia-ia'
     | '/admin'
     | '/panel'
     | '/guias/$slug'
@@ -829,12 +869,15 @@ export interface FileRouteTypes {
     | '/accountant-resume-template'
     | '/architect-resume-template'
     | '/auth'
+    | '/aviso-legal'
     | '/blog'
     | '/ceo-resume-template'
     | '/contacto'
+    | '/cookies'
     | '/ejemplos'
     | '/entry-level-resume-template'
     | '/executive-resume-template'
+    | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
     | '/government-resume-template'
@@ -857,6 +900,7 @@ export interface FileRouteTypes {
     | '/student-resume-template'
     | '/teacher-resume-template'
     | '/terminos'
+    | '/transparencia-ia'
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
@@ -906,12 +950,15 @@ export interface FileRouteTypes {
     | '/accountant-resume-template'
     | '/architect-resume-template'
     | '/auth'
+    | '/aviso-legal'
     | '/blog'
     | '/ceo-resume-template'
     | '/contacto'
+    | '/cookies'
     | '/ejemplos'
     | '/entry-level-resume-template'
     | '/executive-resume-template'
+    | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
     | '/government-resume-template'
@@ -934,6 +981,7 @@ export interface FileRouteTypes {
     | '/student-resume-template'
     | '/teacher-resume-template'
     | '/terminos'
+    | '/transparencia-ia'
     | '/_authenticated/admin'
     | '/_authenticated/panel'
     | '/guias/$slug'
@@ -986,12 +1034,15 @@ export interface RootRouteChildren {
   AccountantResumeTemplateRoute: typeof AccountantResumeTemplateRoute
   ArchitectResumeTemplateRoute: typeof ArchitectResumeTemplateRoute
   AuthRoute: typeof AuthRoute
+  AvisoLegalRoute: typeof AvisoLegalRoute
   BlogRoute: typeof BlogRoute
   CeoResumeTemplateRoute: typeof CeoResumeTemplateRoute
   ContactoRoute: typeof ContactoRoute
+  CookiesRoute: typeof CookiesRoute
   EjemplosRoute: typeof EjemplosRoute
   EntryLevelResumeTemplateRoute: typeof EntryLevelResumeTemplateRoute
   ExecutiveResumeTemplateRoute: typeof ExecutiveResumeTemplateRoute
+  FacturacionPagosRoute: typeof FacturacionPagosRoute
   FreelancerResumeTemplateRoute: typeof FreelancerResumeTemplateRoute
   FresherResumeTemplateRoute: typeof FresherResumeTemplateRoute
   GovernmentResumeTemplateRoute: typeof GovernmentResumeTemplateRoute
@@ -1014,6 +1065,7 @@ export interface RootRouteChildren {
   StudentResumeTemplateRoute: typeof StudentResumeTemplateRoute
   TeacherResumeTemplateRoute: typeof TeacherResumeTemplateRoute
   TerminosRoute: typeof TerminosRoute
+  TransparenciaIaRoute: typeof TransparenciaIaRoute
   GuiasSlugRoute: typeof GuiasSlugRoute
   LegalSlugRoute: typeof LegalSlugRoute
   ResumeCitySlugRoute: typeof ResumeCitySlugRoute
@@ -1021,6 +1073,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/transparencia-ia': {
+      id: '/transparencia-ia'
+      path: '/transparencia-ia'
+      fullPath: '/transparencia-ia'
+      preLoaderRoute: typeof TransparenciaIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terminos': {
       id: '/terminos'
       path: '/terminos'
@@ -1175,6 +1234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FreelancerResumeTemplateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/facturacion-pagos': {
+      id: '/facturacion-pagos'
+      path: '/facturacion-pagos'
+      fullPath: '/facturacion-pagos'
+      preLoaderRoute: typeof FacturacionPagosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/executive-resume-template': {
       id: '/executive-resume-template'
       path: '/executive-resume-template'
@@ -1196,6 +1262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EjemplosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contacto': {
       id: '/contacto'
       path: '/contacto'
@@ -1215,6 +1288,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aviso-legal': {
+      id: '/aviso-legal'
+      path: '/aviso-legal'
+      fullPath: '/aviso-legal'
+      preLoaderRoute: typeof AvisoLegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1678,12 +1758,15 @@ const rootRouteChildren: RootRouteChildren = {
   AccountantResumeTemplateRoute: AccountantResumeTemplateRoute,
   ArchitectResumeTemplateRoute: ArchitectResumeTemplateRoute,
   AuthRoute: AuthRoute,
+  AvisoLegalRoute: AvisoLegalRoute,
   BlogRoute: BlogRoute,
   CeoResumeTemplateRoute: CeoResumeTemplateRoute,
   ContactoRoute: ContactoRoute,
+  CookiesRoute: CookiesRoute,
   EjemplosRoute: EjemplosRoute,
   EntryLevelResumeTemplateRoute: EntryLevelResumeTemplateRoute,
   ExecutiveResumeTemplateRoute: ExecutiveResumeTemplateRoute,
+  FacturacionPagosRoute: FacturacionPagosRoute,
   FreelancerResumeTemplateRoute: FreelancerResumeTemplateRoute,
   FresherResumeTemplateRoute: FresherResumeTemplateRoute,
   GovernmentResumeTemplateRoute: GovernmentResumeTemplateRoute,
@@ -1706,6 +1789,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentResumeTemplateRoute: StudentResumeTemplateRoute,
   TeacherResumeTemplateRoute: TeacherResumeTemplateRoute,
   TerminosRoute: TerminosRoute,
+  TransparenciaIaRoute: TransparenciaIaRoute,
   GuiasSlugRoute: GuiasSlugRoute,
   LegalSlugRoute: LegalSlugRoute,
   ResumeCitySlugRoute: ResumeCitySlugRoute,

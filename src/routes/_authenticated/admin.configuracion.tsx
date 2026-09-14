@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Settings, Palette, Globe, DollarSign, Flag, Wrench, Loader2, Save,
+  Settings, Palette, Globe, DollarSign, Flag, Wrench, Loader2, Save, Scale,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_LEGAL_CONFIG, type CompanyLegalConfig } from "@/lib/legal-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,7 @@ type SettingsMap = {
   currency: Currency;
   flags: Flags;
   maintenance: Maintenance;
+  legal_company: CompanyLegalConfig;
 };
 
 const LANGS = [
@@ -97,6 +99,9 @@ function SettingsAdmin() {
           return;
         }
         const map = Object.fromEntries((rows ?? []).map((r) => [r.key, r.value])) as unknown as SettingsMap;
+        if (!map.legal_company) {
+          map.legal_company = { ...DEFAULT_LEGAL_CONFIG };
+        }
         setData(map);
       });
   }, []);
@@ -105,8 +110,7 @@ function SettingsAdmin() {
     setSaving(key);
     const { error } = await supabase
       .from("system_settings")
-      .update({ value: value as never })
-      .eq("key", key);
+      .upsert({ key, value: value as never }, { onConflict: "key" });
     setSaving(null);
     if (error) return toast.error(error.message);
     toast.success("Settings saved");
@@ -150,6 +154,7 @@ function SettingsAdmin() {
           <TabsTrigger value="languages"><Globe className="mr-1.5 h-3.5 w-3.5" />Languages</TabsTrigger>
           <TabsTrigger value="currency"><DollarSign className="mr-1.5 h-3.5 w-3.5" />Currency</TabsTrigger>
           <TabsTrigger value="flags"><Flag className="mr-1.5 h-3.5 w-3.5" />Feature flags</TabsTrigger>
+          <TabsTrigger value="legal_company"><Scale className="mr-1.5 h-3.5 w-3.5" />Legal & Empresa</TabsTrigger>
           <TabsTrigger value="maintenance"><Wrench className="mr-1.5 h-3.5 w-3.5" />Maintenance</TabsTrigger>
         </TabsList>
 
@@ -293,6 +298,188 @@ function SettingsAdmin() {
               <Textarea rows={3} value={data.maintenance.message} onChange={(e) => patch("maintenance", { message: e.target.value })} />
             </Field>
             <SaveBtn k="maintenance" value={data.maintenance} />
+          </SectionCard>
+        </TabsContent>
+
+        <TabsContent value="legal_company">
+          <SectionCard icon={Scale} title="Legal, Empresa & Confianza" desc="Información corporativa, correos de contacto, fechas de vigencia y proveedores de infraestructura.">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Nombre Legal de la Empresa / Plataforma">
+                <Input
+                  value={data.legal_company?.companyName || ""}
+                  onChange={(e) => patch("legal_company", { companyName: e.target.value })}
+                  placeholder="Curriculum Vitae AI"
+                />
+              </Field>
+              <Field label="Nombre Comercial / Marca">
+                <Input
+                  value={data.legal_company?.brandName || ""}
+                  onChange={(e) => patch("legal_company", { brandName: e.target.value })}
+                  placeholder="CVAI"
+                />
+              </Field>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Field label="Correo de Soporte">
+                <Input
+                  type="email"
+                  value={data.legal_company?.supportEmail || ""}
+                  onChange={(e) => patch("legal_company", { supportEmail: e.target.value })}
+                  placeholder="support@cvai.com.mx"
+                />
+              </Field>
+              <Field label="Correo Legal / Privacidad (ARCO)">
+                <Input
+                  type="email"
+                  value={data.legal_company?.legalEmail || ""}
+                  onChange={(e) => patch("legal_company", { legalEmail: e.target.value })}
+                  placeholder="legal@cvai.com.mx"
+                />
+              </Field>
+              <Field label="Correo de Negocios / Alianzas">
+                <Input
+                  type="email"
+                  value={data.legal_company?.businessEmail || ""}
+                  onChange={(e) => patch("legal_company", { businessEmail: e.target.value })}
+                  placeholder="contacto@cvai.com.mx"
+                />
+              </Field>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Field label="Dirección / Domicilio">
+                <Input
+                  value={data.legal_company?.address || ""}
+                  onChange={(e) => patch("legal_company", { address: e.target.value })}
+                  placeholder="Ciudad de México"
+                />
+              </Field>
+              <Field label="País">
+                <Input
+                  value={data.legal_company?.country || ""}
+                  onChange={(e) => patch("legal_company", { country: e.target.value })}
+                  placeholder="México"
+                />
+              </Field>
+              <Field label="URL Oficial del Sitio">
+                <Input
+                  value={data.legal_company?.websiteUrl || ""}
+                  onChange={(e) => patch("legal_company", { websiteUrl: e.target.value })}
+                  placeholder="https://www.cvai.com.mx"
+                />
+              </Field>
+            </div>
+
+            <Field label="Descripción de Entidad Legal / Registro">
+              <Textarea
+                rows={2}
+                value={data.legal_company?.legalEntityInfo || ""}
+                onChange={(e) => patch("legal_company", { legalEntityInfo: e.target.value })}
+                placeholder="Plataforma digital independiente de desarrollo tecnológico y optimización laboral en México."
+              />
+            </Field>
+
+            <div className="pt-2 border-t border-border">
+              <h3 className="text-sm font-semibold mb-3">Fechas de Última Actualización de Políticas</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Field label="Política de Privacidad">
+                  <Input
+                    value={data.legal_company?.privacyUpdated || ""}
+                    onChange={(e) => patch("legal_company", { privacyUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+                <Field label="Términos y Condiciones">
+                  <Input
+                    value={data.legal_company?.termsUpdated || ""}
+                    onChange={(e) => patch("legal_company", { termsUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+                <Field label="Política de Reembolsos">
+                  <Input
+                    value={data.legal_company?.refundUpdated || ""}
+                    onChange={(e) => patch("legal_company", { refundUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+                <Field label="Política de Cookies">
+                  <Input
+                    value={data.legal_company?.cookieUpdated || ""}
+                    onChange={(e) => patch("legal_company", { cookieUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+                <Field label="Aviso Legal / Disclaimer">
+                  <Input
+                    value={data.legal_company?.disclaimerUpdated || ""}
+                    onChange={(e) => patch("legal_company", { disclaimerUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+                <Field label="Transparencia de IA">
+                  <Input
+                    value={data.legal_company?.aiTransparencyUpdated || ""}
+                    onChange={(e) => patch("legal_company", { aiTransparencyUpdated: e.target.value })}
+                    placeholder="14 de Septiembre de 2026"
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-border">
+              <h3 className="text-sm font-semibold mb-3">Proveedores de Infraestructura Actuales</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Field label="Pasarela de Pago">
+                  <Input
+                    value={data.legal_company?.paymentProvider || ""}
+                    onChange={(e) => patch("legal_company", { paymentProvider: e.target.value })}
+                    placeholder="Lemon Squeezy"
+                  />
+                </Field>
+                <Field label="Proveedor de IA">
+                  <Input
+                    value={data.legal_company?.aiProvider || ""}
+                    onChange={(e) => patch("legal_company", { aiProvider: e.target.value })}
+                    placeholder="DeepSeek AI"
+                  />
+                </Field>
+                <Field label="Almacenamiento en la Nube">
+                  <Input
+                    value={data.legal_company?.storageProvider || ""}
+                    onChange={(e) => patch("legal_company", { storageProvider: e.target.value })}
+                    placeholder="Cloudflare R2"
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-border">
+              <h3 className="text-sm font-semibold mb-3">Redes Sociales</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="LinkedIn">
+                  <Input
+                    value={data.legal_company?.socialLinks?.linkedin || ""}
+                    onChange={(e) => patch("legal_company", {
+                      socialLinks: { ...(data.legal_company?.socialLinks || {}), linkedin: e.target.value }
+                    })}
+                    placeholder="https://linkedin.com/company/cvai-mexico"
+                  />
+                </Field>
+                <Field label="Twitter / X">
+                  <Input
+                    value={data.legal_company?.socialLinks?.twitter || ""}
+                    onChange={(e) => patch("legal_company", {
+                      socialLinks: { ...(data.legal_company?.socialLinks || {}), twitter: e.target.value }
+                    })}
+                    placeholder="https://twitter.com/cvai_mx"
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <SaveBtn k="legal_company" value={data.legal_company} />
           </SectionCard>
         </TabsContent>
       </Tabs>
