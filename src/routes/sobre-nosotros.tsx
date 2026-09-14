@@ -42,6 +42,7 @@ function AboutPageComponent() {
         { id: "mexico-first", title: "7. Our Mexico-First Approach" },
         { id: "mission-vision", title: "8. Mission & Vision" },
         { id: "independent-status", title: "9. Independent Platform Statement" },
+        { id: "operation-founder", title: "10. Operation & Founder (fkdigitalmedia)" },
       ]
     : [
         { id: "que-es-cvai", title: "1. ¿Qué es CVAI?" },
@@ -53,6 +54,7 @@ function AboutPageComponent() {
         { id: "enfoque-mexico", title: "7. Enfoque prioritario en México" },
         { id: "mision-vision", title: "8. Misión y Visión" },
         { id: "plataforma-independiente", title: "9. Declaración de plataforma independiente" },
+        { id: "operacion-fundador", title: "10. Operación y Fundador (fkdigitalmedia)" },
       ];
 
   return (
@@ -326,14 +328,71 @@ function AboutPageComponent() {
         <div className="rounded-xl border border-border bg-secondary/30 p-4 text-xs space-y-2">
           <p>
             {isEn
-              ? `${cfg.brandName} (${cfg.companyName}) is an independent private technology initiative. CVAI is not affiliated with, sponsored by, or endorsed by any government entity (such as the Secretaría del Trabajo y Previsión Social - STPS, Servicio Nacional de Empleo - SNE), universities (such as UNAM, IPN, ITESM), or third-party employment portals, unless explicitly stated in a signed formal agreement.`
-              : `${cfg.brandName} (${cfg.companyName}) es una plataforma privada e independiente de desarrollo tecnológico. CVAI no forma parte, no tiene patrocinio ni mantiene afiliación oficial con dependencias de gobierno (como la STPS o el SNE), universidades públicas o privadas (como UNAM, IPN o Tec de Monterrey) ni con bolsas de trabajo de terceros, salvo que se exprese lo contrario en convenios institucionales explícitos.`}
+              ? `${cfg.brandName} (${cfg.companyName}) is an independent private technology platform developed and operated by fkdigitalmedia. CVAI is not affiliated with, sponsored by, or endorsed by any government entity (such as the Secretaría del Trabajo y Previsión Social - STPS, Servicio Nacional de Empleo - SNE), universities (such as UNAM, IPN, ITESM), or third-party employment portals, unless explicitly stated in a signed formal agreement.`
+              : `${cfg.brandName} (${cfg.companyName}) es una plataforma digital privada e independiente de desarrollo tecnológico, desarrollada y operada por fkdigitalmedia. CVAI no forma parte, no tiene patrocinio ni mantiene afiliación oficial con dependencias de gobierno (como la STPS o el SNE), universidades públicas o privadas (como UNAM, IPN o Tec de Monterrey) ni con bolsas de trabajo de terceros, salvo que se exprese lo contrario en convenios institucionales explícitos.`}
           </p>
           <p>
             {isEn
               ? "All registered trademarks, company names, and logos referenced on this site belong to their respective owners and are used purely for nominative and descriptive purposes."
               : "Todas las marcas registradas, nombres comerciales y logotipos mencionados en este sitio pertenecen a sus respectivos titulares y se utilizan con fines exclusivamente descriptivos e informativos."}
           </p>
+        </div>
+      </section>
+
+      {/* Section 10 */}
+      <section id={isEn ? "operation-founder" : "operacion-fundador"} className="space-y-4">
+        <h2 className="text-xl md:text-2xl font-bold font-display text-foreground flex items-center gap-2">
+          <Users className="h-5 w-5 text-primary" />
+          {isEn ? "10. Operation & Founder (fkdigitalmedia)" : "10. Operación y Fundador (fkdigitalmedia)"}
+        </h2>
+        <p>
+          {isEn
+            ? "CVAI is developed, operated, and maintained by fkdigitalmedia, led by founder and engineer Firoz Khan. Dedicated to high-performance web engineering, artificial intelligence systems, and data privacy, fkdigitalmedia creates modern digital platforms tailored for practical real-world impact."
+            : "CVAI es desarrollada, operada y mantenida integralmente por fkdigitalmedia, bajo la dirección técnica y visión de su fundador, Firoz Khan. Comprometidos con el desarrollo de software de alto rendimiento, sistemas de inteligencia artificial aplicada y la protección de datos, fkdigitalmedia diseña herramientas digitales especializadas para potenciar el éxito profesional."}
+        </p>
+
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                {isEn ? "Operated by fkdigitalmedia" : "Operado por fkdigitalmedia"}
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Firoz Khan</h3>
+              <p className="text-xs text-muted-foreground max-w-md">
+                {isEn
+                  ? "Founder & Lead Developer · Specializing in AI-powered applications, user experience, and modern web architectures."
+                  : "Fundador y Desarrollador Principal · Especializado en soluciones de inteligencia artificial, arquitectura web moderna y optimización digital."}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="https://www.linkedin.com/in/firoz-khan-1153358a/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-xs font-medium text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary shadow-sm hover:shadow"
+                aria-label="Perfil de LinkedIn de Firoz Khan"
+              >
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 0 0-1.6 1.6 1.6 1.6 0 0 0 1.6 1.6 1.6 1.6 0 0 0 1.6-1.6c0-.88-.72-1.6-1.6-1.6Z" />
+                </svg>
+                <span>LinkedIn</span>
+              </a>
+
+              <a
+                href="https://github.com/fkdigitalmedia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-xs font-medium text-foreground transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary shadow-sm hover:shadow"
+                aria-label="Perfil de GitHub de fkdigitalmedia"
+              >
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

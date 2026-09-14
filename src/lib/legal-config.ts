@@ -50,16 +50,16 @@ export const DEFAULT_LEGAL_CONFIG: CompanyLegalConfig = {
   disclaimerUpdated: "14 de Septiembre de 2026",
   aiTransparencyUpdated: "14 de Septiembre de 2026",
   billingUpdated: "14 de Septiembre de 2026",
-  legalEntityInfo: "Plataforma digital independiente de desarrollo tecnológico y optimización laboral en México.",
+  legalEntityInfo: "Plataforma digital desarrollada y operada por fkdigitalmedia, enfocada en soluciones de inteligencia artificial y optimización laboral en México.",
   paymentProvider: "Lemon Squeezy",
   aiProvider: "DeepSeek AI",
   storageProvider: "Cloudflare R2",
   socialLinks: {
-    linkedin: "https://www.linkedin.com/company/cvai-mexico",
+    linkedin: "https://www.linkedin.com/in/firoz-khan-1153358a/",
     twitter: "https://twitter.com/cvai_mx",
     facebook: "",
     instagram: "",
-    github: "",
+    github: "https://github.com/fkdigitalmedia",
   },
 };
 
