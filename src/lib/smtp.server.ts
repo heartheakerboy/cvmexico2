@@ -107,7 +107,38 @@ export async function sendEmail({
   text?: string;
   templateSlug?: string;
 }) {
-  const { transporter, config } = await createSmtpTransporter();
+  let finalHtml = html;
+  if (!html.includes("<html") && !html.includes("<div") && !html.includes("<body")) {
+    const paragraphs = html
+      .split(/\n\n+/)
+      .map((p) => {
+        // Convert URLs to clickable links if not already wrapped in <a>
+        const linked = p.replace(
+          /(https?:\/\/[^\s<]+)/g,
+          '<a href="$1" style="color: #2563eb; font-weight: 600; text-decoration: underline; word-break: break-all;">$1</a>'
+        );
+        return `<p style="margin: 0 0 16px 0; line-height: 1.6; color: #334155;">${linked.replace(/\n/g, "<br/>")}</p>`;
+      })
+      .join("");
+
+    finalHtml = `
+      <div style="background-color: #f8fafc; padding: 36px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <div style="max-width: 580px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <div style="background-color: #ffffff; padding: 28px 32px 20px 32px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+            <h1 style="color: #2563eb; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">CV<span style="color: #0f172a;">AI</span></h1>
+            <p style="color: #64748b; font-size: 11px; margin: 4px 0 0 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Curriculum Vitae AI</p>
+          </div>
+          <div style="padding: 32px; font-size: 15px; color: #334155;">
+            ${paragraphs}
+          </div>
+          <div style="background-color: #f8fafc; padding: 20px 32px; border-top: 1px solid #f1f5f9; text-align: center; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+            <p style="margin: 0;">CVAI (cvai.com.mx) — Plataforma inteligente de optimización curricular en México.</p>
+            <p style="margin: 4px 0 0 0;">Si no reconoces esta acción, puedes ignorar este mensaje de forma segura.</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
   try {
     const info = await transporter.sendMail({
@@ -115,7 +146,7 @@ export async function sendEmail({
       to,
       subject,
       text: text || html.replace(/<[^>]*>?/gm, ""),
-      html,
+      html: finalHtml,
       replyTo: config.replyTo || config.fromEmail,
     });
 

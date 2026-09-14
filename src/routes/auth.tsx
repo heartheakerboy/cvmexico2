@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSettings } from "@/lib/settings";
 import { getMetaTranslation } from "@/lib/i18n/config";
 import { useAuth } from "@/hooks/use-auth";
+import { requestPasswordReset } from "@/lib/smtp.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -244,11 +245,18 @@ function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
     setLoading(true);
     try {
       const redirectUrl = `${window.location.origin}/actualizar-password`;
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: redirectUrl,
+      const res = await requestPasswordReset({
+        data: {
+          email: email.trim(),
+          redirectTo: redirectUrl,
+        },
       });
-      if (error) throw error;
-      setSent(true);
+
+      if (res?.success || res?.ok) {
+        setSent(true);
+      } else {
+        toast.error((res as any)?.message || t("auth.authError"));
+      }
     } catch (err: any) {
       toast.error(err?.message || t("auth.authError"));
     } finally {

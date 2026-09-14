@@ -4,6 +4,7 @@ import {
   getSmtpSettings,
   saveSmtpSettings,
   createSmtpTransporter,
+  sendTemplateEmail,
   type SmtpSettings,
 } from "./smtp.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
@@ -179,5 +180,84 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
       success: true,
       messageId: info.messageId,
       message: `Correo de prueba enviado con éxito a ${targetRecipient}`,
+    };
+  });
+
+export const requestPasswordReset = createServerFn({ method: "POST" })
+  .validator((data: { email: string; redirectTo?: string }) => data)
+  .handler(async ({ data }) => {
+    const email = data.email?.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      throw new Error("Por favor ingresa una dirección de correo electrónico válida.");
+    }
+
+    const redirectTo =
+      data.redirectTo ||
+      `${process.env.VITE_SITE_URL || "https://cvai.com.mx"}/actualizar-password`;
+
+    // 1. Generate secure recovery token with Supabase Admin SDK without sending Supabase's default email
+    const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email,
+      options: {
+        redirectTo,
+      },
+    });
+
+    if (linkErr) {
+      // If user does not exist, return generic success to protect user privacy
+      if (linkErr.message?.toLowerCase().includes("not found")) {
+        return {
+          ok: true,
+          success: true,
+          message: "Si tu correo está registrado, recibirás un enlace de recuperación en breve.",
+        };
+      }
+      throw new Error(linkErr.message || "Error al procesar la solicitud de recuperación.");
+    }
+
+    const recoveryLink = linkData?.properties?.action_link;
+    if (!recoveryLink) {
+      throw new Error("No se pudo generar el enlace de restablecimiento.");
+    }
+
+    // 2. Extract user's display name or email prefix
+    const userName =
+      linkData?.user?.user_metadata?.full_name ||
+      linkData?.user?.user_metadata?.name ||
+      email.split("@")[0];
+
+    const appUrl = redirectTo ? new URL(redirectTo).origin : "https://cvai.com.mx";
+
+    // 3. Send email using our custom SMTP and the 'password-reset' template from database
+    try {
+      await sendTemplateEmail({
+        to: email,
+        templateSlug: "password-reset",
+        variables: {
+          name: userName,
+          link: recoveryLink,
+          email: email,
+          app_url: appUrl,
+        },
+        fallbackSubject: "Instrucciones para restablecer tu contraseña en CVAI",
+        fallbackHtml: `
+          <h2>Hola ${userName},</h2>
+          <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en CVAI.</p>
+          <p><a href="${recoveryLink}">Restablecer mi contraseña</a></p>
+          <p>Este enlace expirará en 1 hora. Si no realizaste esta solicitud, puedes ignorar este mensaje.</p>
+        `,
+      });
+    } catch (smtpErr: any) {
+      console.error("Error sending password reset via custom SMTP:", smtpErr);
+      throw new Error(
+        `Error al enviar el correo con tu servidor SMTP (${smtpErr.message || "revisa las credenciales SMTP en el Panel de Administración"}).`
+      );
+    }
+
+    return {
+      ok: true,
+      success: true,
+      message: "Enlace de recuperación enviado con éxito mediante la plantilla de CVAI.",
     };
   });
