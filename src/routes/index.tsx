@@ -54,21 +54,21 @@ import { TEMPLATES } from "@/lib/resume/registry";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CVAI – AI Resume Builder for Mexico" },
+      { title: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
       {
         name: "description",
         content:
-          "Crea tu currículum profesional con inteligencia artificial. Plantillas premium y optimización ATS instantánea con CVAI (Curriculum Vitae AI) en México.",
+          "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis.",
       },
-      { property: "og:title", content: "CVAI – AI Resume Builder for Mexico" },
+      { property: "og:title", content: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
       {
         property: "og:description",
-        content: "Diseña un currículum ganador y compatible con filtros ATS en minutos usando la IA avanzada de CVAI.",
+        content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "CVAI – AI Resume Builder for Mexico" },
-      { name: "twitter:description", content: "Crea tu currículum profesional con inteligencia artificial de CVAI." },
+      { name: "twitter:title", content: "CVAI — Creador de Currículum con Inteligencia Artificial | Plantillas ATS México" },
+      { name: "twitter:description", content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis." },
     ],
     scripts: [
       {
@@ -80,7 +80,6 @@ export const Route = createFileRoute("/")({
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
-          aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", ratingCount: "5200" },
         }),
       },
       {
@@ -89,8 +88,38 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "FAQPage",
           mainEntity: [
-            { "@type": "Question", name: "¿Es realmente gratis crear mi CV?", acceptedAnswer: { "@type": "Answer", text: "Sí, puedes crear, editar y descargar tu CV en PDF con el plan gratuito." } },
-            { "@type": "Question", name: "¿Mis plantillas pasan los filtros ATS?", acceptedAnswer: { "@type": "Answer", text: "Todas nuestras plantillas están diseñadas para ser leídas correctamente por los sistemas ATS." } },
+            {
+              "@type": "Question",
+              name: "¿Es realmente gratis crear mi CV?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Sí. Puedes crear, editar y descargar tu currículum en PDF con el plan gratuito sin costo. Pro desbloquea herramientas avanzadas de IA, optimización de palabras clave y plantillas adicionales.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Mis plantillas pasan los filtros ATS?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Nuestras plantillas están construidas con jerarquía semántica limpia, tipografías estándar y formato lineal optimizado para que los sistemas de seguimiento de candidatos (ATS) puedan extraer tu texto sin bloqueos.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Cómo puedo pagar Pro?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Aceptamos tarjetas de crédito o débito, pagos en efectivo en OXXO y transferencias SPEI. Todos los precios están en pesos mexicanos (MXN).",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "¿Mis datos personales están protegidos?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Sí. Tu información se encuentra protegida bajo la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).",
+              },
+            },
           ],
         }),
       },
@@ -189,16 +218,16 @@ const gridFeatures = [
 
 const compareRows = ["home.compare.f1", "home.compare.f2", "home.compare.f3", "home.compare.f4", "home.compare.f5", "home.compare.f6"];
 
-const testimonials = [
-  { q: "home.t1.quote", n: "home.t1.name", r: "home.t1.role" },
-  { q: "home.t2.quote", n: "home.t2.name", r: "home.t2.role" },
-  { q: "home.t3.quote", n: "home.t3.name", r: "home.t3.role" },
+const benefits = [
+  { icon: Sparkles, q: "home.t1.quote", n: "home.t1.name", r: "home.t1.role" },
+  { icon: BadgeCheck, q: "home.t2.quote", n: "home.t2.name", r: "home.t2.role" },
+  { icon: ShieldCheck, q: "home.t3.quote", n: "home.t3.name", r: "home.t3.role" },
 ];
 
 const posts = [
-  { c: "home.b1.cat", t: "home.b1.title" },
-  { c: "home.b2.cat", t: "home.b2.title" },
-  { c: "home.b3.cat", t: "home.b3.title" },
+  { c: "home.b1.cat", t: "home.b1.title", href: "/blog/que-es-un-curriculum-ats-como-hacer-cv-compatible" },
+  { c: "home.b2.cat", t: "home.b2.title", href: "/blog/como-hacer-un-curriculum-vitae-mexico" },
+  { c: "home.b3.cat", t: "home.b3.title", href: "/blog/10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos" },
 ];
 
 function Index() {
@@ -278,14 +307,14 @@ function Index() {
                 <Check className="h-4 w-4 text-primary" /> {t("home.hero.benefitLang")}
               </span>
             </div>
-            <div className="mt-8 flex gap-8">
+            <div className="mt-8 grid grid-cols-1 gap-4 border-t border-border/60 pt-6 sm:grid-cols-3">
               {[
                 ["home.hero.stat1", "home.hero.stat1Label"],
                 ["home.hero.stat2", "home.hero.stat2Label"],
                 ["home.hero.stat3", "home.hero.stat3Label"],
               ].map(([v, l]) => (
-                <div key={v}>
-                  <div className="text-2xl font-bold text-foreground md:text-3xl">{t(v)}</div>
+                <div key={v} className="space-y-1">
+                  <div className="text-sm font-bold text-foreground sm:text-base">{t(v)}</div>
                   <div className="text-xs text-muted-foreground">{t(l)}</div>
                 </div>
               ))}
@@ -345,12 +374,19 @@ function Index() {
             <p className="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("home.trusted.title")}
             </p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-60">
-              {["Bimbo", "Cemex", "BBVA", "Femsa", "Softtek", "Kavak"].map((c) => (
-                <span key={c} className="font-display text-lg font-bold tracking-tight text-foreground/70">
-                  {c}
-                </span>
-              ))}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs sm:text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1.5 shadow-sm">
+                <BadgeCheck className="h-4 w-4 text-primary" /> Estructura optimizada para ATS
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1.5 shadow-sm">
+                <Sparkles className="h-4 w-4 text-accent" /> Español profesional de México
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1.5 shadow-sm">
+                <FileText className="h-4 w-4 text-primary" /> Exportación en PDF sin marcas de agua
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1.5 shadow-sm">
+                <ShieldCheck className="h-4 w-4 text-primary" /> Privacidad de datos (LFPDPPP)
+              </span>
             </div>
           </Reveal>
         </div>
@@ -635,7 +671,7 @@ function Index() {
         </Reveal>
       </section>
 
-      {/* Testimonials */}
+      {/* Product advantages */}
       <section className="border-y border-border/60 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-4 py-20">
           <Reveal className="mx-auto max-w-2xl text-center">
@@ -643,21 +679,15 @@ function Index() {
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("home.testimonials.title")}</h2>
           </Reveal>
           <Stagger className="mt-12 grid gap-6 md:grid-cols-3">
-            {testimonials.map((tm) => (
-              <motion.div key={tm.n} variants={staggerItem} className="rounded-2xl border border-border bg-card p-6">
-                <Quote className="h-6 w-6 text-primary/40" />
-                <p className="mt-3 text-sm text-foreground/80">{t(tm.q)}</p>
-                <div className="mt-4 flex items-center gap-1 text-accent">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-accent" />)}
-                </div>
-                <div className="mt-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-sm font-bold text-primary">
-                    {t(tm.n).charAt(0)}
+            {benefits.map((b) => (
+              <motion.div key={b.n} variants={staggerItem} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <div>
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <b.icon className="h-5 w-5" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold">{t(tm.n)}</p>
-                    <p className="text-xs text-muted-foreground">{t(tm.r)}</p>
-                  </div>
+                  <h3 className="text-base font-semibold text-foreground">{t(b.n)}</h3>
+                  <p className="mt-1 text-xs font-medium text-primary">{t(b.r)}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t(b.q)}</p>
                 </div>
               </motion.div>
             ))}
@@ -723,7 +753,7 @@ function Index() {
           <Stagger className="mt-12 grid gap-6 md:grid-cols-3">
             {posts.map((p) => (
               <motion.div key={p.t} variants={staggerItem}>
-                <Link to="/blog" className="group block overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-md">
+                <Link to={p.href} className="group block overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-md">
                   <div className="aspect-[16/9] bg-gradient-to-br from-primary/15 to-accent/15" />
                   <div className="p-5">
                     <span className="text-xs font-semibold uppercase tracking-wide text-primary">{t(p.c)}</span>
@@ -736,6 +766,13 @@ function Index() {
               </motion.div>
             ))}
           </Stagger>
+          <div className="mt-10 text-center">
+            <Link to="/blog">
+              <Button variant="outline" size="sm" className="gap-2">
+                Ver todos los artículos y guías <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
