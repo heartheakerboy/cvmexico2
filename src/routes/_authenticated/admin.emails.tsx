@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Search, Plus, Trash2, Loader2, Pencil, Mail, Send, FileText,
   Server, CheckCircle2, XCircle, Megaphone, Eye, EyeOff, Key,
-  ShieldCheck, AlertCircle, RefreshCw, Check, Globe,
+  ShieldCheck, AlertCircle, RefreshCw, Check, Globe, Sparkles,
+  HelpCircle, Info, ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,7 +61,207 @@ interface SmtpFormState {
   fromEmail: string;
   fromName: string;
   replyTo: string;
+  ignoreTlsErrors: boolean;
 }
+
+export interface EmailProviderDef {
+  id: string;
+  name: string;
+  badge: string;
+  category: "personal" | "transactional" | "custom";
+  host: string;
+  port: number;
+  secure: boolean;
+  userHint: string;
+  passHint: string;
+  tip: string;
+  domains: string[];
+}
+
+export const EMAIL_PROVIDERS: EmailProviderDef[] = [
+  {
+    id: "gmail",
+    name: "Google / Gmail / Workspace",
+    badge: "Gmail / G-Suite",
+    category: "personal",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    userHint: "tu-correo@gmail.com",
+    passHint: "Contraseña de aplicación de 16 letras",
+    tip: "En tu cuenta de Google activa la 'Verificación en 2 pasos' y luego genera una 'Contraseña de aplicación' de 16 letras (no uses tu contraseña normal).",
+    domains: ["gmail.com", "googlemail.com"],
+  },
+  {
+    id: "outlook",
+    name: "Microsoft 365 / Outlook / Hotmail",
+    badge: "Outlook / Hotmail",
+    category: "personal",
+    host: "smtp.office365.com",
+    port: 587,
+    secure: false,
+    userHint: "tu-correo@outlook.com o hotmail.com",
+    passHint: "Contraseña de cuenta o de aplicación Microsoft",
+    tip: "Compatible con @outlook.com, @hotmail.com, @live.com y Microsoft 365 empresarial. Si tienes 2FA, genera una contraseña de aplicación.",
+    domains: ["outlook.com", "hotmail.com", "live.com", "msn.com", "office365.com"],
+  },
+  {
+    id: "yahoo",
+    name: "Yahoo Mail",
+    badge: "Yahoo",
+    category: "personal",
+    host: "smtp.mail.yahoo.com",
+    port: 465,
+    secure: true,
+    userHint: "tu-usuario@yahoo.com",
+    passHint: "Contraseña de aplicación de Yahoo",
+    tip: "En la configuración de seguridad de Yahoo, ve a 'Generar contraseña de aplicación' e ingrésala aquí.",
+    domains: ["yahoo.com", "yahoo.com.mx", "ymail.com"],
+  },
+  {
+    id: "zoho",
+    name: "Zoho Mail",
+    badge: "Zoho Mail",
+    category: "personal",
+    host: "smtppro.zoho.com",
+    port: 465,
+    secure: true,
+    userHint: "tu-correo@tudominio.com",
+    passHint: "Contraseña de aplicación Zoho",
+    tip: "Válido para Zoho gratuito o empresarial. Genera una contraseña de aplicación desde Mi Cuenta > Seguridad de Zoho.",
+    domains: ["zoho.com", "zohomail.com"],
+  },
+  {
+    id: "icloud",
+    name: "Apple iCloud Mail",
+    badge: "iCloud",
+    category: "personal",
+    host: "smtp.mail.me.com",
+    port: 587,
+    secure: false,
+    userHint: "tu-correo@icloud.com",
+    passHint: "Contraseña específica de app de Apple",
+    tip: "Inicia sesión en appleid.apple.com > Seguridad > Contraseñas específicas de la app y genera una para CVAI.",
+    domains: ["icloud.com", "me.com", "mac.com"],
+  },
+  {
+    id: "hostinger",
+    name: "Hostinger Webmail",
+    badge: "Hostinger",
+    category: "personal",
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true,
+    userHint: "contacto@tudominio.com",
+    passHint: "Contraseña de tu buzón en Hostinger",
+    tip: "Usa el correo completo creado en el panel de Hostinger y la contraseña asignada a ese buzón.",
+    domains: ["hostinger.com", "titan.email"],
+  },
+  {
+    id: "cpanel",
+    name: "cPanel / Webmail / Dominio Propio",
+    badge: "cPanel / Webmail",
+    category: "personal",
+    host: "mail.tudominio.com",
+    port: 465,
+    secure: true,
+    userHint: "tu-correo@tudominio.com",
+    passHint: "Contraseña directa de tu correo en cPanel",
+    tip: "El servidor suele ser mail.tudominio.com. Si el certificado SSL de tu servidor es compartido, activa la opción 'Ignorar advertencias TLS'.",
+    domains: [],
+  },
+  {
+    id: "resend",
+    name: "Resend (Transaccional)",
+    badge: "Resend",
+    category: "transactional",
+    host: "smtp.resend.com",
+    port: 465,
+    secure: true,
+    userHint: "resend",
+    passHint: "re_xxxxxxxxxxxxxxxxxxxx",
+    tip: "Crea tu clave en resend.com/api-keys. El usuario siempre es la palabra 'resend'.",
+    domains: ["resend.com"],
+  },
+  {
+    id: "sendgrid",
+    name: "SendGrid (Twilio)",
+    badge: "SendGrid",
+    category: "transactional",
+    host: "smtp.sendgrid.net",
+    port: 587,
+    secure: false,
+    userHint: "apikey",
+    passHint: "SG.xxxxxxxxxxxxxxxxxxxx",
+    tip: "El usuario siempre es 'apikey' y la contraseña es tu API Key creada en SendGrid.",
+    domains: ["sendgrid.com"],
+  },
+  {
+    id: "brevo",
+    name: "Brevo (Sendinblue)",
+    badge: "Brevo",
+    category: "transactional",
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+    userHint: "tu-login-brevo@correo.com",
+    passHint: "Clave SMTP master de Brevo",
+    tip: "Consulta tus credenciales en el panel de Brevo en Configuración > SMTP & API.",
+    domains: ["brevo.com", "sendinblue.com"],
+  },
+  {
+    id: "mailgun",
+    name: "Mailgun",
+    badge: "Mailgun",
+    category: "transactional",
+    host: "smtp.mailgun.org",
+    port: 587,
+    secure: false,
+    userHint: "postmaster@mg.tudominio.com",
+    passHint: "Contraseña SMTP de Mailgun",
+    tip: "Obtenla en Sending > Domains > Domain Settings > SMTP Credentials.",
+    domains: ["mailgun.org", "mailgun.com"],
+  },
+  {
+    id: "ses",
+    name: "Amazon SES",
+    badge: "AWS SES",
+    category: "transactional",
+    host: "email-smtp.us-east-1.amazonaws.com",
+    port: 587,
+    secure: false,
+    userHint: "Usuario SMTP de AWS SES (AKIA...)",
+    passHint: "Contraseña SMTP de AWS SES",
+    tip: "Genera credenciales SMTP dedicadas en AWS Console > SES > SMTP Settings.",
+    domains: ["amazonaws.com"],
+  },
+  {
+    id: "postmark",
+    name: "Postmark",
+    badge: "Postmark",
+    category: "transactional",
+    host: "smtp.postmarkapp.com",
+    port: 587,
+    secure: false,
+    userHint: "Server API Token de Postmark",
+    passHint: "Server API Token de Postmark",
+    tip: "Tanto el usuario como la contraseña corresponden al Server API Token de tu servidor en Postmark.",
+    domains: ["postmarkapp.com"],
+  },
+  {
+    id: "custom",
+    name: "Servidor Personalizado / Cualquier otro SMTP",
+    badge: "Personalizado",
+    category: "custom",
+    host: "",
+    port: 587,
+    secure: false,
+    userHint: "usuario@servidor.com",
+    passHint: "Contraseña del servidor SMTP",
+    tip: "Compatible con cualquier servidor SMTP del mundo (Postfix, Exim, VPS privado, etc.).",
+    domains: [],
+  },
+];
 
 const defaultSmtpForm: SmtpFormState = {
   host: "smtp.resend.com",
@@ -71,6 +272,7 @@ const defaultSmtpForm: SmtpFormState = {
   fromEmail: "contacto@cvai.com.mx",
   fromName: "CVAI - Currículum Vitae AI",
   replyTo: "soporte@cvai.com.mx",
+  ignoreTlsErrors: false,
 };
 
 function slugify(s: string) {
@@ -121,6 +323,7 @@ function EmailsAdmin() {
   const [showPassword, setShowPassword] = useState(false);
   const [testRecipient, setTestRecipient] = useState("");
   const [sendingTest, setSendingTest] = useState(false);
+  const [selectedProviderId, setSelectedProviderId] = useState<string>("custom");
 
   // Template preview state
   const [previewTpl, setPreviewTpl] = useState<Template | null>(null);
@@ -142,7 +345,7 @@ function EmailsAdmin() {
     try {
       const res = await getAdminSmtpConfig();
       if (res.data) {
-        setSmtpForm({
+        const loaded: SmtpFormState = {
           host: res.data.host || "",
           port: Number(res.data.port) || 465,
           secure: Boolean(res.data.secure),
@@ -151,7 +354,21 @@ function EmailsAdmin() {
           fromEmail: res.data.fromEmail || "contacto@cvai.com.mx",
           fromName: res.data.fromName || "CVAI - Currículum Vitae AI",
           replyTo: res.data.replyTo || "soporte@cvai.com.mx",
-        });
+          ignoreTlsErrors: Boolean((res.data as any).ignoreTlsErrors),
+        };
+        setSmtpForm(loaded);
+
+        // Detect provider
+        const matched = EMAIL_PROVIDERS.find(
+          (p) => p.host && p.host.toLowerCase() === loaded.host.toLowerCase()
+        );
+        if (matched) {
+          setSelectedProviderId(matched.id);
+        } else if (loaded.host.startsWith("mail.")) {
+          setSelectedProviderId("cpanel");
+        } else {
+          setSelectedProviderId("custom");
+        }
       }
     } catch (err: any) {
       console.error("Error loading SMTP config:", err);
@@ -173,7 +390,7 @@ function EmailsAdmin() {
     setSavingSmtp(true);
     try {
       const res = await saveAdminSmtpConfig({ data: smtpForm });
-      if (res.success) {
+      if (res.success || res.ok) {
         toast.success(res.message || "Configuración SMTP guardada");
       } else {
         toast.error(res.message || "Error al guardar SMTP");
@@ -192,12 +409,18 @@ function EmailsAdmin() {
     }
     setSendingTest(true);
     try {
-      const res = await sendTestSmtpEmail({ data: { to: testRecipient.trim() } });
-      if (res.success) {
+      const res = await sendTestSmtpEmail({
+        data: {
+          to: testRecipient.trim(),
+          recipient: testRecipient.trim(),
+          customSettings: smtpForm,
+        },
+      });
+      if (res.success || res.ok) {
         toast.success(res.message || "¡Correo de prueba enviado con éxito!");
         load();
       } else {
-        toast.error(res.message || "Error al enviar correo de prueba");
+        toast.error((res as any).message || "Error al enviar correo de prueba");
         load();
       }
     } catch (err: any) {
@@ -208,43 +431,52 @@ function EmailsAdmin() {
     }
   }
 
-  function applyPreset(provider: "resend" | "gmail" | "sendgrid" | "brevo") {
-    if (provider === "resend") {
-      setSmtpForm((prev) => ({
+  function applyProvider(providerId: string, customDomainHost?: string) {
+    setSelectedProviderId(providerId);
+    const p = EMAIL_PROVIDERS.find((x) => x.id === providerId);
+    if (!p) return;
+
+    setSmtpForm((prev) => {
+      let nextHost = customDomainHost || p.host;
+      if (providerId === "cpanel" && !customDomainHost) {
+        const rawEmail = prev.fromEmail || prev.user || "";
+        const domain = rawEmail.includes("@") ? rawEmail.split("@")[1].toLowerCase().trim() : "";
+        if (domain) nextHost = `mail.${domain}`;
+      }
+      return {
         ...prev,
-        host: "smtp.resend.com",
-        port: 465,
-        secure: true,
-        user: "resend",
-      }));
-      toast.info("Configuración de Resend aplicada");
-    } else if (provider === "gmail") {
-      setSmtpForm((prev) => ({
-        ...prev,
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-      }));
-      toast.info("Configuración de Gmail aplicada (requiere Contraseña de Aplicación de Google)");
-    } else if (provider === "sendgrid") {
-      setSmtpForm((prev) => ({
-        ...prev,
-        host: "smtp.sendgrid.net",
-        port: 587,
-        secure: false,
-        user: "apikey",
-      }));
-      toast.info("Configuración de SendGrid aplicada");
-    } else if (provider === "brevo") {
-      setSmtpForm((prev) => ({
-        ...prev,
-        host: "smtp-relay.brevo.com",
-        port: 587,
-        secure: false,
-      }));
-      toast.info("Configuración de Brevo aplicada");
+        host: nextHost || prev.host,
+        port: p.port,
+        secure: p.secure,
+        user: p.id === "resend" ? "resend" : p.id === "sendgrid" ? "apikey" : prev.user,
+      };
+    });
+    toast.info(`Configuración para ${p.name} aplicada`);
+  }
+
+  function autoDetectFromEmail(emailInput?: string) {
+    const raw = (emailInput || smtpForm.user || smtpForm.fromEmail || "").trim();
+    if (!raw.includes("@")) {
+      toast.error("Ingresa primero un correo con '@' para auto-detectar");
+      return;
+    }
+    const domain = raw.split("@")[1].toLowerCase().trim();
+    const matched = EMAIL_PROVIDERS.find((p) =>
+      p.domains.some((d) => domain === d || domain.endsWith("." + d))
+    );
+
+    if (matched) {
+      applyProvider(matched.id);
+      toast.success(`Proveedor detectado: ${matched.name}`);
+    } else {
+      applyProvider("cpanel", `mail.${domain}`);
+      toast.success(`Dominio @${domain} detectado. Host asignado: mail.${domain}`);
     }
   }
+
+  const selectedProvider = useMemo(() => {
+    return EMAIL_PROVIDERS.find((p) => p.id === selectedProviderId) || EMAIL_PROVIDERS[EMAIL_PROVIDERS.length - 1];
+  }, [selectedProviderId]);
 
   function openPreview(t: Template) {
     setPreviewTpl(t);
@@ -508,19 +740,22 @@ function EmailsAdmin() {
 
         {/* SMTP */}
         <TabsContent value="smtp" className="space-y-6">
-          {/* Status & Quick Presets Header */}
+          {/* Status & Universal Provider Header */}
           <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
                   <Server className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold text-base">Servidor de Correo Saliente (SMTP)</h3>
+                  <h3 className="font-semibold text-base">Servidor de Correo Saliente (SMTP Universal)</h3>
                   <Badge variant={smtpForm.host ? "default" : "secondary"}>
                     {smtpForm.host ? "Configurado" : "Pendiente"}
                   </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {selectedProvider.name}
+                  </Badge>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Configura el servidor SMTP para el envío de correos transaccionales, activaciones Pro, notificaciones ATS y soporte de CVAI.
+                  Puedes utilizar <strong>cualquier proveedor de correo del mundo</strong>: Gmail, Microsoft Outlook, Yahoo, Zoho, iCloud, Hostinger, cPanel / Webmail o servicios transaccionales.
                 </p>
               </div>
 
@@ -536,22 +771,75 @@ function EmailsAdmin() {
               </div>
             </div>
 
-            {/* Quick Provider Presets */}
-            <div className="pt-2 border-t border-border/60">
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="font-medium text-muted-foreground">Preajustes rápidos:</span>
-                <Button variant="secondary" size="sm" className="h-7 text-xs" onClick={() => applyPreset("resend")}>
-                  Resend (Recomendado)
+            {/* Provider selector & auto-detect bar */}
+            <div className="pt-3 border-t border-border/60 flex flex-col md:flex-row md:items-center gap-3">
+              <div className="flex-1 space-y-1">
+                <Label htmlFor="provider-selector" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Elige tu Proveedor de Correo:
+                </Label>
+                <Select value={selectedProviderId} onValueChange={(val) => applyProvider(val)}>
+                  <SelectTrigger id="provider-selector" className="h-9">
+                    <SelectValue placeholder="Selecciona un proveedor..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-80">
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Correos Personales y Profesionales
+                    </div>
+                    {EMAIL_PROVIDERS.filter((p) => p.category === "personal").map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2 border-t border-border/40 pt-2">
+                      Servicios Transaccionales & Cloud
+                    </div>
+                    {EMAIL_PROVIDERS.filter((p) => p.category === "transactional").map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground mt-2 border-t border-border/40 pt-2">
+                      Personalizado
+                    </div>
+                    {EMAIL_PROVIDERS.filter((p) => p.category === "custom").map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-end pt-1">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="h-9 gap-1.5"
+                  onClick={() => autoDetectFromEmail()}
+                  title="Detecta automáticamente el servidor analizando tu dirección de correo"
+                >
+                  <Sparkles className="h-4 w-4 text-amber-500" />
+                  Auto-detectar desde mi correo
                 </Button>
-                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("gmail")}>
-                  Google / Gmail
-                </Button>
-                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("sendgrid")}>
-                  SendGrid
-                </Button>
-                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => applyPreset("brevo")}>
-                  Brevo (Sendinblue)
-                </Button>
+              </div>
+            </div>
+
+            {/* Dynamic Provider Tip Box */}
+            <div className="rounded-xl border border-blue-500/20 bg-blue-50/50 dark:bg-blue-950/20 p-3.5 flex items-start gap-3">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-1">
+                <div className="font-semibold text-blue-900 dark:text-blue-200">
+                  Instrucciones para {selectedProvider.name}:
+                </div>
+                <p className="text-blue-800 dark:text-blue-300 leading-relaxed">
+                  {selectedProvider.tip}
+                </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-blue-700/80 dark:text-blue-400/80 pt-1 text-[11px]">
+                  <span><strong>Formato de usuario:</strong> {selectedProvider.userHint}</span>
+                  <span><strong>Contraseña esperada:</strong> {selectedProvider.passHint}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -569,7 +857,7 @@ function EmailsAdmin() {
                   <Label htmlFor="smtp-host">Host / Servidor SMTP</Label>
                   <Input
                     id="smtp-host"
-                    placeholder="smtp.resend.com o smtp.gmail.com"
+                    placeholder="smtp.gmail.com o mail.tudominio.com"
                     value={smtpForm.host}
                     onChange={(e) => setSmtpForm((f) => ({ ...f, host: e.target.value }))}
                   />
@@ -586,31 +874,57 @@ function EmailsAdmin() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
-                <div className="space-y-0.5">
-                  <div className="text-sm font-medium">Conexión Segura (SSL / TLS directo)</div>
-                  <div className="text-xs text-muted-foreground">
-                    Activar para puerto 465 (SSL/TLS). Desactivar para puerto 587 (STARTTLS).
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
+                  <div className="space-y-0.5 pr-2">
+                    <div className="text-sm font-medium">SSL / TLS directo</div>
+                    <div className="text-xs text-muted-foreground">
+                      Activar para puerto 465. Desactivar para 587 (STARTTLS).
+                    </div>
                   </div>
+                  <Switch
+                    checked={smtpForm.secure}
+                    onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, secure: v }))}
+                  />
                 </div>
-                <Switch
-                  checked={smtpForm.secure}
-                  onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, secure: v }))}
-                />
+
+                <div className="flex items-center justify-between rounded-xl border border-border/80 bg-muted/30 p-3">
+                  <div className="space-y-0.5 pr-2">
+                    <div className="text-sm font-medium">Ignorar errores TLS</div>
+                    <div className="text-xs text-muted-foreground">
+                      Para cPanel, certificados compartidos o autofirmados.
+                    </div>
+                  </div>
+                  <Switch
+                    checked={smtpForm.ignoreTlsErrors}
+                    onCheckedChange={(v) => setSmtpForm((f) => ({ ...f, ignoreTlsErrors: v }))}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="smtp-user">Usuario / API Key</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="smtp-user">Usuario / Correo / API Key</Label>
+                    <button
+                      type="button"
+                      onClick={() => autoDetectFromEmail(smtpForm.user)}
+                      className="text-[11px] text-primary hover:underline flex items-center gap-0.5"
+                      title="Detectar servidor según este correo"
+                    >
+                      <Sparkles className="h-3 w-3" /> Auto-detectar
+                    </button>
+                  </div>
                   <Input
                     id="smtp-user"
-                    placeholder="resend / apikey / correo"
+                    placeholder={selectedProvider.userHint || "tu-correo@ejemplo.com"}
                     value={smtpForm.user}
                     onChange={(e) => setSmtpForm((f) => ({ ...f, user: e.target.value }))}
                   />
                 </div>
+
                 <div className="space-y-1.5">
-                  <Label htmlFor="smtp-pass">Contraseña / Token</Label>
+                  <Label htmlFor="smtp-pass">Contraseña / Token / App Password</Label>
                   <div className="relative">
                     <Input
                       id="smtp-pass"
@@ -664,7 +978,7 @@ function EmailsAdmin() {
                     onChange={(e) => setSmtpForm((f) => ({ ...f, replyTo: e.target.value }))}
                   />
                   <p className="text-xs text-muted-foreground">
-                    A este buzón llegarán las respuestas directas de los usuarios a cualquier notificación del sistema.
+                    A este buzón llegarán las respuestas que los usuarios escriban a los correos del sistema.
                   </p>
                 </div>
               </div>
@@ -677,7 +991,7 @@ function EmailsAdmin() {
               </div>
             </div>
 
-            {/* Right: Test Email & Diagnostics (5 cols) */}
+            {/* Right: Test Email & App Password Guides (5 cols) */}
             <div className="lg:col-span-5 space-y-4">
               {/* Test email card */}
               <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
@@ -686,7 +1000,7 @@ function EmailsAdmin() {
                   Prueba de Envío en Vivo
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Envía un correo de verificación en tiempo real para comprobar la autenticación TLS/SSL, las cabeceras y la entrega a la bandeja de entrada.
+                  Envía un correo de verificación en tiempo real usando los parámetros actuales del formulario para validar la conexión y autenticación antes de guardar.
                 </p>
 
                 <div className="space-y-2">
@@ -720,26 +1034,33 @@ function EmailsAdmin() {
                 </Button>
               </div>
 
-              {/* Tips & Mexico compliance */}
+              {/* Universal Provider Guide */}
               <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
                 <div className="flex items-center gap-2 font-medium text-sm">
-                  <ShieldCheck className="h-4 w-4 text-green-600" />
-                  Mejores Prácticas y Entregabilidad
+                  <HelpCircle className="h-4 w-4 text-amber-500" />
+                  Guía Rápida para cualquier Proveedor
                 </div>
-                <ul className="text-xs space-y-2 text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
-                    <span><strong>Dominio cvai.com.mx:</strong> Asegúrate de tener registros SPF, DKIM y DMARC activos en tu proveedor de DNS.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
-                    <span><strong>Entorno México:</strong> Las plantillas están optimizadas en español de México con zona horaria central y moneda MXN.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0 mt-0.5" />
-                    <span><strong>Monitoreo de Logs:</strong> Cada intento de envío se registra automáticamente en la pestaña <em>Logs</em> con estado y errores si los hubiera.</span>
-                  </li>
-                </ul>
+                <div className="text-xs space-y-2.5 text-muted-foreground">
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                    <strong className="text-foreground block mb-0.5">Gmail / Google:</strong>
+                    Activa la <em>Verificación en 2 pasos</em> en myaccount.google.com y genera una <em>Contraseña de aplicación</em> de 16 caracteres.
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                    <strong className="text-foreground block mb-0.5">Outlook / Hotmail / Office 365:</strong>
+                    Puerto 587 con STARTTLS. Si tienes autenticación en 2 pasos, crea una contraseña de aplicación en account.microsoft.com.
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                    <strong className="text-foreground block mb-0.5">cPanel / Webmail / Hosting:</strong>
+                    Host: <code>mail.tudominio.com</code>. Usa el correo completo como usuario y activa <em>"Ignorar errores TLS"</em> si tu hosting usa SSL compartido.
+                  </div>
+
+                  <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                    <strong className="text-foreground block mb-0.5">Yahoo / Zoho / Apple iCloud:</strong>
+                    Todos estos proveedores requieren que generes una <em>Contraseña de aplicación</em> desde la sección de seguridad de tu cuenta.
+                  </div>
+                </div>
               </div>
             </div>
           </div>

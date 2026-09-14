@@ -25,16 +25,23 @@ export const saveAdminSmtpConfig = createServerFn({ method: "POST" })
   .validator((data: Partial<SmtpSettings>) => data)
   .handler(async ({ data }) => {
     await saveSmtpSettings(data);
-    return { ok: true };
+    return { ok: true, success: true, message: "Configuración SMTP guardada exitosamente" };
   });
 
 export const sendTestSmtpEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: { recipient: string; customSettings?: Partial<SmtpSettings> }) => data)
+  .validator(
+    (data: {
+      recipient?: string;
+      to?: string;
+      customSettings?: Partial<SmtpSettings>;
+    }) => data
+  )
   .handler(async ({ data }) => {
-    const { recipient, customSettings } = data;
+    const targetRecipient = (data.recipient || data.to || "").trim();
+    const customSettings = data.customSettings;
 
-    if (!recipient || !recipient.includes("@")) {
+    if (!targetRecipient || !targetRecipient.includes("@")) {
       throw new Error("Por favor proporciona una dirección de correo de prueba válida.");
     }
 
@@ -49,8 +56,8 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
           : current.pass,
     };
 
-    if (!configToTest.host || !configToTest.user) {
-      throw new Error("Faltan datos de Host o Usuario SMTP para realizar la prueba.");
+    if (!configToTest.host) {
+      throw new Error("Falta el Host del servidor SMTP para realizar la prueba.");
     }
 
     const { transporter } = await createSmtpTransporter(configToTest);
@@ -106,7 +113,7 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
 
     const info = await transporter.sendMail({
       from: `"${configToTest.fromName}" <${configToTest.fromEmail}>`,
-      to: recipient,
+      to: targetRecipient,
       subject,
       html,
     });
@@ -114,7 +121,7 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
     // Log to email_logs
     try {
       await supabaseAdmin.from("email_logs" as any).insert({
-        recipient,
+        recipient: targetRecipient,
         template: "test-smtp",
         subject,
         status: "delivered",
@@ -126,7 +133,8 @@ export const sendTestSmtpEmail = createServerFn({ method: "POST" })
 
     return {
       ok: true,
+      success: true,
       messageId: info.messageId,
-      message: `Correo de prueba enviado con éxito a ${recipient}`,
+      message: `Correo de prueba enviado con éxito a ${targetRecipient}`,
     };
   });

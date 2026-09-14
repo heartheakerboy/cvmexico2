@@ -11,6 +11,7 @@ export type SmtpSettings = {
   fromEmail: string;
   fromName: string;
   replyTo: string;
+  ignoreTlsErrors?: boolean;
 };
 
 export const DEFAULT_SMTP_SETTINGS: SmtpSettings = {
@@ -23,6 +24,7 @@ export const DEFAULT_SMTP_SETTINGS: SmtpSettings = {
   fromEmail: process.env.SMTP_FROM || "soporte@cvai.com.mx",
   fromName: process.env.SMTP_FROM_NAME || "CVAI (Curriculum Vitae AI)",
   replyTo: process.env.SMTP_REPLY_TO || "soporte@cvai.com.mx",
+  ignoreTlsErrors: false,
 };
 
 export async function getSmtpSettings(): Promise<SmtpSettings> {
@@ -65,23 +67,29 @@ export async function saveSmtpSettings(settings: Partial<SmtpSettings>): Promise
 export async function createSmtpTransporter(customSettings?: SmtpSettings) {
   const config = customSettings || (await getSmtpSettings());
 
-  if (!config.host || !config.user) {
-    throw new Error("La configuración SMTP está incompleta. Por favor proporciona Host y Usuario.");
+  if (!config.host) {
+    throw new Error("El host del servidor SMTP es obligatorio.");
   }
 
-  const transporter = nodemailer.createTransport({
+  const transportOptions: any = {
     host: config.host,
     port: Number(config.port) || 587,
     secure: Boolean(config.secure), // true for 465, false for other ports
-    auth: {
+    tls: {
+      // Allow self-signed or shared certificates if ignoreTlsErrors is set
+      rejectUnauthorized: !config.ignoreTlsErrors && process.env.NODE_ENV === "production",
+    },
+  };
+
+  // Only attach auth if user is provided
+  if (config.user) {
+    transportOptions.auth = {
       user: config.user,
       pass: config.pass,
-    },
-    tls: {
-      // Don't fail on invalid certs in local dev environments
-      rejectUnauthorized: process.env.NODE_ENV === "production",
-    },
-  });
+    };
+  }
+
+  const transporter = nodemailer.createTransport(transportOptions);
 
   return { transporter, config };
 }
