@@ -51,6 +51,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResumeCitySlugRouteImport } from './routes/resume.$citySlug'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
@@ -313,6 +314,11 @@ const GuiasSlugRoute = GuiasSlugRouteImport.update({
   path: '/guias/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
   id: '/panel',
   path: '/panel',
@@ -560,7 +566,7 @@ export interface FileRoutesByFullPath {
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -594,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
@@ -645,7 +652,7 @@ export interface FileRoutesByTo {
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -677,6 +684,7 @@ export interface FileRoutesByTo {
   '/terminos': typeof TerminosRoute
   '/transparencia-ia': typeof TransparenciaIaRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
@@ -730,7 +738,7 @@ export interface FileRoutesById {
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
-  '/blog': typeof BlogRoute
+  '/blog': typeof BlogRouteWithChildren
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -764,6 +772,7 @@ export interface FileRoutesById {
   '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/guias/$slug': typeof GuiasSlugRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/resume/$citySlug': typeof ResumeCitySlugRoute
@@ -851,6 +860,7 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/admin'
     | '/panel'
+    | '/blog/$slug'
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
@@ -934,6 +944,7 @@ export interface FileRouteTypes {
     | '/terminos'
     | '/transparencia-ia'
     | '/unsubscribe'
+    | '/blog/$slug'
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
@@ -1020,6 +1031,7 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/_authenticated/admin'
     | '/_authenticated/panel'
+    | '/blog/$slug'
     | '/guias/$slug'
     | '/legal/$slug'
     | '/resume/$citySlug'
@@ -1073,7 +1085,7 @@ export interface RootRouteChildren {
   ArchitectResumeTemplateRoute: typeof ArchitectResumeTemplateRoute
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
-  BlogRoute: typeof BlogRoute
+  BlogRoute: typeof BlogRouteWithChildren
   CeoResumeTemplateRoute: typeof CeoResumeTemplateRoute
   ContactoRoute: typeof ContactoRoute
   CookiesRoute: typeof CookiesRoute
@@ -1405,6 +1417,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guias/$slug'
       preLoaderRoute: typeof GuiasSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/_authenticated/panel': {
       id: '/_authenticated/panel'
@@ -1815,6 +1834,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -1823,7 +1852,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArchitectResumeTemplateRoute: ArchitectResumeTemplateRoute,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
-  BlogRoute: BlogRoute,
+  BlogRoute: BlogRouteWithChildren,
   CeoResumeTemplateRoute: CeoResumeTemplateRoute,
   ContactoRoute: ContactoRoute,
   CookiesRoute: CookiesRoute,
