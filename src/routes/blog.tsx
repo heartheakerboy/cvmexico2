@@ -18,10 +18,10 @@ export const Route = createFileRoute("/blog")({
       },
       {
         name: "description",
-        content: "Consejos prácticos, guías paso a paso para hacer tu currículum vitae, optimización para filtros ATS y tendencias de contratación en México.",
+        content: "Consejos prácticos, ejemplos de currículum vitae por profesión, guías paso a paso, optimización para filtros ATS y tendencias de contratación en México.",
       },
       { property: "og:title", content: "Blog de Empleo y Currículum Vitae en México | CVAI" },
-      { property: "og:description", content: "Guías prácticas y estrategias para redactar un currículum vitae exitoso en México." },
+      { property: "og:description", content: "Guías prácticas, 10 ejemplos de CV por profesión y estrategias para conseguir trabajo en México." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.cvai.com.mx/blog" },
     ],
@@ -53,6 +53,17 @@ const DEFAULT_POSTS: BlogPostItem[] = [
     published_at: "2026-09-14T06:57:47.065Z",
     read_time: "12 min de lectura",
     featured: true,
+  },
+  {
+    id: "0fe4f03d-b7bf-4793-a745-97ac76865d03",
+    title: "10 ejemplos de currículum vitae para diferentes trabajos y perfiles profesionales",
+    slug: "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos",
+    excerpt: "Descubre 10 ejemplos de currículum vitae reales adaptados a México: estudiantes, sin experiencia, recién egresados, ingenieros, ventas, directivos, trabajo remoto y más.",
+    category: "Ejemplos",
+    author: "Equipo Editorial CVAI",
+    published_at: "2026-09-14T07:04:14.528Z",
+    read_time: "14 min de lectura",
+    featured: false,
   },
   {
     id: "73382f83-c5d6-485b-8c6d-acdb5ed71241",
@@ -98,10 +109,9 @@ function BlogPage() {
       .order("published_at", { ascending: false })
       .then(({ data, error }) => {
         if (!error && data && data.length > 0) {
-          // Merge with default ensuring our flagship article is always present
-          const hasFlagship = data.some((p) => p.slug === "como-hacer-un-curriculum-vitae-mexico");
-          const merged = hasFlagship ? (data as BlogPostItem[]) : [DEFAULT_POSTS[0], ...(data as BlogPostItem[])];
-          setPosts(merged);
+          const slugsInDb = new Set(data.map((p) => p.slug));
+          const missingDefaults = DEFAULT_POSTS.filter((p) => !slugsInDb.has(p.slug));
+          setPosts([...(data as BlogPostItem[]), ...missingDefaults]);
         }
       })
       .catch(() => {
@@ -239,7 +249,7 @@ function BlogPage() {
                         {post.category}
                       </Badge>
                       <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                        <Clock className="h-3 w-3" /> {post.read_time ?? "6 min"}
+                        <Clock className="h-3 w-3" /> {post.read_time ?? "8 min"}
                       </span>
                     </div>
 
@@ -282,7 +292,7 @@ function BlogPage() {
             Diseña un currículum vitae optimizado para el mercado mexicano con plantillas profesionales y sugerencias en tiempo real con Inteligencia Artificial.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Link to="/plantillas-curriculum-vitae">
+            <Link to="/plantillas">
               <Button variant="outline" size="sm">Explorar plantillas</Button>
             </Link>
             <Link to="/curriculum-vitae">
