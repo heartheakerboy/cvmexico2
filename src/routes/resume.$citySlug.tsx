@@ -13,13 +13,21 @@ import {
   Briefcase,
   ChevronRight,
   TrendingUp,
-  Loader2
+  Loader2,
+  Compass,
+  Award
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ResumePaper } from "@/components/resume/resume-paper";
 import { makeDefaultDesign, defaultLayout } from "@/lib/resume/types";
 import { getStaticCityBySlug, getStaticCities, type City } from "@/lib/cities-data";
@@ -241,7 +249,7 @@ function CityLandingPage() {
               Mercado Laboral en {city.name}
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              {city.name} cuenta con un ecosistema laboral único. Destacar frente a las empresas locales requiere adaptar tu enfoque a las industrias y prácticas de reclutamiento más valoradas en la región.
+              {city.localEmploymentFocus || `${city.name} cuenta con un ecosistema laboral único. Destacar frente a las empresas locales requiere adaptar tu enfoque a las industrias y prácticas de reclutamiento más valoradas en la región.`}
             </p>
 
             <div className="space-y-4">
@@ -313,10 +321,10 @@ function CityLandingPage() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <Building2 className="h-5 w-5" />
             </span>
-            <h3 className="font-bold text-lg text-foreground">Principales Empleadores en {city.name}</h3>
+            <h3 className="font-bold text-lg text-foreground">Empresas con presencia en {city.name}</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Incluimos estas empresas en los currículums de ejemplo de {city.name} para reflejar la realidad del ecosistema local:
+            Organizaciones representativas del ecosistema local útiles para investigar oportunidades profesionales e incluir como referencia en tu CV:
           </p>
           <ul className="grid grid-cols-2 gap-2 text-xs font-semibold text-muted-foreground pt-2">
             {city.companies.map((c, i) => (
@@ -413,6 +421,69 @@ function CityLandingPage() {
         </div>
       </section>
 
+      {/* Local Skills Section */}
+      {city.localSkills && city.localSkills.length > 0 && (
+        <section className="border-t py-14 md:py-16">
+          <div className="mx-auto max-w-6xl px-4 space-y-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <Award className="h-4 w-4" />
+                <span>Perfil Profesional Local</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                Habilidades que puedes destacar en {city.name}
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-3xl">
+                Si estás buscando puestos en los principales sectores de {city.name}, considera incorporar estas competencias técnicas y operativas según tu especialidad:
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2.5 pt-2">
+              {city.localSkills.map((skill, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1.5 rounded-xl border bg-card px-3.5 py-2 text-xs font-semibold text-foreground shadow-sm hover:border-primary/40 transition-colors"
+                >
+                  <Check className="h-3.5 w-3.5 text-primary shrink-0" />
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Local Job Search Guidance */}
+      {city.localJobSearchTips && city.localJobSearchTips.length > 0 && (
+        <section className="bg-secondary/15 border-t py-14 md:py-16">
+          <div className="mx-auto max-w-6xl px-4 space-y-8">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <Compass className="h-4 w-4" />
+                <span>Estrategia de Postulación</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                Consejos para buscar trabajo en {city.name}
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-3xl">
+                Pautas prácticas para gestionar tu búsqueda de empleo y contactar oportunidades en la región:
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {city.localJobSearchTips.map((tip, i) => (
+                <div key={i} className="bg-card border p-5 rounded-2xl space-y-2.5 shadow-sm">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary text-xs font-bold">
+                    {i + 1}
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {tip}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Templates Section */}
       <section id="templates-section" className="mx-auto max-w-6xl px-4 py-16 md:py-24 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -449,6 +520,42 @@ function CityLandingPage() {
           ))}
         </div>
       </section>
+
+      {/* City-Specific FAQs */}
+      {city.faqs && city.faqs.length > 0 && (
+        <section className="border-t py-14 md:py-20">
+          <div className="mx-auto max-w-4xl px-4 space-y-8">
+            <div className="text-center space-y-3">
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <HelpCircle className="h-4 w-4" />
+                <span>Dudas Frecuentes</span>
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Preguntas frecuentes sobre el currículum en {city.name}
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+                Respuestas prácticas a las dudas más comunes al postularse a empleos en la región.
+              </p>
+            </div>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              {city.faqs.map((faq, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`item-${i}`}
+                  className="border rounded-2xl bg-card px-5 py-1 shadow-sm"
+                >
+                  <AccordionTrigger className="text-left text-sm font-semibold text-foreground hover:text-primary transition-colors py-4">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-xs text-muted-foreground leading-relaxed pb-4">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
 
       {/* Suggested Articles */}
       <section className="bg-secondary/20 border-t py-14">
