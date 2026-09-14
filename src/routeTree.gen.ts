@@ -43,6 +43,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ArchitectResumeTemplateRouteImport } from './routes/architect-resume-template'
+import { Route as ActualizarPasswordRouteImport } from './routes/actualizar-password'
 import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -268,6 +269,11 @@ const AuthRoute = AuthRouteImport.update({
 const ArchitectResumeTemplateRoute = ArchitectResumeTemplateRouteImport.update({
   id: '/architect-resume-template',
   path: '/architect-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActualizarPasswordRoute = ActualizarPasswordRouteImport.update({
+  id: '/actualizar-password',
+  path: '/actualizar-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountantResumeTemplateRoute =
@@ -537,6 +543,7 @@ const AuthenticatedAdminAfiliadosRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
+  '/actualizar-password': typeof ActualizarPasswordRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -619,6 +626,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
+  '/actualizar-password': typeof ActualizarPasswordRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -701,6 +709,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/accountant-resume-template': typeof AccountantResumeTemplateRoute
+  '/actualizar-password': typeof ActualizarPasswordRoute
   '/architect-resume-template': typeof ArchitectResumeTemplateRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
@@ -785,6 +794,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accountant-resume-template'
+    | '/actualizar-password'
     | '/architect-resume-template'
     | '/auth'
     | '/aviso-legal'
@@ -867,6 +877,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/accountant-resume-template'
+    | '/actualizar-password'
     | '/architect-resume-template'
     | '/auth'
     | '/aviso-legal'
@@ -948,6 +959,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/accountant-resume-template'
+    | '/actualizar-password'
     | '/architect-resume-template'
     | '/auth'
     | '/aviso-legal'
@@ -1032,6 +1044,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AccountantResumeTemplateRoute: typeof AccountantResumeTemplateRoute
+  ActualizarPasswordRoute: typeof ActualizarPasswordRoute
   ArchitectResumeTemplateRoute: typeof ArchitectResumeTemplateRoute
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
@@ -1309,6 +1322,13 @@ declare module '@tanstack/react-router' {
       path: '/architect-resume-template'
       fullPath: '/architect-resume-template'
       preLoaderRoute: typeof ArchitectResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/actualizar-password': {
+      id: '/actualizar-password'
+      path: '/actualizar-password'
+      fullPath: '/actualizar-password'
+      preLoaderRoute: typeof ActualizarPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accountant-resume-template': {
@@ -1756,6 +1776,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AccountantResumeTemplateRoute: AccountantResumeTemplateRoute,
+  ActualizarPasswordRoute: ActualizarPasswordRoute,
   ArchitectResumeTemplateRoute: ArchitectResumeTemplateRoute,
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
