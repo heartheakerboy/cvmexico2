@@ -47,14 +47,18 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 import { supabase } from "@/integrations/supabase/client";
 import { getStaticCities } from "@/lib/cities-data";
+import { TEMPLATES } from "@/lib/resume/registry";
+import { getTemplateUrl } from "@/lib/resume/template-routes";
 
 async function serveSitemap(): Promise<Response> {
   const base = "https://www.cvai.com.mx";
   
   const staticPages = [
     "",
-    "/auth",
     "/plantillas",
+    "/curriculum-vitae",
+    "/ats-checker",
+    "/blog",
     "/precios",
     "/contacto",
     "/sobre-nosotros",
@@ -67,26 +71,10 @@ async function serveSitemap(): Promise<Response> {
     "/cookies",
     "/transparencia-ia",
     "/facturacion-pagos",
-    "/software-engineer-resume-template",
-    "/nurse-resume-template",
-    "/teacher-resume-template",
-    "/accountant-resume-template",
-    "/lawyer-resume-template",
-    "/architect-resume-template",
-    "/project-manager-resume-template",
-    "/hr-manager-resume-template",
-    "/sales-executive-resume-template",
-    "/graphic-designer-resume-template",
-    "/ceo-resume-template",
-    "/fresher-resume-template",
-    "/internship-resume-template",
-    "/entry-level-resume-template",
-    "/mid-level-resume-template",
-    "/senior-professional-resume-template",
-    "/executive-resume-template",
-    "/government-resume-template",
-    "/freelancer-resume-template"
   ];
+
+  // All 80+ template pages (both dedicated and /plantillas/:id)
+  const templatePages = TEMPLATES.map((t) => getTemplateUrl(t.id));
 
   let dbPages: string[] = [];
   try {
@@ -101,10 +89,23 @@ async function serveSitemap(): Promise<Response> {
     console.error("Error fetching SEO pages for sitemap in server.ts:", e);
   }
 
+  let blogPages: string[] = [];
+  try {
+    const { data: posts } = await supabase
+      .from("blog_posts")
+      .select("slug")
+      .eq("published", true);
+    if (posts) {
+      blogPages = posts.map((p) => `/blog/${p.slug}`);
+    }
+  } catch (e) {
+    console.error("Error fetching blog posts for sitemap in server.ts:", e);
+  }
+
   const cityPages = getStaticCities().map((c) => `/resume/${c.slug}`);
 
   const allPaths = Array.from(
-    new Set([...staticPages, ...dbPages, ...cityPages])
+    new Set([...staticPages, ...templatePages, ...blogPages, ...dbPages, ...cityPages])
   );
 
   const xml = [

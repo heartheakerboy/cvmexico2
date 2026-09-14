@@ -88,7 +88,34 @@ function EditorPage() {
       let doc: ResumeDoc;
       let tplId = cv.template;
 
-      if (isEmpty && (paramTemplate || paramCity)) {
+      // Check if user has an imported resume from ATS Checker
+      const importedRaw = typeof window !== "undefined" ? localStorage.getItem("cvai_imported_resume") : null;
+      let importedDoc: Partial<ResumeDoc> | null = null;
+      if (isEmpty && importedRaw) {
+        try {
+          importedDoc = JSON.parse(importedRaw);
+          localStorage.removeItem("cvai_imported_resume");
+        } catch (e) {
+          console.error("Error parsing imported resume:", e);
+        }
+      }
+
+      if (isEmpty && importedDoc) {
+        doc = normalizeDoc({
+          full_name: importedDoc.full_name || cv.full_name || "",
+          headline: importedDoc.headline || cv.headline || "",
+          photo_url: cv.photo_url ?? "",
+          email: importedDoc.email || cv.email || "",
+          phone: importedDoc.phone || cv.phone || "",
+          location: importedDoc.location || cv.location || "",
+          website: importedDoc.website || cv.website || "",
+          summary: importedDoc.summary || cv.summary || "",
+          experience: (importedDoc.experience || cv.experience || []) as ResumeDoc["experience"],
+          education: (importedDoc.education || cv.education || []) as ResumeDoc["education"],
+          skills: (importedDoc.skills || cv.skills || []) as string[],
+        });
+        toast.success("¡Tu CV ha sido importado y optimizado con una plantilla ATS!");
+      } else if (isEmpty && (paramTemplate || paramCity)) {
         tplId = paramTemplate || cv.template;
         const baseSample = getSampleForTemplate(tplId);
         let localized = baseSample;

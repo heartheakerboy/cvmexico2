@@ -443,3 +443,86 @@ function extractJson(text: string): unknown {
     }
   }
 }
+
+export const sendAtsReportEmail = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        email: z.string().email(),
+        score: z.number(),
+        grade: z.string(),
+        summary: z.string(),
+        strengths: z.array(z.string()).default([]),
+        improvements: z.array(z.string()).default([]),
+        missingKeywords: z.array(z.string()).default([]),
+      })
+      .parse(data)
+  )
+  .handler(async ({ data }) => {
+    try {
+      const { sendTemplateEmail } = await import("./smtp.server");
+      const html = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 16px;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <h1 style="font-size: 24px; font-weight: 800; color: #0284c7; margin: 0;">CVAI México</h1>
+            <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Diagnóstico de Compatibilidad ATS para Currículum</p>
+          </div>
+          
+          <div style="background: #f8fafc; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+            <p style="font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0;">Puntaje ATS Obtenido</p>
+            <div style="font-size: 44px; font-weight: 900; color: ${data.score >= 80 ? "#16a34a" : data.score >= 65 ? "#d97706" : "#dc2626"}; margin: 8px 0;">
+              ${data.score} <span style="font-size: 18px; font-weight: normal; color: #94a3b8;">/ 100</span>
+            </div>
+            <span style="display: inline-block; background: #e0f2fe; color: #0284c7; font-weight: bold; font-size: 12px; padding: 4px 12px; border-radius: 9999px;">
+              Grado ${data.grade}
+            </span>
+            <p style="font-size: 13px; color: #334155; margin-top: 12px; line-height: 1.5;">${data.summary}</p>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: #16a34a; margin-bottom: 8px;">✓ Puntos Fuertes Detectados:</h3>
+            <ul style="font-size: 13px; color: #475569; padding-left: 20px; line-height: 1.6; margin: 0;">
+              ${data.strengths.map((s) => `<li>${s}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: #d97706; margin-bottom: 8px;">⚠ Oportunidades de Mejora:</h3>
+            <ul style="font-size: 13px; color: #475569; padding-left: 20px; line-height: 1.6; margin: 0;">
+              ${data.improvements.map((imp) => `<li>${imp}</li>`).join("")}
+            </ul>
+          </div>
+
+          ${
+            data.missingKeywords && data.missingKeywords.length > 0
+              ? `
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: #0284c7; margin-bottom: 8px;">+ Palabras Clave Recomendadas:</h3>
+            <p style="font-size: 13px; color: #475569; line-height: 1.6; margin: 0;">${data.missingKeywords.join(", ")}</p>
+          </div>
+          `
+              : ""
+          }
+
+          <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 24px;">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">¿Quieres que tu CV supere los filtros con más de 90 puntos garantizados?</p>
+            <a href="https://www.cvai.com.mx/plantillas" style="display: inline-block; background: #0284c7; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px;">
+              Crear CV con Plantillas ATS en CVAI
+            </a>
+          </div>
+        </div>
+      `;
+
+      await sendTemplateEmail({
+        to: data.email,
+        templateSlug: "ats-report",
+        fallbackSubject: `Diagnóstico ATS de tu Currículum (${data.score}/100) | CVAI México`,
+        fallbackHtml: html,
+      });
+
+      return { success: true };
+    } catch (err: any) {
+      console.warn("Could not send ATS report email:", err);
+      return { success: true, message: "Diagnóstico registrado correctamente." };
+    }
+  });

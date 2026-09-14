@@ -52,6 +52,7 @@ const en = {
 
   // Public site
   "site.nav.templates": "Templates",
+  "site.nav.atsChecker": "ATS Checker",
   "site.nav.examples": "Examples",
   "site.nav.pricing": "Pricing",
   "site.nav.guides": "Guides",
@@ -67,6 +68,8 @@ const en = {
   "site.footer.description": "The resume builder designed for the Mexican job market. ATS templates, AI writing and professional export.",
   "site.footer.cvExamples": "Resume examples",
   "site.footer.freeTools": "Free tools",
+  "site.footer.atsChecker": "ATS PDF Checker",
+  "site.footer.cvMexico": "Mexico Resume Builder",
   "site.footer.howToCv": "How to write a resume",
   "site.footer.noExperience": "Resume with no experience",
   "site.footer.atsCv": "ATS-friendly resume",

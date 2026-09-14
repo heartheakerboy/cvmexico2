@@ -28,6 +28,12 @@ function MyResumes() {
 
   useEffect(() => {
     load();
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("import") === "true" && localStorage.getItem("cvai_imported_resume")) {
+        createResume();
+      }
+    }
   }, []);
 
   const filtered = useMemo(() => {

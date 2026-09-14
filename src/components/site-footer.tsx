@@ -7,6 +7,8 @@ const columns = [
     titleKey: "site.footer.product",
     links: [
       { to: "/plantillas", labelKey: "site.nav.templates" },
+      { to: "/ats-checker", labelKey: "site.footer.atsChecker" },
+      { to: "/curriculum-vitae", labelKey: "site.footer.cvMexico" },
       { to: "/ejemplos", labelKey: "site.footer.cvExamples" },
       { to: "/precios", labelKey: "site.nav.pricing" },
       { to: "/herramientas", labelKey: "site.footer.freeTools" },

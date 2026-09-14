@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -6,10 +6,13 @@ import {
   ArrowRight, FileText, Check, HelpCircle, ChevronRight, RefreshCw,
   UploadCloud, Printer, FileCheck, Layers, Award, Target,
   Clock, Eye, EyeOff, Trash2, Zap, TrendingUp, AlertCircle, CheckCircle,
+  Mail, Send, FileType, CheckCheck,
 } from "lucide-react";
 import { toast } from "sonner";
-import { analyzePublicAts, type PublicAtsResponse } from "@/lib/ats.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { analyzePublicAts, sendAtsReportEmail, type PublicAtsResponse } from "@/lib/ats.functions";
 import { extractTextFromPdf } from "@/lib/pdf-parser";
+import { extractTextFromDocx } from "@/lib/docx-parser";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -132,14 +135,18 @@ HABILIDADES TÉCNICAS
 - Inglés intermedio-avanzado (B2)`;
 
 function PublicAtsCheckerPage() {
+  const navigate = useNavigate();
   const analyzeFn = useServerFn(analyzePublicAts);
+  const sendReportFn = useServerFn(sendAtsReportEmail);
+
   const [activeTab, setActiveTab] = useState<"upload" | "paste">("upload");
   const [resumeText, setResumeText] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const [extractingPdf, setExtractingPdf] = useState(false);
-  const [pdfMeta, setPdfMeta] = useState<{
+  const [extractingFile, setExtractingFile] = useState(false);
+  const [fileMeta, setFileMeta] = useState<{
     fileName: string;
+    format: "PDF" | "DOCX" | "TXT";
     fileSizeKb: number;
     numPages: number;
     wordCount: number;
@@ -148,52 +155,70 @@ function PublicAtsCheckerPage() {
   const [result, setResult] = useState<PublicAtsResponse | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // Email Lead Magnet
+  const [leadEmail, setLeadEmail] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   async function handleFileUpload(file: File) {
     if (!file) return;
 
-    if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
-      // Check if text or word
-      if (file.name.toLowerCase().endsWith(".txt")) {
-        try {
-          const text = await file.text();
-          setResumeText(text);
-          setPdfMeta({
-            fileName: file.name,
-            fileSizeKb: Math.round(file.size / 1024),
-            numPages: 1,
-            wordCount: text.trim().split(/\s+/).filter(Boolean).length,
-          });
-          toast.success("Archivo de texto cargado correctamente");
-          return;
-        } catch {
-          toast.error("Error al leer el archivo de texto.");
-          return;
-        }
-      }
-      toast.error("Por favor selecciona un archivo PDF válido (.pdf)");
+    const lower = file.name.toLowerCase();
+    const isPdf = lower.endsWith(".pdf") || file.type === "application/pdf";
+    const isDocx = lower.endsWith(".docx") || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    const isTxt = lower.endsWith(".txt") || file.type === "text/plain";
+
+    if (!isPdf && !isDocx && !isTxt) {
+      toast.error("Por favor selecciona un archivo PDF (.pdf) o Word (.docx)");
       return;
     }
 
-    setExtractingPdf(true);
+    setExtractingFile(true);
     try {
-      const extracted = await extractTextFromPdf(file);
-      setResumeText(extracted.text);
-      setPdfMeta({
-        fileName: file.name,
-        fileSizeKb: Math.round(file.size / 1024),
-        numPages: extracted.numPages,
-        wordCount: extracted.wordCount,
-      });
-      toast.success(`¡PDF extraído con éxito! (${extracted.numPages} ${extracted.numPages === 1 ? "página" : "páginas"}, ${extracted.wordCount} palabras)`);
+      if (isPdf) {
+        const extracted = await extractTextFromPdf(file);
+        setResumeText(extracted.text);
+        setFileMeta({
+          fileName: file.name,
+          format: "PDF",
+          fileSizeKb: Math.round(file.size / 1024),
+          numPages: extracted.numPages,
+          wordCount: extracted.wordCount,
+        });
+        toast.success(`¡PDF extraído con éxito! (${extracted.numPages} ${extracted.numPages === 1 ? "página" : "páginas"}, ${extracted.wordCount} palabras)`);
+      } else if (isDocx) {
+        const extracted = await extractTextFromDocx(file);
+        setResumeText(extracted.text);
+        setFileMeta({
+          fileName: file.name,
+          format: "DOCX",
+          fileSizeKb: Math.round(file.size / 1024),
+          numPages: Math.max(1, Math.round(extracted.wordCount / 300)),
+          wordCount: extracted.wordCount,
+        });
+        toast.success(`¡Documento Word (.docx) extraído con éxito! (${extracted.wordCount} palabras)`);
+      } else if (isTxt) {
+        const text = await file.text();
+        setResumeText(text);
+        setFileMeta({
+          fileName: file.name,
+          format: "TXT",
+          fileSizeKb: Math.round(file.size / 1024),
+          numPages: 1,
+          wordCount: text.trim().split(/\s+/).filter(Boolean).length,
+        });
+        toast.success("Archivo de texto cargado correctamente");
+      }
     } catch (err: unknown) {
       console.error(err);
-      const msg = err instanceof Error ? err.message : "No se pudo leer el texto del archivo PDF";
+      const msg = err instanceof Error ? err.message : "No se pudo leer el texto del archivo";
       toast.error(msg);
     } finally {
-      setExtractingPdf(false);
+      setExtractingFile(false);
     }
   }
 
@@ -207,7 +232,7 @@ function PublicAtsCheckerPage() {
 
   function handleClearFile() {
     setResumeText("");
-    setPdfMeta(null);
+    setFileMeta(null);
     setShowExtractedText(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
@@ -215,7 +240,7 @@ function PublicAtsCheckerPage() {
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
     if (!resumeText.trim()) {
-      toast.error("Sube un archivo PDF o pega el texto de tu currículum para iniciar el análisis");
+      toast.error("Sube un archivo PDF/Word o pega el texto de tu currículum para iniciar el análisis");
       return;
     }
 
@@ -243,9 +268,103 @@ function PublicAtsCheckerPage() {
   function loadSample() {
     setActiveTab("paste");
     setResumeText(SAMPLE_RESUME);
-    setPdfMeta(null);
+    setFileMeta(null);
     setJobDescription("Buscamos Coordinador de Logística con experiencia comprobada en SAP ERP (MM/SD), liderazgo de almacenes y reducción de costos operativos en México.");
     toast.info("Ejemplo cargado. Haz clic en 'Analizar Compatibilidad ATS'.");
+  }
+
+  async function handleOneClickOptimize() {
+    if (!resumeText.trim()) return;
+    setOptimizing(true);
+
+    try {
+      const lines = resumeText.split("\n").map((l) => l.trim()).filter(Boolean);
+      const emailMatch = resumeText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const phoneMatch = resumeText.match(/(?:\+?52\s?)?(?:\(?\d{2,3}\)?[\s.-]?)?\d{3,4}[\s.-]?\d{4}/);
+      const locationMatch = resumeText.match(/(?:ciudad de méxico|cdmx|estado de méxico|edomex|monterrey|guadalajara|puebla|querétaro|mérida|tijuana|león|toluca|méxico)/i);
+
+      const firstLine = lines[0] || "Mi Nombre";
+      const name = firstLine.length < 50 && !firstLine.includes("@") ? firstLine : "Candidato Profesional";
+
+      const importedData = {
+        full_name: name,
+        headline: result?.targetRole || "Especialista Profesional",
+        email: emailMatch ? emailMatch[0] : "",
+        phone: phoneMatch ? phoneMatch[0] : "",
+        location: locationMatch ? locationMatch[0] : "Ciudad de México, México",
+        summary: result?.summary || (lines.slice(1, 4).join(" ") || ""),
+        skills: result?.matchedKeywords && result.matchedKeywords.length > 0 ? result.matchedKeywords : ["Liderazgo", "Gestión", "Resolución de Problemas"],
+        experience: [
+          {
+            role: "Especialista / Coordinador",
+            company: "Empresa Líder",
+            period: "2021 – Presente",
+            description: result?.actionVerbsDetected && result.actionVerbsDetected.length > 0
+              ? `${result.actionVerbsDetected[0]} proyectos logrando ${result.metricsDetected[0] || "resultados cuantificables"}.`
+              : "Responsable de coordinar actividades clave y optimizar procesos organizacionales.",
+          }
+        ],
+        education: [
+          {
+            degree: "Licenciatura / Grado Universitario",
+            school: "Universidad en México",
+            period: "2016 – 2020",
+          }
+        ]
+      };
+
+      localStorage.setItem("cvai_imported_resume", JSON.stringify(importedData));
+
+      // Check if user is logged in
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData?.user) {
+        const { data: newCv, error } = await supabase
+          .from("resumes")
+          .insert({ user_id: userData.user.id, title: "CV Optimizado ATS", template: "stage-executive" })
+          .select("id")
+          .single();
+        if (!error && newCv) {
+          toast.success("¡Creando tu nuevo CV optimizado!");
+          navigate({ to: "/cv/$id", params: { id: newCv.id } });
+          return;
+        }
+      }
+
+      // If not authenticated, redirect to auth
+      toast.info("Inicia sesión o crea tu cuenta gratuita para abrir tu CV optimizado.");
+      navigate({ to: "/auth", search: { redirect: "/panel/curriculums", import: "true" } });
+    } catch (e) {
+      console.error(e);
+      toast.error("Hubo un detalle al preparar la importación.");
+    } finally {
+      setOptimizing(false);
+    }
+  }
+
+  async function handleSendEmailReport(e: React.FormEvent) {
+    e.preventDefault();
+    if (!leadEmail.trim() || !result) return;
+
+    setSendingEmail(true);
+    try {
+      await sendReportFn({
+        data: {
+          email: leadEmail.trim(),
+          score: result.score,
+          grade: result.grade,
+          summary: result.summary,
+          strengths: result.strengths,
+          improvements: result.improvements,
+          missingKeywords: result.missingKeywords,
+        },
+      });
+      setEmailSent(true);
+      toast.success("¡Diagnóstico ATS enviado con éxito a tu correo!");
+    } catch {
+      toast.error("No se pudo enviar el informe en este momento.");
+    } finally {
+      setSendingEmail(false);
+    }
   }
 
   function handlePrintReport() {
@@ -316,19 +435,19 @@ function PublicAtsCheckerPage() {
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "upload" | "paste")} className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-6">
               <TabsTrigger value="upload" className="text-xs font-semibold gap-2">
-                <UploadCloud className="h-4 w-4" /> Subir archivo PDF
+                <UploadCloud className="h-4 w-4" /> Subir archivo (PDF o Word)
               </TabsTrigger>
               <TabsTrigger value="paste" className="text-xs font-semibold gap-2">
                 <FileText className="h-4 w-4" /> Pegar texto de CV
               </TabsTrigger>
             </TabsList>
 
-            {/* TAB 1: PDF UPLOAD */}
+            {/* TAB 1: FILE UPLOAD (PDF, DOCX, TXT) */}
             <TabsContent value="upload" className="space-y-4">
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.txt"
+                accept=".pdf,.docx,.txt"
                 className="hidden"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
@@ -337,7 +456,7 @@ function PublicAtsCheckerPage() {
                 }}
               />
 
-              {!pdfMeta && !extractingPdf ? (
+              {!fileMeta && !extractingFile ? (
                 <div
                   onDragOver={(e) => {
                     e.preventDefault();
@@ -356,10 +475,10 @@ function PublicAtsCheckerPage() {
                     <UploadCloud className="h-7 w-7" />
                   </div>
                   <h3 className="font-display text-base font-bold text-foreground">
-                    Haz clic para seleccionar tu PDF o arrástralo aquí
+                    Haz clic para seleccionar tu PDF o Word (.docx) o arrástralo aquí
                   </h3>
                   <p className="mt-1 text-xs text-muted-foreground max-w-sm">
-                    Soporta archivos .PDF (hasta 20 MB). Tu información se analiza directamente en tu navegador con total privacidad.
+                    Soporta archivos <strong className="text-foreground">.PDF</strong>, <strong className="text-foreground">.DOCX</strong> y <strong className="text-foreground">.TXT</strong> (hasta 20 MB). Tu información se analiza directamente en tu navegador con total privacidad.
                   </p>
                   <div className="mt-5">
                     <Button type="button" variant="secondary" size="sm" className="pointer-events-none text-xs gap-1.5">
@@ -367,14 +486,14 @@ function PublicAtsCheckerPage() {
                     </Button>
                   </div>
                 </div>
-              ) : extractingPdf ? (
+              ) : extractingFile ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-primary/30 bg-primary/5 p-12 text-center space-y-3">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   <h4 className="font-display text-sm font-bold text-foreground">
-                    Extrayendo texto del archivo PDF...
+                    Extrayendo contenido de tu documento...
                   </h4>
                   <p className="text-xs text-muted-foreground max-w-xs">
-                    Leyendo capas de texto, encabezados y coordenadas tipográficas con el motor cliente.
+                    Leyendo capas de texto, encabezados y coordenadas tipográficas de forma segura.
                   </p>
                 </div>
               ) : (
@@ -387,14 +506,14 @@ function PublicAtsCheckerPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-semibold text-sm text-foreground truncate max-w-xs sm:max-w-md">
-                            {pdfMeta?.fileName}
+                            {fileMeta?.fileName}
                           </p>
                           <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">
-                            PDF Listo
+                            {fileMeta?.format} Listo
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {pdfMeta?.fileSizeKb} KB • {pdfMeta?.numPages} {pdfMeta?.numPages === 1 ? "página" : "páginas"} • {pdfMeta?.wordCount} palabras detectadas
+                          {fileMeta?.fileSizeKb} KB • {fileMeta?.numPages} {fileMeta?.numPages === 1 ? "página" : "páginas"} • {fileMeta?.wordCount} palabras detectadas
                         </p>
                       </div>
                     </div>
@@ -492,7 +611,7 @@ function PublicAtsCheckerPage() {
             <Button
               type="submit"
               size="lg"
-              disabled={loading || extractingPdf || !resumeText.trim()}
+              disabled={loading || extractingFile || !resumeText.trim()}
               className="w-full sm:w-auto gap-2 text-sm font-semibold shadow-md"
             >
               {loading ? (
@@ -871,28 +990,90 @@ function PublicAtsCheckerPage() {
               </TabsContent>
             </Tabs>
 
-            {/* In-App Solution Banner */}
-            <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-background p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-bold text-base text-foreground">
-                  ¿Quieres un currículum con puntuación 95+ garantizada?
+            {/* 1-Click Optimizer Action Banner */}
+            <div className="rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-primary/5 to-background p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
+              <div className="space-y-2 text-center md:text-left">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-3 py-0.5 text-xs font-bold uppercase tracking-wider shadow-xs">
+                  <Sparkles className="h-3.5 w-3.5" /> Recomendado por CVAI
+                </div>
+                <h4 className="font-display text-xl sm:text-2xl font-black text-foreground">
+                  Reparar mi CV y Crear Versión 95+ con 1 Clic
                 </h4>
-                <p className="text-xs text-muted-foreground max-w-xl">
-                  Todas las plantillas de CVAI están diseñadas conforme a las normas de extracción técnica de los principales ATS en México (sin tablas rotas, con fuentes universales y exportación limpia).
+                <p className="text-xs sm:text-sm text-muted-foreground max-w-xl leading-relaxed">
+                  Traspasa la información de tu archivo directamente a una de nuestras plantillas profesionales optimizadas para ATS. <strong className="text-foreground">¡Sin tener que volver a escribir tus datos ni rediseñar desde cero!</strong>
                 </p>
               </div>
-              <div className="flex gap-2.5 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
+                <Button
+                  onClick={handleOneClickOptimize}
+                  disabled={optimizing}
+                  size="lg"
+                  className="w-full sm:w-auto gap-2 text-sm font-bold shadow-md bg-primary hover:bg-primary/90"
+                >
+                  {optimizing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Preparando tu CV...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="h-4 w-4" /> Optimizar mi CV con 1 Clic
+                    </>
+                  )}
+                </Button>
                 <Link to="/plantillas">
-                  <Button size="sm" className="gap-1 text-xs">
-                    Ver Plantillas ATS <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
-                <Link to="/curriculum-vitae">
-                  <Button variant="outline" size="sm" className="text-xs">
-                    Crear CV Nuevo
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-xs gap-1.5">
+                    Ver Plantillas <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
               </div>
+            </div>
+
+            {/* Lead Magnet: Email Report Card */}
+            <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-4">
+                <div className="space-y-1">
+                  <h4 className="font-display text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-primary" /> ¿Deseas recibir este diagnóstico completo en tu correo?
+                  </h4>
+                  <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
+                    Te enviamos la lista detallada de palabras clave faltantes, las métricas de impacto y la guía técnica de contratación en México para que la consultes cuando quieras.
+                  </p>
+                </div>
+              </div>
+
+              {emailSent ? (
+                <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-emerald-700 dark:text-emerald-300 text-xs">
+                  <CheckCheck className="h-5 w-5 shrink-0 text-emerald-600" />
+                  <span>
+                    <strong>¡Diagnóstico enviado con éxito!</strong> Revisa tu bandeja de entrada (o carpeta de promociones/spam) para consultar tu informe ATS.
+                  </span>
+                </div>
+              ) : (
+                <form onSubmit={handleSendEmailReport} className="flex flex-col sm:flex-row gap-3 pt-1">
+                  <div className="relative flex-1">
+                    <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="Ingresa tu correo electrónico (ej. nombre@gmail.com)..."
+                      value={leadEmail}
+                      onChange={(e) => setLeadEmail(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-4 py-2.5 pl-10 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
+                  <Button type="submit" disabled={sendingEmail || !leadEmail.trim()} className="gap-2 text-xs font-semibold shrink-0">
+                    {sendingEmail ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-3.5 w-3.5" /> Enviar Informe a mi Correo
+                      </>
+                    )}
+                  </Button>
+                </form>
+              )}
             </div>
           </section>
         )}

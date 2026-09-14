@@ -52,6 +52,7 @@ const es = {
 
   // Sitio público
   "site.nav.templates": "Plantillas",
+  "site.nav.atsChecker": "Verificador ATS",
   "site.nav.examples": "Ejemplos",
   "site.nav.pricing": "Precios",
   "site.nav.guides": "Guías",
@@ -67,6 +68,8 @@ const es = {
   "site.footer.description": "El constructor de currículum diseñado para el mercado laboral mexicano. Plantillas ATS, IA en español y exportación profesional.",
   "site.footer.cvExamples": "Ejemplos de CV",
   "site.footer.freeTools": "Herramientas gratis",
+  "site.footer.atsChecker": "Verificador ATS en PDF",
+  "site.footer.cvMexico": "Crear CV en México",
   "site.footer.howToCv": "Cómo hacer un CV",
   "site.footer.noExperience": "CV sin experiencia",
   "site.footer.atsCv": "CV que pasa el ATS",

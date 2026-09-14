@@ -8,6 +8,7 @@ import { useSettings } from "@/lib/settings";
 
 const navLinks = [
   { to: "/plantillas", labelKey: "site.nav.templates" },
+  { to: "/ats-checker", labelKey: "site.nav.atsChecker" },
   { to: "/ejemplos", labelKey: "site.nav.examples" },
   { to: "/precios", labelKey: "site.nav.pricing" },
   { to: "/blog", labelKey: "site.nav.guides" },
