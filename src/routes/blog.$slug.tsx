@@ -18,7 +18,20 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => {
+  loader: async ({ params }) => {
+    try {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("title, excerpt, seo_title, seo_description")
+        .eq("slug", params.slug)
+        .eq("status", "publicado")
+        .maybeSingle();
+      return { post: data ?? null };
+    } catch {
+      return { post: null };
+    }
+  },
+  head: ({ params, loaderData }) => {
     const isEjemplos = params.slug === "10-ejemplos-de-curriculum-vitae-para-diferentes-trabajos";
     const isAts = params.slug === "que-es-un-curriculum-ats-como-hacer-cv-compatible" || params.slug === "cv-filtros-ats";
     const isCarta = params.slug === "errores-carta-presentacion";
@@ -37,6 +50,20 @@ export const Route = createFileRoute("/blog/$slug")({
       description = "Evita los errores más comunes al redactar tu carta de presentación laboral en México. Consejos prácticos, ejemplos y cómo destacar ante reclutadores.";
     }
 
+    // DB-published articles (not one of the hardcoded guides) use their own
+    // SEO title/description from blog_posts.
+    const dbPost = loaderData?.post;
+    if (
+      !isEjemplos &&
+      !isAts &&
+      !isCarta &&
+      params.slug !== "como-hacer-un-curriculum-vitae-mexico" &&
+      dbPost
+    ) {
+      title = dbPost.seo_title || `${dbPost.title} | CVAI`;
+      description = dbPost.seo_description || dbPost.excerpt || description;
+    }
+
     const canonicalUrl = `https://www.cvai.com.mx/blog/${params.slug}`;
 
     const articleSchema = {
@@ -48,7 +75,8 @@ export const Route = createFileRoute("/blog/$slug")({
         ? "¿Qué es un currículum ATS y cómo hacer un CV que pase los filtros de selección?"
         : isCarta
         ? "10 errores comunes en la carta de presentación y cómo evitarlos"
-        : "¿Cómo hacer un currículum vitae en México? Guía paso a paso para crear un CV profesional",
+        : dbPost?.title ??
+          "¿Cómo hacer un currículum vitae en México? Guía paso a paso para crear un CV profesional",
       description: description,
       inLanguage: "es-MX",
       mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },

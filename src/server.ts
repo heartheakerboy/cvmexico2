@@ -102,7 +102,7 @@ async function serveSitemap(): Promise<Response> {
     const { data: posts } = await supabase
       .from("blog_posts")
       .select("slug")
-      .eq("published", true);
+      .eq("status", "publicado");
     if (posts && posts.length > 0) {
       for (const p of posts) {
         if (p.slug && !blogPages.includes(`/blog/${p.slug}`)) {
