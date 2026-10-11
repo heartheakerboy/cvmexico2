@@ -13,7 +13,7 @@ export const Route = createFileRoute("/freelancer-resume-template")({
       { property: "og:title", content: "Plantilla CV Freelancers y Remotos | CVAI" },
       { property: "og:url", content: "/freelancer-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/freelancer-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/freelancer-resume-template" }],
   }),
   component: FreelancerLandingPage,
 });

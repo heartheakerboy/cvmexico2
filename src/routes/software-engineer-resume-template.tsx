@@ -13,7 +13,7 @@ export const Route = createFileRoute("/software-engineer-resume-template")({
       { property: "og:title", content: "Plantilla CV Ingeniero de Software ATS | CVAI" },
       { property: "og:url", content: "/software-engineer-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/software-engineer-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/software-engineer-resume-template" }],
   }),
   component: SoftwareEngineerLandingPage,
 });

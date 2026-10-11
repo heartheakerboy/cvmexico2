@@ -7,6 +7,11 @@ import { Loader2, Scale } from "lucide-react";
 import { useSettings } from "@/lib/settings";
 
 export const Route = createFileRoute("/legal/$slug")({
+  head: ({ params }) => ({
+    links: [
+      { rel: "canonical", href: `https://www.cvai.com.mx/legal/${params.slug}` },
+    ],
+  }),
   component: LegalPage,
 });
 

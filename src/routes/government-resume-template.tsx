@@ -13,7 +13,7 @@ export const Route = createFileRoute("/government-resume-template")({
       { property: "og:title", content: "Plantilla CV Servidores Públicos | CVAI" },
       { property: "og:url", content: "/government-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/government-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/government-resume-template" }],
   }),
   component: GovernmentLandingPage,
 });

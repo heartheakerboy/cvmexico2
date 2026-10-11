@@ -13,7 +13,7 @@ export const Route = createFileRoute("/fresher-resume-template")({
       { property: "og:title", content: "Plantilla CV Recién Egresados | CVAI" },
       { property: "og:url", content: "/fresher-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/fresher-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/fresher-resume-template" }],
   }),
   component: FresherLandingPage,
 });

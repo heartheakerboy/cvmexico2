@@ -13,7 +13,7 @@ export const Route = createFileRoute("/teacher-resume-template")({
       { property: "og:title", content: "Plantilla CV Docentes y Profesores | CVAI" },
       { property: "og:url", content: "/teacher-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/teacher-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/teacher-resume-template" }],
   }),
   component: TeacherLandingPage,
 });

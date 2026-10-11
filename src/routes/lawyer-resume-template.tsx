@@ -13,7 +13,7 @@ export const Route = createFileRoute("/lawyer-resume-template")({
       { property: "og:title", content: "Plantilla CV Abogados y Litigantes | CVAI" },
       { property: "og:url", content: "/lawyer-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/lawyer-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/lawyer-resume-template" }],
   }),
   component: LawyerLandingPage,
 });

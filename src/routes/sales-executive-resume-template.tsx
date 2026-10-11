@@ -13,7 +13,7 @@ export const Route = createFileRoute("/sales-executive-resume-template")({
       { property: "og:title", content: "Plantilla CV Ejecutivos de Ventas | CVAI" },
       { property: "og:url", content: "/sales-executive-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/sales-executive-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/sales-executive-resume-template" }],
   }),
   component: SalesExecutiveLandingPage,
 });

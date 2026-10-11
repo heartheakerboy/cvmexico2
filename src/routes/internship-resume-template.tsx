@@ -13,7 +13,7 @@ export const Route = createFileRoute("/internship-resume-template")({
       { property: "og:title", content: "Plantilla CV Prácticas Profesionales | CVAI" },
       { property: "og:url", content: "/internship-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/internship-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/internship-resume-template" }],
   }),
   component: InternshipLandingPage,
 });

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/project-manager-resume-template")({
       { property: "og:title", content: "Plantilla CV Project Managers PMP | CVAI" },
       { property: "og:url", content: "/project-manager-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/project-manager-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/project-manager-resume-template" }],
   }),
   component: ProjectManagerLandingPage,
 });

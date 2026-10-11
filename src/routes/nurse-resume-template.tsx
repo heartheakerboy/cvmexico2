@@ -13,7 +13,7 @@ export const Route = createFileRoute("/nurse-resume-template")({
       { property: "og:title", content: "Plantilla CV Enfermera Profesional | CVAI" },
       { property: "og:url", content: "/nurse-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/nurse-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/nurse-resume-template" }],
   }),
   component: NurseLandingPage,
 });

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/senior-professional-resume-template")({
       { property: "og:title", content: "Plantilla CV Especialistas Senior | CVAI" },
       { property: "og:url", content: "/senior-professional-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/senior-professional-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/senior-professional-resume-template" }],
   }),
   component: SeniorProfessionalLandingPage,
 });

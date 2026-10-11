@@ -14,7 +14,7 @@ export const Route = createFileRoute("/ejemplos")({
       },
       { property: "og:url", content: "/ejemplos" },
     ],
-    links: [{ rel: "canonical", href: "/ejemplos" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/ejemplos" }],
   }),
   component: EjemplosPage,
 });

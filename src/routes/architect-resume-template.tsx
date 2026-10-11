@@ -13,7 +13,7 @@ export const Route = createFileRoute("/architect-resume-template")({
       { property: "og:title", content: "Plantilla CV Arquitectos y BIM Leads | CVAI" },
       { property: "og:url", content: "/architect-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/architect-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/architect-resume-template" }],
   }),
   component: ArchitectLandingPage,
 });

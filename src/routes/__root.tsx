@@ -108,7 +108,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: getMetaTranslation("root.metaOgDesc"),
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://www.cvai.com.mx/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/png" },
+      {
+        property: "og:image:alt",
+        content: "CVAI — Crea un CV profesional con Inteligencia Artificial",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://www.cvai.com.mx/og-image.png" },
+      {
+        name: "twitter:image:alt",
+        content: "CVAI — Crea un CV profesional con Inteligencia Artificial",
+      },
     ],
     links: [
       {

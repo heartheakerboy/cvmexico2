@@ -13,7 +13,7 @@ export const Route = createFileRoute("/hr-manager-resume-template")({
       { property: "og:title", content: "Plantilla CV Recursos Humanos | CVAI" },
       { property: "og:url", content: "/hr-manager-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/hr-manager-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/hr-manager-resume-template" }],
   }),
   component: HrManagerLandingPage,
 });

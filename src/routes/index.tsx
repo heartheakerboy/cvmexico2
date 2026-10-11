@@ -66,10 +66,12 @@ export const Route = createFileRoute("/")({
         content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.cvai.com.mx/" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "CVAI — Creador de Currículum con IA | Plantillas ATS México" },
       { name: "twitter:description", content: "Crea tu currículum profesional con inteligencia artificial. Plantillas optimizadas para ATS, redacción en español de México y descarga en PDF gratis." },
     ],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/" }],
     scripts: [
       {
         type: "application/ld+json",

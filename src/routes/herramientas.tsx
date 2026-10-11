@@ -15,7 +15,7 @@ export const Route = createFileRoute("/herramientas")({
       },
       { property: "og:url", content: "/herramientas" },
     ],
-    links: [{ rel: "canonical", href: "/herramientas" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/herramientas" }],
   }),
   component: HerramientasPage,
 });

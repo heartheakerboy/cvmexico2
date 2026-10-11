@@ -13,7 +13,7 @@ export const Route = createFileRoute("/graphic-designer-resume-template")({
       { property: "og:title", content: "Plantilla CV Diseñadores Gráficos | CVAI" },
       { property: "og:url", content: "/graphic-designer-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/graphic-designer-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/graphic-designer-resume-template" }],
   }),
   component: GraphicDesignerLandingPage,
 });

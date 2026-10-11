@@ -13,7 +13,7 @@ export const Route = createFileRoute("/student-resume-template")({
       { property: "og:title", content: "Plantilla CV Estudiantes Gratis | CVAI" },
       { property: "og:url", content: "/student-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/student-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/student-resume-template" }],
   }),
   component: StudentLandingPage,
 });

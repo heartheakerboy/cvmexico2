@@ -13,7 +13,7 @@ export const Route = createFileRoute("/mid-level-resume-template")({
       { property: "og:title", content: "Plantilla CV Analistas y Mid-Level | CVAI" },
       { property: "og:url", content: "/mid-level-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/mid-level-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/mid-level-resume-template" }],
   }),
   component: MidLevelLandingPage,
 });

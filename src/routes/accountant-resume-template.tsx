@@ -13,7 +13,7 @@ export const Route = createFileRoute("/accountant-resume-template")({
       { property: "og:title", content: "Plantilla CV Contadores Públicos ATS | CVAI" },
       { property: "og:url", content: "/accountant-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/accountant-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/accountant-resume-template" }],
   }),
   component: AccountantLandingPage,
 });

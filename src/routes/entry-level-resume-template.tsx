@@ -13,7 +13,7 @@ export const Route = createFileRoute("/entry-level-resume-template")({
       { property: "og:title", content: "Plantilla CV Profesional Junior | CVAI" },
       { property: "og:url", content: "/entry-level-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/entry-level-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/entry-level-resume-template" }],
   }),
   component: EntryLevelLandingPage,
 });

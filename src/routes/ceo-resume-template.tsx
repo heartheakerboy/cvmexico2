@@ -13,7 +13,7 @@ export const Route = createFileRoute("/ceo-resume-template")({
       { property: "og:title", content: "Plantilla CV Directores Generales y CEOs | CVAI" },
       { property: "og:url", content: "/ceo-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/ceo-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/ceo-resume-template" }],
   }),
   component: CeoLandingPage,
 });

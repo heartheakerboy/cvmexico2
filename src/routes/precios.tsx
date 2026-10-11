@@ -19,7 +19,7 @@ export const Route = createFileRoute("/precios")({
       { property: "og:title", content: getMetaTranslation("pricing.metaTitle") },
       { property: "og:url", content: "/precios" },
     ],
-    links: [{ rel: "canonical", href: "/precios" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/precios" }],
   }),
   component: PreciosPage,
 });

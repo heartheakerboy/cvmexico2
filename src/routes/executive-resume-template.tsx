@@ -13,7 +13,7 @@ export const Route = createFileRoute("/executive-resume-template")({
       { property: "og:title", content: "Plantilla CV Dirección Ejecutiva y VPs | CVAI" },
       { property: "og:url", content: "/executive-resume-template" },
     ],
-    links: [{ rel: "canonical", href: "/executive-resume-template" }],
+    links: [{ rel: "canonical", href: "https://www.cvai.com.mx/executive-resume-template" }],
   }),
   component: ExecutiveLandingPage,
 });
