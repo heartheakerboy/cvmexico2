@@ -9,301 +9,109 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as TransparenciaIaRouteImport } from './routes/transparencia-ia'
-import { Route as TerminosRouteImport } from './routes/terminos'
-import { Route as TeacherResumeTemplateRouteImport } from './routes/teacher-resume-template'
-import { Route as StudentResumeTemplateRouteImport } from './routes/student-resume-template'
-import { Route as SoftwareEngineerResumeTemplateRouteImport } from './routes/software-engineer-resume-template'
-import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
-import { Route as SeniorProfessionalResumeTemplateRouteImport } from './routes/senior-professional-resume-template'
-import { Route as SalesExecutiveResumeTemplateRouteImport } from './routes/sales-executive-resume-template'
-import { Route as SalesExecutiveResultsTemplateRouteImport } from './routes/sales-executive-results-template'
-import { Route as ReembolsoRouteImport } from './routes/reembolso'
-import { Route as ProjectManagerResumeTemplateRouteImport } from './routes/project-manager-resume-template'
-import { Route as PrivacidadRouteImport } from './routes/privacidad'
-import { Route as PreciosRouteImport } from './routes/precios'
-import { Route as PlantillasRouteImport } from './routes/plantillas'
-import { Route as NurseResumeTemplateRouteImport } from './routes/nurse-resume-template'
-import { Route as MidLevelResumeTemplateRouteImport } from './routes/mid-level-resume-template'
-import { Route as LawyerResumeTemplateRouteImport } from './routes/lawyer-resume-template'
-import { Route as InternshipResumeTemplateRouteImport } from './routes/internship-resume-template'
-import { Route as HrManagerResumeTemplateRouteImport } from './routes/hr-manager-resume-template'
-import { Route as HerramientasRouteImport } from './routes/herramientas'
-import { Route as GraphicDesignerResumeTemplateRouteImport } from './routes/graphic-designer-resume-template'
-import { Route as GovernmentResumeTemplateRouteImport } from './routes/government-resume-template'
-import { Route as FresherResumeTemplateRouteImport } from './routes/fresher-resume-template'
-import { Route as FreelancerResumeTemplateRouteImport } from './routes/freelancer-resume-template'
-import { Route as FacturacionPagosRouteImport } from './routes/facturacion-pagos'
-import { Route as ExecutiveResumeTemplateRouteImport } from './routes/executive-resume-template'
-import { Route as EntryLevelResumeTemplateRouteImport } from './routes/entry-level-resume-template'
-import { Route as EjemplosRouteImport } from './routes/ejemplos'
-import { Route as CurriculumVitaeRouteImport } from './routes/curriculum-vitae'
-import { Route as CookiesRouteImport } from './routes/cookies'
-import { Route as ContactoRouteImport } from './routes/contacto'
-import { Route as CeoResumeTemplateRouteImport } from './routes/ceo-resume-template'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AtsCheckerRouteImport } from './routes/ats-checker'
-import { Route as ArchitectResumeTemplateRouteImport } from './routes/architect-resume-template'
-import { Route as ActualizarPasswordRouteImport } from './routes/actualizar-password'
-import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PlantillasIndexRouteImport } from './routes/plantillas.index'
-import { Route as BlogIndexRouteImport } from './routes/blog.index'
-import { Route as ResumeCitySlugRouteImport } from './routes/resume.$citySlug'
-import { Route as PlantillasIdRouteImport } from './routes/plantillas.$id'
-import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
-import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AccountantResumeTemplateRouteImport } from './routes/accountant-resume-template'
+import { Route as ActualizarPasswordRouteImport } from './routes/actualizar-password'
+import { Route as ArchitectResumeTemplateRouteImport } from './routes/architect-resume-template'
+import { Route as AtsCheckerRouteImport } from './routes/ats-checker'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as CalculadoraFiniquitoRouteImport } from './routes/calculadora-finiquito'
+import { Route as CalculadoraSueldoNetoRouteImport } from './routes/calculadora-sueldo-neto'
+import { Route as CeoResumeTemplateRouteImport } from './routes/ceo-resume-template'
+import { Route as ContactoRouteImport } from './routes/contacto'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as CurriculumVitaeRouteImport } from './routes/curriculum-vitae'
+import { Route as EjemplosRouteImport } from './routes/ejemplos'
+import { Route as EntryLevelResumeTemplateRouteImport } from './routes/entry-level-resume-template'
+import { Route as ExecutiveResumeTemplateRouteImport } from './routes/executive-resume-template'
+import { Route as FacturacionPagosRouteImport } from './routes/facturacion-pagos'
+import { Route as FreelancerResumeTemplateRouteImport } from './routes/freelancer-resume-template'
+import { Route as FresherResumeTemplateRouteImport } from './routes/fresher-resume-template'
+import { Route as GeneradorCartaRenunciaRouteImport } from './routes/generador-carta-renuncia'
+import { Route as GovernmentResumeTemplateRouteImport } from './routes/government-resume-template'
+import { Route as GraphicDesignerResumeTemplateRouteImport } from './routes/graphic-designer-resume-template'
+import { Route as HerramientasRouteImport } from './routes/herramientas'
+import { Route as HrManagerResumeTemplateRouteImport } from './routes/hr-manager-resume-template'
+import { Route as InternshipResumeTemplateRouteImport } from './routes/internship-resume-template'
+import { Route as LawyerResumeTemplateRouteImport } from './routes/lawyer-resume-template'
+import { Route as MidLevelResumeTemplateRouteImport } from './routes/mid-level-resume-template'
+import { Route as NurseResumeTemplateRouteImport } from './routes/nurse-resume-template'
+import { Route as PlantillasRouteImport } from './routes/plantillas'
+import { Route as PreciosRouteImport } from './routes/precios'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as ProjectManagerResumeTemplateRouteImport } from './routes/project-manager-resume-template'
+import { Route as ReembolsoRouteImport } from './routes/reembolso'
+import { Route as SalesExecutiveResultsTemplateRouteImport } from './routes/sales-executive-results-template'
+import { Route as SalesExecutiveResumeTemplateRouteImport } from './routes/sales-executive-resume-template'
+import { Route as SeniorProfessionalResumeTemplateRouteImport } from './routes/senior-professional-resume-template'
+import { Route as SimuladorEntrevistaRouteImport } from './routes/simulador-entrevista'
+import { Route as SobreNosotrosRouteImport } from './routes/sobre-nosotros'
+import { Route as SoftwareEngineerResumeTemplateRouteImport } from './routes/software-engineer-resume-template'
+import { Route as StudentResumeTemplateRouteImport } from './routes/student-resume-template'
+import { Route as TeacherResumeTemplateRouteImport } from './routes/teacher-resume-template'
+import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as TransparenciaIaRouteImport } from './routes/transparencia-ia'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
+import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
+import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
+import { Route as PlantillasIndexRouteImport } from './routes/plantillas.index'
+import { Route as PlantillasIdRouteImport } from './routes/plantillas.$id'
+import { Route as ResumeCitySlugRouteImport } from './routes/resume.$citySlug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedPanelPreferenciasEmailRouteImport } from './routes/_authenticated/panel.preferencias-email'
-import { Route as AuthenticatedPanelPlantillasRouteImport } from './routes/_authenticated/panel.plantillas'
-import { Route as AuthenticatedPanelPerfilRouteImport } from './routes/_authenticated/panel.perfil'
-import { Route as AuthenticatedPanelIaRouteImport } from './routes/_authenticated/panel.ia'
-import { Route as AuthenticatedPanelHerramientasRouteImport } from './routes/_authenticated/panel.herramientas'
-import { Route as AuthenticatedPanelEntrevistasRouteImport } from './routes/_authenticated/panel.entrevistas'
-import { Route as AuthenticatedPanelEmpleosRouteImport } from './routes/_authenticated/panel.empleos'
-import { Route as AuthenticatedPanelDescargasRouteImport } from './routes/_authenticated/panel.descargas'
-import { Route as AuthenticatedPanelCurriculumsRouteImport } from './routes/_authenticated/panel.curriculums'
-import { Route as AuthenticatedPanelCuentaRouteImport } from './routes/_authenticated/panel.cuenta'
-import { Route as AuthenticatedPanelCartasRouteImport } from './routes/_authenticated/panel.cartas'
-import { Route as AuthenticatedPanelAyudaRouteImport } from './routes/_authenticated/panel.ayuda'
-import { Route as AuthenticatedPanelAtsRouteImport } from './routes/_authenticated/panel.ats'
-import { Route as AuthenticatedPanelAjustesRouteImport } from './routes/_authenticated/panel.ajustes'
-import { Route as AuthenticatedCvIdRouteImport } from './routes/_authenticated/cv.$id'
-import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
-import { Route as AuthenticatedAdminTraduccionesRouteImport } from './routes/_authenticated/admin.traducciones'
-import { Route as AuthenticatedAdminSuscripcionesRouteImport } from './routes/_authenticated/admin.suscripciones'
-import { Route as AuthenticatedAdminSoporteRouteImport } from './routes/_authenticated/admin.soporte'
-import { Route as AuthenticatedAdminSistemaRouteImport } from './routes/_authenticated/admin.sistema'
-import { Route as AuthenticatedAdminSeoRouteImport } from './routes/_authenticated/admin.seo'
-import { Route as AuthenticatedAdminSeguridadRouteImport } from './routes/_authenticated/admin.seguridad'
-import { Route as AuthenticatedAdminPlantillasRouteImport } from './routes/_authenticated/admin.plantillas'
-import { Route as AuthenticatedAdminPaginasLegalesRouteImport } from './routes/_authenticated/admin.paginas-legales'
-import { Route as AuthenticatedAdminNotificacionesRouteImport } from './routes/_authenticated/admin.notificaciones'
-import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
-import { Route as AuthenticatedAdminMarketingRouteImport } from './routes/_authenticated/admin.marketing'
-import { Route as AuthenticatedAdminIaUsoRouteImport } from './routes/_authenticated/admin.ia-uso'
-import { Route as AuthenticatedAdminIaRouteImport } from './routes/_authenticated/admin.ia'
-import { Route as AuthenticatedAdminExportacionesRouteImport } from './routes/_authenticated/admin.exportaciones'
-import { Route as AuthenticatedAdminEmpleosRouteImport } from './routes/_authenticated/admin.empleos'
-import { Route as AuthenticatedAdminEmailsRouteImport } from './routes/_authenticated/admin.emails'
-import { Route as AuthenticatedAdminConfiguracionRouteImport } from './routes/_authenticated/admin.configuracion'
-import { Route as AuthenticatedAdminCiudadesRouteImport } from './routes/_authenticated/admin.ciudades'
-import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
-import { Route as AuthenticatedAdminAnaliticaRouteImport } from './routes/_authenticated/admin.analitica'
-import { Route as AuthenticatedAdminAlmacenamientoRouteImport } from './routes/_authenticated/admin.almacenamiento'
 import { Route as AuthenticatedAdminAfiliadosRouteImport } from './routes/_authenticated/admin.afiliados'
+import { Route as AuthenticatedAdminAlmacenamientoRouteImport } from './routes/_authenticated/admin.almacenamiento'
+import { Route as AuthenticatedAdminAnaliticaRouteImport } from './routes/_authenticated/admin.analitica'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
+import { Route as AuthenticatedAdminCiudadesRouteImport } from './routes/_authenticated/admin.ciudades'
+import { Route as AuthenticatedAdminConfiguracionRouteImport } from './routes/_authenticated/admin.configuracion'
+import { Route as AuthenticatedAdminEmailsRouteImport } from './routes/_authenticated/admin.emails'
+import { Route as AuthenticatedAdminEmpleosRouteImport } from './routes/_authenticated/admin.empleos'
+import { Route as AuthenticatedAdminExportacionesRouteImport } from './routes/_authenticated/admin.exportaciones'
+import { Route as AuthenticatedAdminIaRouteImport } from './routes/_authenticated/admin.ia'
+import { Route as AuthenticatedAdminIaUsoRouteImport } from './routes/_authenticated/admin.ia-uso'
+import { Route as AuthenticatedAdminMarketingRouteImport } from './routes/_authenticated/admin.marketing'
+import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
+import { Route as AuthenticatedAdminNotificacionesRouteImport } from './routes/_authenticated/admin.notificaciones'
+import { Route as AuthenticatedAdminPaginasLegalesRouteImport } from './routes/_authenticated/admin.paginas-legales'
+import { Route as AuthenticatedAdminPlantillasRouteImport } from './routes/_authenticated/admin.plantillas'
+import { Route as AuthenticatedAdminSeguridadRouteImport } from './routes/_authenticated/admin.seguridad'
+import { Route as AuthenticatedAdminSeoRouteImport } from './routes/_authenticated/admin.seo'
+import { Route as AuthenticatedAdminSistemaRouteImport } from './routes/_authenticated/admin.sistema'
+import { Route as AuthenticatedAdminSoporteRouteImport } from './routes/_authenticated/admin.soporte'
+import { Route as AuthenticatedAdminSuscripcionesRouteImport } from './routes/_authenticated/admin.suscripciones'
+import { Route as AuthenticatedAdminTraduccionesRouteImport } from './routes/_authenticated/admin.traducciones'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
+import { Route as AuthenticatedCvIdRouteImport } from './routes/_authenticated/cv.$id'
+import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
+import { Route as AuthenticatedPanelAjustesRouteImport } from './routes/_authenticated/panel.ajustes'
+import { Route as AuthenticatedPanelAtsRouteImport } from './routes/_authenticated/panel.ats'
+import { Route as AuthenticatedPanelAyudaRouteImport } from './routes/_authenticated/panel.ayuda'
+import { Route as AuthenticatedPanelCartasRouteImport } from './routes/_authenticated/panel.cartas'
+import { Route as AuthenticatedPanelCuentaRouteImport } from './routes/_authenticated/panel.cuenta'
+import { Route as AuthenticatedPanelCurriculumsRouteImport } from './routes/_authenticated/panel.curriculums'
+import { Route as AuthenticatedPanelDescargasRouteImport } from './routes/_authenticated/panel.descargas'
+import { Route as AuthenticatedPanelEmpleosRouteImport } from './routes/_authenticated/panel.empleos'
+import { Route as AuthenticatedPanelEntrevistasRouteImport } from './routes/_authenticated/panel.entrevistas'
+import { Route as AuthenticatedPanelHerramientasRouteImport } from './routes/_authenticated/panel.herramientas'
+import { Route as AuthenticatedPanelIaRouteImport } from './routes/_authenticated/panel.ia'
+import { Route as AuthenticatedPanelPerfilRouteImport } from './routes/_authenticated/panel.perfil'
+import { Route as AuthenticatedPanelPlantillasRouteImport } from './routes/_authenticated/panel.plantillas'
+import { Route as AuthenticatedPanelPreferenciasEmailRouteImport } from './routes/_authenticated/panel.preferencias-email'
 
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TransparenciaIaRoute = TransparenciaIaRouteImport.update({
-  id: '/transparencia-ia',
-  path: '/transparencia-ia',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TerminosRoute = TerminosRouteImport.update({
-  id: '/terminos',
-  path: '/terminos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeacherResumeTemplateRoute = TeacherResumeTemplateRouteImport.update({
-  id: '/teacher-resume-template',
-  path: '/teacher-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudentResumeTemplateRoute = StudentResumeTemplateRouteImport.update({
-  id: '/student-resume-template',
-  path: '/student-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SoftwareEngineerResumeTemplateRoute =
-  SoftwareEngineerResumeTemplateRouteImport.update({
-    id: '/software-engineer-resume-template',
-    path: '/software-engineer-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SobreNosotrosRoute = SobreNosotrosRouteImport.update({
-  id: '/sobre-nosotros',
-  path: '/sobre-nosotros',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SeniorProfessionalResumeTemplateRoute =
-  SeniorProfessionalResumeTemplateRouteImport.update({
-    id: '/senior-professional-resume-template',
-    path: '/senior-professional-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SalesExecutiveResumeTemplateRoute =
-  SalesExecutiveResumeTemplateRouteImport.update({
-    id: '/sales-executive-resume-template',
-    path: '/sales-executive-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SalesExecutiveResultsTemplateRoute =
-  SalesExecutiveResultsTemplateRouteImport.update({
-    id: '/sales-executive-results-template',
-    path: '/sales-executive-results-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ReembolsoRoute = ReembolsoRouteImport.update({
-  id: '/reembolso',
-  path: '/reembolso',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectManagerResumeTemplateRoute =
-  ProjectManagerResumeTemplateRouteImport.update({
-    id: '/project-manager-resume-template',
-    path: '/project-manager-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const PrivacidadRoute = PrivacidadRouteImport.update({
-  id: '/privacidad',
-  path: '/privacidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreciosRoute = PreciosRouteImport.update({
-  id: '/precios',
-  path: '/precios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlantillasRoute = PlantillasRouteImport.update({
-  id: '/plantillas',
-  path: '/plantillas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NurseResumeTemplateRoute = NurseResumeTemplateRouteImport.update({
-  id: '/nurse-resume-template',
-  path: '/nurse-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MidLevelResumeTemplateRoute = MidLevelResumeTemplateRouteImport.update({
-  id: '/mid-level-resume-template',
-  path: '/mid-level-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LawyerResumeTemplateRoute = LawyerResumeTemplateRouteImport.update({
-  id: '/lawyer-resume-template',
-  path: '/lawyer-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InternshipResumeTemplateRoute =
-  InternshipResumeTemplateRouteImport.update({
-    id: '/internship-resume-template',
-    path: '/internship-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const HrManagerResumeTemplateRoute = HrManagerResumeTemplateRouteImport.update({
-  id: '/hr-manager-resume-template',
-  path: '/hr-manager-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HerramientasRoute = HerramientasRouteImport.update({
-  id: '/herramientas',
-  path: '/herramientas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GraphicDesignerResumeTemplateRoute =
-  GraphicDesignerResumeTemplateRouteImport.update({
-    id: '/graphic-designer-resume-template',
-    path: '/graphic-designer-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const GovernmentResumeTemplateRoute =
-  GovernmentResumeTemplateRouteImport.update({
-    id: '/government-resume-template',
-    path: '/government-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const FresherResumeTemplateRoute = FresherResumeTemplateRouteImport.update({
-  id: '/fresher-resume-template',
-  path: '/fresher-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FreelancerResumeTemplateRoute =
-  FreelancerResumeTemplateRouteImport.update({
-    id: '/freelancer-resume-template',
-    path: '/freelancer-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const FacturacionPagosRoute = FacturacionPagosRouteImport.update({
-  id: '/facturacion-pagos',
-  path: '/facturacion-pagos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExecutiveResumeTemplateRoute = ExecutiveResumeTemplateRouteImport.update({
-  id: '/executive-resume-template',
-  path: '/executive-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EntryLevelResumeTemplateRoute =
-  EntryLevelResumeTemplateRouteImport.update({
-    id: '/entry-level-resume-template',
-    path: '/entry-level-resume-template',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const EjemplosRoute = EjemplosRouteImport.update({
-  id: '/ejemplos',
-  path: '/ejemplos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CurriculumVitaeRoute = CurriculumVitaeRouteImport.update({
-  id: '/curriculum-vitae',
-  path: '/curriculum-vitae',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactoRoute = ContactoRouteImport.update({
-  id: '/contacto',
-  path: '/contacto',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CeoResumeTemplateRoute = CeoResumeTemplateRouteImport.update({
-  id: '/ceo-resume-template',
-  path: '/ceo-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AvisoLegalRoute = AvisoLegalRouteImport.update({
-  id: '/aviso-legal',
-  path: '/aviso-legal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AtsCheckerRoute = AtsCheckerRouteImport.update({
-  id: '/ats-checker',
-  path: '/ats-checker',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArchitectResumeTemplateRoute = ArchitectResumeTemplateRouteImport.update({
-  id: '/architect-resume-template',
-  path: '/architect-resume-template',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ActualizarPasswordRoute = ActualizarPasswordRouteImport.update({
-  id: '/actualizar-password',
-  path: '/actualizar-password',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountantResumeTemplateRoute =
@@ -312,13 +120,259 @@ const AccountantResumeTemplateRoute =
     path: '/accountant-resume-template',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const ActualizarPasswordRoute = ActualizarPasswordRouteImport.update({
+  id: '/actualizar-password',
+  path: '/actualizar-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const ArchitectResumeTemplateRoute = ArchitectResumeTemplateRouteImport.update({
+  id: '/architect-resume-template',
+  path: '/architect-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtsCheckerRoute = AtsCheckerRouteImport.update({
+  id: '/ats-checker',
+  path: '/ats-checker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvisoLegalRoute = AvisoLegalRouteImport.update({
+  id: '/aviso-legal',
+  path: '/aviso-legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculadoraFiniquitoRoute = CalculadoraFiniquitoRouteImport.update({
+  id: '/calculadora-finiquito',
+  path: '/calculadora-finiquito',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculadoraSueldoNetoRoute = CalculadoraSueldoNetoRouteImport.update({
+  id: '/calculadora-sueldo-neto',
+  path: '/calculadora-sueldo-neto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CeoResumeTemplateRoute = CeoResumeTemplateRouteImport.update({
+  id: '/ceo-resume-template',
+  path: '/ceo-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactoRoute = ContactoRouteImport.update({
+  id: '/contacto',
+  path: '/contacto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CurriculumVitaeRoute = CurriculumVitaeRouteImport.update({
+  id: '/curriculum-vitae',
+  path: '/curriculum-vitae',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EjemplosRoute = EjemplosRouteImport.update({
+  id: '/ejemplos',
+  path: '/ejemplos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntryLevelResumeTemplateRoute =
+  EntryLevelResumeTemplateRouteImport.update({
+    id: '/entry-level-resume-template',
+    path: '/entry-level-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ExecutiveResumeTemplateRoute = ExecutiveResumeTemplateRouteImport.update({
+  id: '/executive-resume-template',
+  path: '/executive-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacturacionPagosRoute = FacturacionPagosRouteImport.update({
+  id: '/facturacion-pagos',
+  path: '/facturacion-pagos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreelancerResumeTemplateRoute =
+  FreelancerResumeTemplateRouteImport.update({
+    id: '/freelancer-resume-template',
+    path: '/freelancer-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FresherResumeTemplateRoute = FresherResumeTemplateRouteImport.update({
+  id: '/fresher-resume-template',
+  path: '/fresher-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeneradorCartaRenunciaRoute = GeneradorCartaRenunciaRouteImport.update({
+  id: '/generador-carta-renuncia',
+  path: '/generador-carta-renuncia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GovernmentResumeTemplateRoute =
+  GovernmentResumeTemplateRouteImport.update({
+    id: '/government-resume-template',
+    path: '/government-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GraphicDesignerResumeTemplateRoute =
+  GraphicDesignerResumeTemplateRouteImport.update({
+    id: '/graphic-designer-resume-template',
+    path: '/graphic-designer-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const HerramientasRoute = HerramientasRouteImport.update({
+  id: '/herramientas',
+  path: '/herramientas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HrManagerResumeTemplateRoute = HrManagerResumeTemplateRouteImport.update({
+  id: '/hr-manager-resume-template',
+  path: '/hr-manager-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InternshipResumeTemplateRoute =
+  InternshipResumeTemplateRouteImport.update({
+    id: '/internship-resume-template',
+    path: '/internship-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LawyerResumeTemplateRoute = LawyerResumeTemplateRouteImport.update({
+  id: '/lawyer-resume-template',
+  path: '/lawyer-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MidLevelResumeTemplateRoute = MidLevelResumeTemplateRouteImport.update({
+  id: '/mid-level-resume-template',
+  path: '/mid-level-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NurseResumeTemplateRoute = NurseResumeTemplateRouteImport.update({
+  id: '/nurse-resume-template',
+  path: '/nurse-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlantillasRoute = PlantillasRouteImport.update({
+  id: '/plantillas',
+  path: '/plantillas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreciosRoute = PreciosRouteImport.update({
+  id: '/precios',
+  path: '/precios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectManagerResumeTemplateRoute =
+  ProjectManagerResumeTemplateRouteImport.update({
+    id: '/project-manager-resume-template',
+    path: '/project-manager-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ReembolsoRoute = ReembolsoRouteImport.update({
+  id: '/reembolso',
+  path: '/reembolso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalesExecutiveResultsTemplateRoute =
+  SalesExecutiveResultsTemplateRouteImport.update({
+    id: '/sales-executive-results-template',
+    path: '/sales-executive-results-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SalesExecutiveResumeTemplateRoute =
+  SalesExecutiveResumeTemplateRouteImport.update({
+    id: '/sales-executive-resume-template',
+    path: '/sales-executive-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SeniorProfessionalResumeTemplateRoute =
+  SeniorProfessionalResumeTemplateRouteImport.update({
+    id: '/senior-professional-resume-template',
+    path: '/senior-professional-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SimuladorEntrevistaRoute = SimuladorEntrevistaRouteImport.update({
+  id: '/simulador-entrevista',
+  path: '/simulador-entrevista',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreNosotrosRoute = SobreNosotrosRouteImport.update({
+  id: '/sobre-nosotros',
+  path: '/sobre-nosotros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SoftwareEngineerResumeTemplateRoute =
+  SoftwareEngineerResumeTemplateRouteImport.update({
+    id: '/software-engineer-resume-template',
+    path: '/software-engineer-resume-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const StudentResumeTemplateRoute = StudentResumeTemplateRouteImport.update({
+  id: '/student-resume-template',
+  path: '/student-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeacherResumeTemplateRoute = TeacherResumeTemplateRouteImport.update({
+  id: '/teacher-resume-template',
+  path: '/teacher-resume-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransparenciaIaRoute = TransparenciaIaRouteImport.update({
+  id: '/transparencia-ia',
+  path: '/transparencia-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
+  id: '/panel',
+  path: '/panel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
+const GuiasSlugRoute = GuiasSlugRouteImport.update({
+  id: '/guias/$slug',
+  path: '/guias/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalSlugRoute = LegalSlugRouteImport.update({
+  id: '/legal/$slug',
+  path: '/legal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlantillasIndexRoute = PlantillasIndexRouteImport.update({
@@ -326,261 +380,25 @@ const PlantillasIndexRoute = PlantillasIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PlantillasRoute,
 } as any)
-const BlogIndexRoute = BlogIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BlogRoute,
+const PlantillasIdRoute = PlantillasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PlantillasRoute,
 } as any)
 const ResumeCitySlugRoute = ResumeCitySlugRouteImport.update({
   id: '/resume/$citySlug',
   path: '/resume/$citySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlantillasIdRoute = PlantillasIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => PlantillasRoute,
-} as any)
-const LegalSlugRoute = LegalSlugRouteImport.update({
-  id: '/legal/$slug',
-  path: '/legal/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuiasSlugRoute = GuiasSlugRouteImport.update({
-  id: '/guias/$slug',
-  path: '/guias/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
-} as any)
-const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
-  id: '/panel',
-  path: '/panel',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedPanelIndexRoute = AuthenticatedPanelIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedPanelRoute,
-} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedPanelPreferenciasEmailRoute =
-  AuthenticatedPanelPreferenciasEmailRouteImport.update({
-    id: '/preferencias-email',
-    path: '/preferencias-email',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelPlantillasRoute =
-  AuthenticatedPanelPlantillasRouteImport.update({
-    id: '/plantillas',
-    path: '/plantillas',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelPerfilRoute =
-  AuthenticatedPanelPerfilRouteImport.update({
-    id: '/perfil',
-    path: '/perfil',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelIaRoute = AuthenticatedPanelIaRouteImport.update({
-  id: '/ia',
-  path: '/ia',
-  getParentRoute: () => AuthenticatedPanelRoute,
-} as any)
-const AuthenticatedPanelHerramientasRoute =
-  AuthenticatedPanelHerramientasRouteImport.update({
-    id: '/herramientas',
-    path: '/herramientas',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelEntrevistasRoute =
-  AuthenticatedPanelEntrevistasRouteImport.update({
-    id: '/entrevistas',
-    path: '/entrevistas',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelEmpleosRoute =
-  AuthenticatedPanelEmpleosRouteImport.update({
-    id: '/empleos',
-    path: '/empleos',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelDescargasRoute =
-  AuthenticatedPanelDescargasRouteImport.update({
-    id: '/descargas',
-    path: '/descargas',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelCurriculumsRoute =
-  AuthenticatedPanelCurriculumsRouteImport.update({
-    id: '/curriculums',
-    path: '/curriculums',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelCuentaRoute =
-  AuthenticatedPanelCuentaRouteImport.update({
-    id: '/cuenta',
-    path: '/cuenta',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelCartasRoute =
-  AuthenticatedPanelCartasRouteImport.update({
-    id: '/cartas',
-    path: '/cartas',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedPanelAyudaRoute = AuthenticatedPanelAyudaRouteImport.update({
-  id: '/ayuda',
-  path: '/ayuda',
-  getParentRoute: () => AuthenticatedPanelRoute,
-} as any)
-const AuthenticatedPanelAtsRoute = AuthenticatedPanelAtsRouteImport.update({
-  id: '/ats',
-  path: '/ats',
-  getParentRoute: () => AuthenticatedPanelRoute,
-} as any)
-const AuthenticatedPanelAjustesRoute =
-  AuthenticatedPanelAjustesRouteImport.update({
-    id: '/ajustes',
-    path: '/ajustes',
-    getParentRoute: () => AuthenticatedPanelRoute,
-  } as any)
-const AuthenticatedCvIdRoute = AuthenticatedCvIdRouteImport.update({
-  id: '/cv/$id',
-  path: '/cv/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminUsuariosRoute =
-  AuthenticatedAdminUsuariosRouteImport.update({
-    id: '/usuarios',
-    path: '/usuarios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminTraduccionesRoute =
-  AuthenticatedAdminTraduccionesRouteImport.update({
-    id: '/traducciones',
-    path: '/traducciones',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSuscripcionesRoute =
-  AuthenticatedAdminSuscripcionesRouteImport.update({
-    id: '/suscripciones',
-    path: '/suscripciones',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSoporteRoute =
-  AuthenticatedAdminSoporteRouteImport.update({
-    id: '/soporte',
-    path: '/soporte',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSistemaRoute =
-  AuthenticatedAdminSistemaRouteImport.update({
-    id: '/sistema',
-    path: '/sistema',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSeoRoute = AuthenticatedAdminSeoRouteImport.update({
-  id: '/seo',
-  path: '/seo',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminSeguridadRoute =
-  AuthenticatedAdminSeguridadRouteImport.update({
-    id: '/seguridad',
-    path: '/seguridad',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPlantillasRoute =
-  AuthenticatedAdminPlantillasRouteImport.update({
-    id: '/plantillas',
-    path: '/plantillas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPaginasLegalesRoute =
-  AuthenticatedAdminPaginasLegalesRouteImport.update({
-    id: '/paginas-legales',
-    path: '/paginas-legales',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminNotificacionesRoute =
-  AuthenticatedAdminNotificacionesRouteImport.update({
-    id: '/notificaciones',
-    path: '/notificaciones',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminMarketingRoute =
-  AuthenticatedAdminMarketingRouteImport.update({
-    id: '/marketing',
-    path: '/marketing',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminIaUsoRoute = AuthenticatedAdminIaUsoRouteImport.update({
-  id: '/ia-uso',
-  path: '/ia-uso',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminIaRoute = AuthenticatedAdminIaRouteImport.update({
-  id: '/ia',
-  path: '/ia',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminExportacionesRoute =
-  AuthenticatedAdminExportacionesRouteImport.update({
-    id: '/exportaciones',
-    path: '/exportaciones',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmpleosRoute =
-  AuthenticatedAdminEmpleosRouteImport.update({
-    id: '/empleos',
-    path: '/empleos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminEmailsRoute =
-  AuthenticatedAdminEmailsRouteImport.update({
-    id: '/emails',
-    path: '/emails',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminConfiguracionRoute =
-  AuthenticatedAdminConfiguracionRouteImport.update({
-    id: '/configuracion',
-    path: '/configuracion',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCiudadesRoute =
-  AuthenticatedAdminCiudadesRouteImport.update({
-    id: '/ciudades',
-    path: '/ciudades',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminAnaliticaRoute =
-  AuthenticatedAdminAnaliticaRouteImport.update({
-    id: '/analitica',
-    path: '/analitica',
+const AuthenticatedAdminAfiliadosRoute =
+  AuthenticatedAdminAfiliadosRouteImport.update({
+    id: '/afiliados',
+    path: '/afiliados',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAlmacenamientoRoute =
@@ -589,11 +407,217 @@ const AuthenticatedAdminAlmacenamientoRoute =
     path: '/almacenamiento',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminAfiliadosRoute =
-  AuthenticatedAdminAfiliadosRouteImport.update({
-    id: '/afiliados',
-    path: '/afiliados',
+const AuthenticatedAdminAnaliticaRoute =
+  AuthenticatedAdminAnaliticaRouteImport.update({
+    id: '/analitica',
+    path: '/analitica',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminCiudadesRoute =
+  AuthenticatedAdminCiudadesRouteImport.update({
+    id: '/ciudades',
+    path: '/ciudades',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracionRoute =
+  AuthenticatedAdminConfiguracionRouteImport.update({
+    id: '/configuracion',
+    path: '/configuracion',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEmailsRoute =
+  AuthenticatedAdminEmailsRouteImport.update({
+    id: '/emails',
+    path: '/emails',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEmpleosRoute =
+  AuthenticatedAdminEmpleosRouteImport.update({
+    id: '/empleos',
+    path: '/empleos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminExportacionesRoute =
+  AuthenticatedAdminExportacionesRouteImport.update({
+    id: '/exportaciones',
+    path: '/exportaciones',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIaRoute = AuthenticatedAdminIaRouteImport.update({
+  id: '/ia',
+  path: '/ia',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminIaUsoRoute = AuthenticatedAdminIaUsoRouteImport.update({
+  id: '/ia-uso',
+  path: '/ia-uso',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminMarketingRoute =
+  AuthenticatedAdminMarketingRouteImport.update({
+    id: '/marketing',
+    path: '/marketing',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminNotificacionesRoute =
+  AuthenticatedAdminNotificacionesRouteImport.update({
+    id: '/notificaciones',
+    path: '/notificaciones',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPaginasLegalesRoute =
+  AuthenticatedAdminPaginasLegalesRouteImport.update({
+    id: '/paginas-legales',
+    path: '/paginas-legales',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPlantillasRoute =
+  AuthenticatedAdminPlantillasRouteImport.update({
+    id: '/plantillas',
+    path: '/plantillas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSeguridadRoute =
+  AuthenticatedAdminSeguridadRouteImport.update({
+    id: '/seguridad',
+    path: '/seguridad',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSeoRoute = AuthenticatedAdminSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminSistemaRoute =
+  AuthenticatedAdminSistemaRouteImport.update({
+    id: '/sistema',
+    path: '/sistema',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSoporteRoute =
+  AuthenticatedAdminSoporteRouteImport.update({
+    id: '/soporte',
+    path: '/soporte',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSuscripcionesRoute =
+  AuthenticatedAdminSuscripcionesRouteImport.update({
+    id: '/suscripciones',
+    path: '/suscripciones',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTraduccionesRoute =
+  AuthenticatedAdminTraduccionesRouteImport.update({
+    id: '/traducciones',
+    path: '/traducciones',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedCvIdRoute = AuthenticatedCvIdRouteImport.update({
+  id: '/cv/$id',
+  path: '/cv/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPanelIndexRoute = AuthenticatedPanelIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedPanelRoute,
+} as any)
+const AuthenticatedPanelAjustesRoute =
+  AuthenticatedPanelAjustesRouteImport.update({
+    id: '/ajustes',
+    path: '/ajustes',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelAtsRoute = AuthenticatedPanelAtsRouteImport.update({
+  id: '/ats',
+  path: '/ats',
+  getParentRoute: () => AuthenticatedPanelRoute,
+} as any)
+const AuthenticatedPanelAyudaRoute = AuthenticatedPanelAyudaRouteImport.update({
+  id: '/ayuda',
+  path: '/ayuda',
+  getParentRoute: () => AuthenticatedPanelRoute,
+} as any)
+const AuthenticatedPanelCartasRoute =
+  AuthenticatedPanelCartasRouteImport.update({
+    id: '/cartas',
+    path: '/cartas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelCuentaRoute =
+  AuthenticatedPanelCuentaRouteImport.update({
+    id: '/cuenta',
+    path: '/cuenta',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelCurriculumsRoute =
+  AuthenticatedPanelCurriculumsRouteImport.update({
+    id: '/curriculums',
+    path: '/curriculums',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelDescargasRoute =
+  AuthenticatedPanelDescargasRouteImport.update({
+    id: '/descargas',
+    path: '/descargas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelEmpleosRoute =
+  AuthenticatedPanelEmpleosRouteImport.update({
+    id: '/empleos',
+    path: '/empleos',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelEntrevistasRoute =
+  AuthenticatedPanelEntrevistasRouteImport.update({
+    id: '/entrevistas',
+    path: '/entrevistas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelHerramientasRoute =
+  AuthenticatedPanelHerramientasRouteImport.update({
+    id: '/herramientas',
+    path: '/herramientas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelIaRoute = AuthenticatedPanelIaRouteImport.update({
+  id: '/ia',
+  path: '/ia',
+  getParentRoute: () => AuthenticatedPanelRoute,
+} as any)
+const AuthenticatedPanelPerfilRoute =
+  AuthenticatedPanelPerfilRouteImport.update({
+    id: '/perfil',
+    path: '/perfil',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelPlantillasRoute =
+  AuthenticatedPanelPlantillasRouteImport.update({
+    id: '/plantillas',
+    path: '/plantillas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelPreferenciasEmailRoute =
+  AuthenticatedPanelPreferenciasEmailRouteImport.update({
+    id: '/preferencias-email',
+    path: '/preferencias-email',
+    getParentRoute: () => AuthenticatedPanelRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -605,6 +629,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRouteWithChildren
+  '/calculadora-finiquito': typeof CalculadoraFiniquitoRoute
+  '/calculadora-sueldo-neto': typeof CalculadoraSueldoNetoRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -615,6 +641,7 @@ export interface FileRoutesByFullPath {
   '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
+  '/generador-carta-renuncia': typeof GeneradorCartaRenunciaRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
   '/graphic-designer-resume-template': typeof GraphicDesignerResumeTemplateRoute
   '/herramientas': typeof HerramientasRoute
@@ -631,6 +658,7 @@ export interface FileRoutesByFullPath {
   '/sales-executive-results-template': typeof SalesExecutiveResultsTemplateRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
+  '/simulador-entrevista': typeof SimuladorEntrevistaRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/software-engineer-resume-template': typeof SoftwareEngineerResumeTemplateRoute
   '/student-resume-template': typeof StudentResumeTemplateRoute
@@ -696,6 +724,8 @@ export interface FileRoutesByTo {
   '/ats-checker': typeof AtsCheckerRoute
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
+  '/calculadora-finiquito': typeof CalculadoraFiniquitoRoute
+  '/calculadora-sueldo-neto': typeof CalculadoraSueldoNetoRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -706,6 +736,7 @@ export interface FileRoutesByTo {
   '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
+  '/generador-carta-renuncia': typeof GeneradorCartaRenunciaRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
   '/graphic-designer-resume-template': typeof GraphicDesignerResumeTemplateRoute
   '/herramientas': typeof HerramientasRoute
@@ -721,6 +752,7 @@ export interface FileRoutesByTo {
   '/sales-executive-results-template': typeof SalesExecutiveResultsTemplateRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
+  '/simulador-entrevista': typeof SimuladorEntrevistaRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/software-engineer-resume-template': typeof SoftwareEngineerResumeTemplateRoute
   '/student-resume-template': typeof StudentResumeTemplateRoute
@@ -787,6 +819,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRouteWithChildren
+  '/calculadora-finiquito': typeof CalculadoraFiniquitoRoute
+  '/calculadora-sueldo-neto': typeof CalculadoraSueldoNetoRoute
   '/ceo-resume-template': typeof CeoResumeTemplateRoute
   '/contacto': typeof ContactoRoute
   '/cookies': typeof CookiesRoute
@@ -797,6 +831,7 @@ export interface FileRoutesById {
   '/facturacion-pagos': typeof FacturacionPagosRoute
   '/freelancer-resume-template': typeof FreelancerResumeTemplateRoute
   '/fresher-resume-template': typeof FresherResumeTemplateRoute
+  '/generador-carta-renuncia': typeof GeneradorCartaRenunciaRoute
   '/government-resume-template': typeof GovernmentResumeTemplateRoute
   '/graphic-designer-resume-template': typeof GraphicDesignerResumeTemplateRoute
   '/herramientas': typeof HerramientasRoute
@@ -813,6 +848,7 @@ export interface FileRoutesById {
   '/sales-executive-results-template': typeof SalesExecutiveResultsTemplateRoute
   '/sales-executive-resume-template': typeof SalesExecutiveResumeTemplateRoute
   '/senior-professional-resume-template': typeof SeniorProfessionalResumeTemplateRoute
+  '/simulador-entrevista': typeof SimuladorEntrevistaRoute
   '/sobre-nosotros': typeof SobreNosotrosRoute
   '/software-engineer-resume-template': typeof SoftwareEngineerResumeTemplateRoute
   '/student-resume-template': typeof StudentResumeTemplateRoute
@@ -881,6 +917,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/blog'
+    | '/calculadora-finiquito'
+    | '/calculadora-sueldo-neto'
     | '/ceo-resume-template'
     | '/contacto'
     | '/cookies'
@@ -891,6 +929,7 @@ export interface FileRouteTypes {
     | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
+    | '/generador-carta-renuncia'
     | '/government-resume-template'
     | '/graphic-designer-resume-template'
     | '/herramientas'
@@ -907,6 +946,7 @@ export interface FileRouteTypes {
     | '/sales-executive-results-template'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
+    | '/simulador-entrevista'
     | '/sobre-nosotros'
     | '/software-engineer-resume-template'
     | '/student-resume-template'
@@ -972,6 +1012,8 @@ export interface FileRouteTypes {
     | '/ats-checker'
     | '/auth'
     | '/aviso-legal'
+    | '/calculadora-finiquito'
+    | '/calculadora-sueldo-neto'
     | '/ceo-resume-template'
     | '/contacto'
     | '/cookies'
@@ -982,6 +1024,7 @@ export interface FileRouteTypes {
     | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
+    | '/generador-carta-renuncia'
     | '/government-resume-template'
     | '/graphic-designer-resume-template'
     | '/herramientas'
@@ -997,6 +1040,7 @@ export interface FileRouteTypes {
     | '/sales-executive-results-template'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
+    | '/simulador-entrevista'
     | '/sobre-nosotros'
     | '/software-engineer-resume-template'
     | '/student-resume-template'
@@ -1062,6 +1106,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/aviso-legal'
     | '/blog'
+    | '/calculadora-finiquito'
+    | '/calculadora-sueldo-neto'
     | '/ceo-resume-template'
     | '/contacto'
     | '/cookies'
@@ -1072,6 +1118,7 @@ export interface FileRouteTypes {
     | '/facturacion-pagos'
     | '/freelancer-resume-template'
     | '/fresher-resume-template'
+    | '/generador-carta-renuncia'
     | '/government-resume-template'
     | '/graphic-designer-resume-template'
     | '/herramientas'
@@ -1088,6 +1135,7 @@ export interface FileRouteTypes {
     | '/sales-executive-results-template'
     | '/sales-executive-resume-template'
     | '/senior-professional-resume-template'
+    | '/simulador-entrevista'
     | '/sobre-nosotros'
     | '/software-engineer-resume-template'
     | '/student-resume-template'
@@ -1156,6 +1204,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   AvisoLegalRoute: typeof AvisoLegalRoute
   BlogRoute: typeof BlogRouteWithChildren
+  CalculadoraFiniquitoRoute: typeof CalculadoraFiniquitoRoute
+  CalculadoraSueldoNetoRoute: typeof CalculadoraSueldoNetoRoute
   CeoResumeTemplateRoute: typeof CeoResumeTemplateRoute
   ContactoRoute: typeof ContactoRoute
   CookiesRoute: typeof CookiesRoute
@@ -1166,6 +1216,7 @@ export interface RootRouteChildren {
   FacturacionPagosRoute: typeof FacturacionPagosRoute
   FreelancerResumeTemplateRoute: typeof FreelancerResumeTemplateRoute
   FresherResumeTemplateRoute: typeof FresherResumeTemplateRoute
+  GeneradorCartaRenunciaRoute: typeof GeneradorCartaRenunciaRoute
   GovernmentResumeTemplateRoute: typeof GovernmentResumeTemplateRoute
   GraphicDesignerResumeTemplateRoute: typeof GraphicDesignerResumeTemplateRoute
   HerramientasRoute: typeof HerramientasRoute
@@ -1182,6 +1233,7 @@ export interface RootRouteChildren {
   SalesExecutiveResultsTemplateRoute: typeof SalesExecutiveResultsTemplateRoute
   SalesExecutiveResumeTemplateRoute: typeof SalesExecutiveResumeTemplateRoute
   SeniorProfessionalResumeTemplateRoute: typeof SeniorProfessionalResumeTemplateRoute
+  SimuladorEntrevistaRoute: typeof SimuladorEntrevistaRoute
   SobreNosotrosRoute: typeof SobreNosotrosRoute
   SoftwareEngineerResumeTemplateRoute: typeof SoftwareEngineerResumeTemplateRoute
   StudentResumeTemplateRoute: typeof StudentResumeTemplateRoute
@@ -1196,284 +1248,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/transparencia-ia': {
-      id: '/transparencia-ia'
-      path: '/transparencia-ia'
-      fullPath: '/transparencia-ia'
-      preLoaderRoute: typeof TransparenciaIaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terminos': {
-      id: '/terminos'
-      path: '/terminos'
-      fullPath: '/terminos'
-      preLoaderRoute: typeof TerminosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/teacher-resume-template': {
-      id: '/teacher-resume-template'
-      path: '/teacher-resume-template'
-      fullPath: '/teacher-resume-template'
-      preLoaderRoute: typeof TeacherResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/student-resume-template': {
-      id: '/student-resume-template'
-      path: '/student-resume-template'
-      fullPath: '/student-resume-template'
-      preLoaderRoute: typeof StudentResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/software-engineer-resume-template': {
-      id: '/software-engineer-resume-template'
-      path: '/software-engineer-resume-template'
-      fullPath: '/software-engineer-resume-template'
-      preLoaderRoute: typeof SoftwareEngineerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre-nosotros': {
-      id: '/sobre-nosotros'
-      path: '/sobre-nosotros'
-      fullPath: '/sobre-nosotros'
-      preLoaderRoute: typeof SobreNosotrosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/senior-professional-resume-template': {
-      id: '/senior-professional-resume-template'
-      path: '/senior-professional-resume-template'
-      fullPath: '/senior-professional-resume-template'
-      preLoaderRoute: typeof SeniorProfessionalResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sales-executive-resume-template': {
-      id: '/sales-executive-resume-template'
-      path: '/sales-executive-resume-template'
-      fullPath: '/sales-executive-resume-template'
-      preLoaderRoute: typeof SalesExecutiveResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sales-executive-results-template': {
-      id: '/sales-executive-results-template'
-      path: '/sales-executive-results-template'
-      fullPath: '/sales-executive-results-template'
-      preLoaderRoute: typeof SalesExecutiveResultsTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reembolso': {
-      id: '/reembolso'
-      path: '/reembolso'
-      fullPath: '/reembolso'
-      preLoaderRoute: typeof ReembolsoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/project-manager-resume-template': {
-      id: '/project-manager-resume-template'
-      path: '/project-manager-resume-template'
-      fullPath: '/project-manager-resume-template'
-      preLoaderRoute: typeof ProjectManagerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidad': {
-      id: '/privacidad'
-      path: '/privacidad'
-      fullPath: '/privacidad'
-      preLoaderRoute: typeof PrivacidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/precios': {
-      id: '/precios'
-      path: '/precios'
-      fullPath: '/precios'
-      preLoaderRoute: typeof PreciosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/plantillas': {
-      id: '/plantillas'
-      path: '/plantillas'
-      fullPath: '/plantillas'
-      preLoaderRoute: typeof PlantillasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nurse-resume-template': {
-      id: '/nurse-resume-template'
-      path: '/nurse-resume-template'
-      fullPath: '/nurse-resume-template'
-      preLoaderRoute: typeof NurseResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mid-level-resume-template': {
-      id: '/mid-level-resume-template'
-      path: '/mid-level-resume-template'
-      fullPath: '/mid-level-resume-template'
-      preLoaderRoute: typeof MidLevelResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lawyer-resume-template': {
-      id: '/lawyer-resume-template'
-      path: '/lawyer-resume-template'
-      fullPath: '/lawyer-resume-template'
-      preLoaderRoute: typeof LawyerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/internship-resume-template': {
-      id: '/internship-resume-template'
-      path: '/internship-resume-template'
-      fullPath: '/internship-resume-template'
-      preLoaderRoute: typeof InternshipResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hr-manager-resume-template': {
-      id: '/hr-manager-resume-template'
-      path: '/hr-manager-resume-template'
-      fullPath: '/hr-manager-resume-template'
-      preLoaderRoute: typeof HrManagerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/herramientas': {
-      id: '/herramientas'
-      path: '/herramientas'
-      fullPath: '/herramientas'
-      preLoaderRoute: typeof HerramientasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/graphic-designer-resume-template': {
-      id: '/graphic-designer-resume-template'
-      path: '/graphic-designer-resume-template'
-      fullPath: '/graphic-designer-resume-template'
-      preLoaderRoute: typeof GraphicDesignerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/government-resume-template': {
-      id: '/government-resume-template'
-      path: '/government-resume-template'
-      fullPath: '/government-resume-template'
-      preLoaderRoute: typeof GovernmentResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fresher-resume-template': {
-      id: '/fresher-resume-template'
-      path: '/fresher-resume-template'
-      fullPath: '/fresher-resume-template'
-      preLoaderRoute: typeof FresherResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/freelancer-resume-template': {
-      id: '/freelancer-resume-template'
-      path: '/freelancer-resume-template'
-      fullPath: '/freelancer-resume-template'
-      preLoaderRoute: typeof FreelancerResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/facturacion-pagos': {
-      id: '/facturacion-pagos'
-      path: '/facturacion-pagos'
-      fullPath: '/facturacion-pagos'
-      preLoaderRoute: typeof FacturacionPagosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/executive-resume-template': {
-      id: '/executive-resume-template'
-      path: '/executive-resume-template'
-      fullPath: '/executive-resume-template'
-      preLoaderRoute: typeof ExecutiveResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/entry-level-resume-template': {
-      id: '/entry-level-resume-template'
-      path: '/entry-level-resume-template'
-      fullPath: '/entry-level-resume-template'
-      preLoaderRoute: typeof EntryLevelResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ejemplos': {
-      id: '/ejemplos'
-      path: '/ejemplos'
-      fullPath: '/ejemplos'
-      preLoaderRoute: typeof EjemplosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/curriculum-vitae': {
-      id: '/curriculum-vitae'
-      path: '/curriculum-vitae'
-      fullPath: '/curriculum-vitae'
-      preLoaderRoute: typeof CurriculumVitaeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contacto': {
-      id: '/contacto'
-      path: '/contacto'
-      fullPath: '/contacto'
-      preLoaderRoute: typeof ContactoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ceo-resume-template': {
-      id: '/ceo-resume-template'
-      path: '/ceo-resume-template'
-      fullPath: '/ceo-resume-template'
-      preLoaderRoute: typeof CeoResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/aviso-legal': {
-      id: '/aviso-legal'
-      path: '/aviso-legal'
-      fullPath: '/aviso-legal'
-      preLoaderRoute: typeof AvisoLegalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ats-checker': {
-      id: '/ats-checker'
-      path: '/ats-checker'
-      fullPath: '/ats-checker'
-      preLoaderRoute: typeof AtsCheckerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/architect-resume-template': {
-      id: '/architect-resume-template'
-      path: '/architect-resume-template'
-      fullPath: '/architect-resume-template'
-      preLoaderRoute: typeof ArchitectResumeTemplateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/actualizar-password': {
-      id: '/actualizar-password'
-      path: '/actualizar-password'
-      fullPath: '/actualizar-password'
-      preLoaderRoute: typeof ActualizarPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/accountant-resume-template': {
-      id: '/accountant-resume-template'
-      path: '/accountant-resume-template'
-      fullPath: '/accountant-resume-template'
-      preLoaderRoute: typeof AccountantResumeTemplateRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1483,11 +1262,354 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/accountant-resume-template': {
+      id: '/accountant-resume-template'
+      path: '/accountant-resume-template'
+      fullPath: '/accountant-resume-template'
+      preLoaderRoute: typeof AccountantResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/actualizar-password': {
+      id: '/actualizar-password'
+      path: '/actualizar-password'
+      fullPath: '/actualizar-password'
+      preLoaderRoute: typeof ActualizarPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/architect-resume-template': {
+      id: '/architect-resume-template'
+      path: '/architect-resume-template'
+      fullPath: '/architect-resume-template'
+      preLoaderRoute: typeof ArchitectResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ats-checker': {
+      id: '/ats-checker'
+      path: '/ats-checker'
+      fullPath: '/ats-checker'
+      preLoaderRoute: typeof AtsCheckerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aviso-legal': {
+      id: '/aviso-legal'
+      path: '/aviso-legal'
+      fullPath: '/aviso-legal'
+      preLoaderRoute: typeof AvisoLegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculadora-finiquito': {
+      id: '/calculadora-finiquito'
+      path: '/calculadora-finiquito'
+      fullPath: '/calculadora-finiquito'
+      preLoaderRoute: typeof CalculadoraFiniquitoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculadora-sueldo-neto': {
+      id: '/calculadora-sueldo-neto'
+      path: '/calculadora-sueldo-neto'
+      fullPath: '/calculadora-sueldo-neto'
+      preLoaderRoute: typeof CalculadoraSueldoNetoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ceo-resume-template': {
+      id: '/ceo-resume-template'
+      path: '/ceo-resume-template'
+      fullPath: '/ceo-resume-template'
+      preLoaderRoute: typeof CeoResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacto': {
+      id: '/contacto'
+      path: '/contacto'
+      fullPath: '/contacto'
+      preLoaderRoute: typeof ContactoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/curriculum-vitae': {
+      id: '/curriculum-vitae'
+      path: '/curriculum-vitae'
+      fullPath: '/curriculum-vitae'
+      preLoaderRoute: typeof CurriculumVitaeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ejemplos': {
+      id: '/ejemplos'
+      path: '/ejemplos'
+      fullPath: '/ejemplos'
+      preLoaderRoute: typeof EjemplosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entry-level-resume-template': {
+      id: '/entry-level-resume-template'
+      path: '/entry-level-resume-template'
+      fullPath: '/entry-level-resume-template'
+      preLoaderRoute: typeof EntryLevelResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/executive-resume-template': {
+      id: '/executive-resume-template'
+      path: '/executive-resume-template'
+      fullPath: '/executive-resume-template'
+      preLoaderRoute: typeof ExecutiveResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facturacion-pagos': {
+      id: '/facturacion-pagos'
+      path: '/facturacion-pagos'
+      fullPath: '/facturacion-pagos'
+      preLoaderRoute: typeof FacturacionPagosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/freelancer-resume-template': {
+      id: '/freelancer-resume-template'
+      path: '/freelancer-resume-template'
+      fullPath: '/freelancer-resume-template'
+      preLoaderRoute: typeof FreelancerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fresher-resume-template': {
+      id: '/fresher-resume-template'
+      path: '/fresher-resume-template'
+      fullPath: '/fresher-resume-template'
+      preLoaderRoute: typeof FresherResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generador-carta-renuncia': {
+      id: '/generador-carta-renuncia'
+      path: '/generador-carta-renuncia'
+      fullPath: '/generador-carta-renuncia'
+      preLoaderRoute: typeof GeneradorCartaRenunciaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/government-resume-template': {
+      id: '/government-resume-template'
+      path: '/government-resume-template'
+      fullPath: '/government-resume-template'
+      preLoaderRoute: typeof GovernmentResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graphic-designer-resume-template': {
+      id: '/graphic-designer-resume-template'
+      path: '/graphic-designer-resume-template'
+      fullPath: '/graphic-designer-resume-template'
+      preLoaderRoute: typeof GraphicDesignerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/herramientas': {
+      id: '/herramientas'
+      path: '/herramientas'
+      fullPath: '/herramientas'
+      preLoaderRoute: typeof HerramientasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hr-manager-resume-template': {
+      id: '/hr-manager-resume-template'
+      path: '/hr-manager-resume-template'
+      fullPath: '/hr-manager-resume-template'
+      preLoaderRoute: typeof HrManagerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/internship-resume-template': {
+      id: '/internship-resume-template'
+      path: '/internship-resume-template'
+      fullPath: '/internship-resume-template'
+      preLoaderRoute: typeof InternshipResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lawyer-resume-template': {
+      id: '/lawyer-resume-template'
+      path: '/lawyer-resume-template'
+      fullPath: '/lawyer-resume-template'
+      preLoaderRoute: typeof LawyerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mid-level-resume-template': {
+      id: '/mid-level-resume-template'
+      path: '/mid-level-resume-template'
+      fullPath: '/mid-level-resume-template'
+      preLoaderRoute: typeof MidLevelResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nurse-resume-template': {
+      id: '/nurse-resume-template'
+      path: '/nurse-resume-template'
+      fullPath: '/nurse-resume-template'
+      preLoaderRoute: typeof NurseResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plantillas': {
+      id: '/plantillas'
+      path: '/plantillas'
+      fullPath: '/plantillas'
+      preLoaderRoute: typeof PlantillasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precios': {
+      id: '/precios'
+      path: '/precios'
+      fullPath: '/precios'
+      preLoaderRoute: typeof PreciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/project-manager-resume-template': {
+      id: '/project-manager-resume-template'
+      path: '/project-manager-resume-template'
+      fullPath: '/project-manager-resume-template'
+      preLoaderRoute: typeof ProjectManagerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reembolso': {
+      id: '/reembolso'
+      path: '/reembolso'
+      fullPath: '/reembolso'
+      preLoaderRoute: typeof ReembolsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales-executive-results-template': {
+      id: '/sales-executive-results-template'
+      path: '/sales-executive-results-template'
+      fullPath: '/sales-executive-results-template'
+      preLoaderRoute: typeof SalesExecutiveResultsTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sales-executive-resume-template': {
+      id: '/sales-executive-resume-template'
+      path: '/sales-executive-resume-template'
+      fullPath: '/sales-executive-resume-template'
+      preLoaderRoute: typeof SalesExecutiveResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/senior-professional-resume-template': {
+      id: '/senior-professional-resume-template'
+      path: '/senior-professional-resume-template'
+      fullPath: '/senior-professional-resume-template'
+      preLoaderRoute: typeof SeniorProfessionalResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simulador-entrevista': {
+      id: '/simulador-entrevista'
+      path: '/simulador-entrevista'
+      fullPath: '/simulador-entrevista'
+      preLoaderRoute: typeof SimuladorEntrevistaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre-nosotros': {
+      id: '/sobre-nosotros'
+      path: '/sobre-nosotros'
+      fullPath: '/sobre-nosotros'
+      preLoaderRoute: typeof SobreNosotrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/software-engineer-resume-template': {
+      id: '/software-engineer-resume-template'
+      path: '/software-engineer-resume-template'
+      fullPath: '/software-engineer-resume-template'
+      preLoaderRoute: typeof SoftwareEngineerResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student-resume-template': {
+      id: '/student-resume-template'
+      path: '/student-resume-template'
+      fullPath: '/student-resume-template'
+      preLoaderRoute: typeof StudentResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teacher-resume-template': {
+      id: '/teacher-resume-template'
+      path: '/teacher-resume-template'
+      fullPath: '/teacher-resume-template'
+      preLoaderRoute: typeof TeacherResumeTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transparencia-ia': {
+      id: '/transparencia-ia'
+      path: '/transparencia-ia'
+      fullPath: '/transparencia-ia'
+      preLoaderRoute: typeof TransparenciaIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/panel': {
+      id: '/_authenticated/panel'
+      path: '/panel'
+      fullPath: '/panel'
+      preLoaderRoute: typeof AuthenticatedPanelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/blog/': {
+      id: '/blog/'
       path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/guias/$slug': {
+      id: '/guias/$slug'
+      path: '/guias/$slug'
+      fullPath: '/guias/$slug'
+      preLoaderRoute: typeof GuiasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/$slug': {
+      id: '/legal/$slug'
+      path: '/legal/$slug'
+      fullPath: '/legal/$slug'
+      preLoaderRoute: typeof LegalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plantillas/': {
@@ -1497,12 +1619,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlantillasIndexRouteImport
       parentRoute: typeof PlantillasRoute
     }
-    '/blog/': {
-      id: '/blog/'
-      path: '/'
-      fullPath: '/blog/'
-      preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof BlogRoute
+    '/plantillas/$id': {
+      id: '/plantillas/$id'
+      path: '/$id'
+      fullPath: '/plantillas/$id'
+      preLoaderRoute: typeof PlantillasIdRouteImport
+      parentRoute: typeof PlantillasRoute
     }
     '/resume/$citySlug': {
       id: '/resume/$citySlug'
@@ -1511,55 +1633,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResumeCitySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/plantillas/$id': {
-      id: '/plantillas/$id'
-      path: '/$id'
-      fullPath: '/plantillas/$id'
-      preLoaderRoute: typeof PlantillasIdRouteImport
-      parentRoute: typeof PlantillasRoute
-    }
-    '/legal/$slug': {
-      id: '/legal/$slug'
-      path: '/legal/$slug'
-      fullPath: '/legal/$slug'
-      preLoaderRoute: typeof LegalSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guias/$slug': {
-      id: '/guias/$slug'
-      path: '/guias/$slug'
-      fullPath: '/guias/$slug'
-      preLoaderRoute: typeof GuiasSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/_authenticated/panel': {
-      id: '/_authenticated/panel'
-      path: '/panel'
-      fullPath: '/panel'
-      preLoaderRoute: typeof AuthenticatedPanelRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/panel/': {
-      id: '/_authenticated/panel/'
-      path: '/'
-      fullPath: '/panel/'
-      preLoaderRoute: typeof AuthenticatedPanelIndexRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -1567,256 +1640,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/panel/preferencias-email': {
-      id: '/_authenticated/panel/preferencias-email'
-      path: '/preferencias-email'
-      fullPath: '/panel/preferencias-email'
-      preLoaderRoute: typeof AuthenticatedPanelPreferenciasEmailRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/plantillas': {
-      id: '/_authenticated/panel/plantillas'
-      path: '/plantillas'
-      fullPath: '/panel/plantillas'
-      preLoaderRoute: typeof AuthenticatedPanelPlantillasRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/perfil': {
-      id: '/_authenticated/panel/perfil'
-      path: '/perfil'
-      fullPath: '/panel/perfil'
-      preLoaderRoute: typeof AuthenticatedPanelPerfilRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/ia': {
-      id: '/_authenticated/panel/ia'
-      path: '/ia'
-      fullPath: '/panel/ia'
-      preLoaderRoute: typeof AuthenticatedPanelIaRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/herramientas': {
-      id: '/_authenticated/panel/herramientas'
-      path: '/herramientas'
-      fullPath: '/panel/herramientas'
-      preLoaderRoute: typeof AuthenticatedPanelHerramientasRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/entrevistas': {
-      id: '/_authenticated/panel/entrevistas'
-      path: '/entrevistas'
-      fullPath: '/panel/entrevistas'
-      preLoaderRoute: typeof AuthenticatedPanelEntrevistasRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/empleos': {
-      id: '/_authenticated/panel/empleos'
-      path: '/empleos'
-      fullPath: '/panel/empleos'
-      preLoaderRoute: typeof AuthenticatedPanelEmpleosRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/descargas': {
-      id: '/_authenticated/panel/descargas'
-      path: '/descargas'
-      fullPath: '/panel/descargas'
-      preLoaderRoute: typeof AuthenticatedPanelDescargasRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/curriculums': {
-      id: '/_authenticated/panel/curriculums'
-      path: '/curriculums'
-      fullPath: '/panel/curriculums'
-      preLoaderRoute: typeof AuthenticatedPanelCurriculumsRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/cuenta': {
-      id: '/_authenticated/panel/cuenta'
-      path: '/cuenta'
-      fullPath: '/panel/cuenta'
-      preLoaderRoute: typeof AuthenticatedPanelCuentaRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/cartas': {
-      id: '/_authenticated/panel/cartas'
-      path: '/cartas'
-      fullPath: '/panel/cartas'
-      preLoaderRoute: typeof AuthenticatedPanelCartasRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/ayuda': {
-      id: '/_authenticated/panel/ayuda'
-      path: '/ayuda'
-      fullPath: '/panel/ayuda'
-      preLoaderRoute: typeof AuthenticatedPanelAyudaRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/ats': {
-      id: '/_authenticated/panel/ats'
-      path: '/ats'
-      fullPath: '/panel/ats'
-      preLoaderRoute: typeof AuthenticatedPanelAtsRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/panel/ajustes': {
-      id: '/_authenticated/panel/ajustes'
-      path: '/ajustes'
-      fullPath: '/panel/ajustes'
-      preLoaderRoute: typeof AuthenticatedPanelAjustesRouteImport
-      parentRoute: typeof AuthenticatedPanelRoute
-    }
-    '/_authenticated/cv/$id': {
-      id: '/_authenticated/cv/$id'
-      path: '/cv/$id'
-      fullPath: '/cv/$id'
-      preLoaderRoute: typeof AuthenticatedCvIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/usuarios': {
-      id: '/_authenticated/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/traducciones': {
-      id: '/_authenticated/admin/traducciones'
-      path: '/traducciones'
-      fullPath: '/admin/traducciones'
-      preLoaderRoute: typeof AuthenticatedAdminTraduccionesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/suscripciones': {
-      id: '/_authenticated/admin/suscripciones'
-      path: '/suscripciones'
-      fullPath: '/admin/suscripciones'
-      preLoaderRoute: typeof AuthenticatedAdminSuscripcionesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/soporte': {
-      id: '/_authenticated/admin/soporte'
-      path: '/soporte'
-      fullPath: '/admin/soporte'
-      preLoaderRoute: typeof AuthenticatedAdminSoporteRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/sistema': {
-      id: '/_authenticated/admin/sistema'
-      path: '/sistema'
-      fullPath: '/admin/sistema'
-      preLoaderRoute: typeof AuthenticatedAdminSistemaRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/seo': {
-      id: '/_authenticated/admin/seo'
-      path: '/seo'
-      fullPath: '/admin/seo'
-      preLoaderRoute: typeof AuthenticatedAdminSeoRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/seguridad': {
-      id: '/_authenticated/admin/seguridad'
-      path: '/seguridad'
-      fullPath: '/admin/seguridad'
-      preLoaderRoute: typeof AuthenticatedAdminSeguridadRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/plantillas': {
-      id: '/_authenticated/admin/plantillas'
-      path: '/plantillas'
-      fullPath: '/admin/plantillas'
-      preLoaderRoute: typeof AuthenticatedAdminPlantillasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/paginas-legales': {
-      id: '/_authenticated/admin/paginas-legales'
-      path: '/paginas-legales'
-      fullPath: '/admin/paginas-legales'
-      preLoaderRoute: typeof AuthenticatedAdminPaginasLegalesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/notificaciones': {
-      id: '/_authenticated/admin/notificaciones'
-      path: '/notificaciones'
-      fullPath: '/admin/notificaciones'
-      preLoaderRoute: typeof AuthenticatedAdminNotificacionesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/media': {
-      id: '/_authenticated/admin/media'
-      path: '/media'
-      fullPath: '/admin/media'
-      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/marketing': {
-      id: '/_authenticated/admin/marketing'
-      path: '/marketing'
-      fullPath: '/admin/marketing'
-      preLoaderRoute: typeof AuthenticatedAdminMarketingRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/ia-uso': {
-      id: '/_authenticated/admin/ia-uso'
-      path: '/ia-uso'
-      fullPath: '/admin/ia-uso'
-      preLoaderRoute: typeof AuthenticatedAdminIaUsoRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/ia': {
-      id: '/_authenticated/admin/ia'
-      path: '/ia'
-      fullPath: '/admin/ia'
-      preLoaderRoute: typeof AuthenticatedAdminIaRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/exportaciones': {
-      id: '/_authenticated/admin/exportaciones'
-      path: '/exportaciones'
-      fullPath: '/admin/exportaciones'
-      preLoaderRoute: typeof AuthenticatedAdminExportacionesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/empleos': {
-      id: '/_authenticated/admin/empleos'
-      path: '/empleos'
-      fullPath: '/admin/empleos'
-      preLoaderRoute: typeof AuthenticatedAdminEmpleosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/emails': {
-      id: '/_authenticated/admin/emails'
-      path: '/emails'
-      fullPath: '/admin/emails'
-      preLoaderRoute: typeof AuthenticatedAdminEmailsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/configuracion': {
-      id: '/_authenticated/admin/configuracion'
-      path: '/configuracion'
-      fullPath: '/admin/configuracion'
-      preLoaderRoute: typeof AuthenticatedAdminConfiguracionRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/ciudades': {
-      id: '/_authenticated/admin/ciudades'
-      path: '/ciudades'
-      fullPath: '/admin/ciudades'
-      preLoaderRoute: typeof AuthenticatedAdminCiudadesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/blog': {
-      id: '/_authenticated/admin/blog'
-      path: '/blog'
-      fullPath: '/admin/blog'
-      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/analitica': {
-      id: '/_authenticated/admin/analitica'
-      path: '/analitica'
-      fullPath: '/admin/analitica'
-      preLoaderRoute: typeof AuthenticatedAdminAnaliticaRouteImport
+    '/_authenticated/admin/afiliados': {
+      id: '/_authenticated/admin/afiliados'
+      path: '/afiliados'
+      fullPath: '/admin/afiliados'
+      preLoaderRoute: typeof AuthenticatedAdminAfiliadosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/almacenamiento': {
@@ -1826,12 +1654,264 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAlmacenamientoRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/afiliados': {
-      id: '/_authenticated/admin/afiliados'
-      path: '/afiliados'
-      fullPath: '/admin/afiliados'
-      preLoaderRoute: typeof AuthenticatedAdminAfiliadosRouteImport
+    '/_authenticated/admin/analitica': {
+      id: '/_authenticated/admin/analitica'
+      path: '/analitica'
+      fullPath: '/admin/analitica'
+      preLoaderRoute: typeof AuthenticatedAdminAnaliticaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/ciudades': {
+      id: '/_authenticated/admin/ciudades'
+      path: '/ciudades'
+      fullPath: '/admin/ciudades'
+      preLoaderRoute: typeof AuthenticatedAdminCiudadesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracion': {
+      id: '/_authenticated/admin/configuracion'
+      path: '/configuracion'
+      fullPath: '/admin/configuracion'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracionRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/emails': {
+      id: '/_authenticated/admin/emails'
+      path: '/emails'
+      fullPath: '/admin/emails'
+      preLoaderRoute: typeof AuthenticatedAdminEmailsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/empleos': {
+      id: '/_authenticated/admin/empleos'
+      path: '/empleos'
+      fullPath: '/admin/empleos'
+      preLoaderRoute: typeof AuthenticatedAdminEmpleosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/exportaciones': {
+      id: '/_authenticated/admin/exportaciones'
+      path: '/exportaciones'
+      fullPath: '/admin/exportaciones'
+      preLoaderRoute: typeof AuthenticatedAdminExportacionesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/ia': {
+      id: '/_authenticated/admin/ia'
+      path: '/ia'
+      fullPath: '/admin/ia'
+      preLoaderRoute: typeof AuthenticatedAdminIaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/ia-uso': {
+      id: '/_authenticated/admin/ia-uso'
+      path: '/ia-uso'
+      fullPath: '/admin/ia-uso'
+      preLoaderRoute: typeof AuthenticatedAdminIaUsoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/marketing': {
+      id: '/_authenticated/admin/marketing'
+      path: '/marketing'
+      fullPath: '/admin/marketing'
+      preLoaderRoute: typeof AuthenticatedAdminMarketingRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/media': {
+      id: '/_authenticated/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/notificaciones': {
+      id: '/_authenticated/admin/notificaciones'
+      path: '/notificaciones'
+      fullPath: '/admin/notificaciones'
+      preLoaderRoute: typeof AuthenticatedAdminNotificacionesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/paginas-legales': {
+      id: '/_authenticated/admin/paginas-legales'
+      path: '/paginas-legales'
+      fullPath: '/admin/paginas-legales'
+      preLoaderRoute: typeof AuthenticatedAdminPaginasLegalesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/plantillas': {
+      id: '/_authenticated/admin/plantillas'
+      path: '/plantillas'
+      fullPath: '/admin/plantillas'
+      preLoaderRoute: typeof AuthenticatedAdminPlantillasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/seguridad': {
+      id: '/_authenticated/admin/seguridad'
+      path: '/seguridad'
+      fullPath: '/admin/seguridad'
+      preLoaderRoute: typeof AuthenticatedAdminSeguridadRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/seo': {
+      id: '/_authenticated/admin/seo'
+      path: '/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AuthenticatedAdminSeoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/sistema': {
+      id: '/_authenticated/admin/sistema'
+      path: '/sistema'
+      fullPath: '/admin/sistema'
+      preLoaderRoute: typeof AuthenticatedAdminSistemaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/soporte': {
+      id: '/_authenticated/admin/soporte'
+      path: '/soporte'
+      fullPath: '/admin/soporte'
+      preLoaderRoute: typeof AuthenticatedAdminSoporteRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/suscripciones': {
+      id: '/_authenticated/admin/suscripciones'
+      path: '/suscripciones'
+      fullPath: '/admin/suscripciones'
+      preLoaderRoute: typeof AuthenticatedAdminSuscripcionesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/traducciones': {
+      id: '/_authenticated/admin/traducciones'
+      path: '/traducciones'
+      fullPath: '/admin/traducciones'
+      preLoaderRoute: typeof AuthenticatedAdminTraduccionesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/cv/$id': {
+      id: '/_authenticated/cv/$id'
+      path: '/cv/$id'
+      fullPath: '/cv/$id'
+      preLoaderRoute: typeof AuthenticatedCvIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/panel/': {
+      id: '/_authenticated/panel/'
+      path: '/'
+      fullPath: '/panel/'
+      preLoaderRoute: typeof AuthenticatedPanelIndexRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/ajustes': {
+      id: '/_authenticated/panel/ajustes'
+      path: '/ajustes'
+      fullPath: '/panel/ajustes'
+      preLoaderRoute: typeof AuthenticatedPanelAjustesRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/ats': {
+      id: '/_authenticated/panel/ats'
+      path: '/ats'
+      fullPath: '/panel/ats'
+      preLoaderRoute: typeof AuthenticatedPanelAtsRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/ayuda': {
+      id: '/_authenticated/panel/ayuda'
+      path: '/ayuda'
+      fullPath: '/panel/ayuda'
+      preLoaderRoute: typeof AuthenticatedPanelAyudaRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/cartas': {
+      id: '/_authenticated/panel/cartas'
+      path: '/cartas'
+      fullPath: '/panel/cartas'
+      preLoaderRoute: typeof AuthenticatedPanelCartasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/cuenta': {
+      id: '/_authenticated/panel/cuenta'
+      path: '/cuenta'
+      fullPath: '/panel/cuenta'
+      preLoaderRoute: typeof AuthenticatedPanelCuentaRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/curriculums': {
+      id: '/_authenticated/panel/curriculums'
+      path: '/curriculums'
+      fullPath: '/panel/curriculums'
+      preLoaderRoute: typeof AuthenticatedPanelCurriculumsRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/descargas': {
+      id: '/_authenticated/panel/descargas'
+      path: '/descargas'
+      fullPath: '/panel/descargas'
+      preLoaderRoute: typeof AuthenticatedPanelDescargasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/empleos': {
+      id: '/_authenticated/panel/empleos'
+      path: '/empleos'
+      fullPath: '/panel/empleos'
+      preLoaderRoute: typeof AuthenticatedPanelEmpleosRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/entrevistas': {
+      id: '/_authenticated/panel/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/panel/entrevistas'
+      preLoaderRoute: typeof AuthenticatedPanelEntrevistasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/herramientas': {
+      id: '/_authenticated/panel/herramientas'
+      path: '/herramientas'
+      fullPath: '/panel/herramientas'
+      preLoaderRoute: typeof AuthenticatedPanelHerramientasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/ia': {
+      id: '/_authenticated/panel/ia'
+      path: '/ia'
+      fullPath: '/panel/ia'
+      preLoaderRoute: typeof AuthenticatedPanelIaRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/perfil': {
+      id: '/_authenticated/panel/perfil'
+      path: '/perfil'
+      fullPath: '/panel/perfil'
+      preLoaderRoute: typeof AuthenticatedPanelPerfilRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/plantillas': {
+      id: '/_authenticated/panel/plantillas'
+      path: '/plantillas'
+      fullPath: '/panel/plantillas'
+      preLoaderRoute: typeof AuthenticatedPanelPlantillasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/preferencias-email': {
+      id: '/_authenticated/panel/preferencias-email'
+      path: '/preferencias-email'
+      fullPath: '/panel/preferencias-email'
+      preLoaderRoute: typeof AuthenticatedPanelPreferenciasEmailRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
     }
   }
 }
@@ -1984,6 +2064,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   AvisoLegalRoute: AvisoLegalRoute,
   BlogRoute: BlogRouteWithChildren,
+  CalculadoraFiniquitoRoute: CalculadoraFiniquitoRoute,
+  CalculadoraSueldoNetoRoute: CalculadoraSueldoNetoRoute,
   CeoResumeTemplateRoute: CeoResumeTemplateRoute,
   ContactoRoute: ContactoRoute,
   CookiesRoute: CookiesRoute,
@@ -1994,6 +2076,7 @@ const rootRouteChildren: RootRouteChildren = {
   FacturacionPagosRoute: FacturacionPagosRoute,
   FreelancerResumeTemplateRoute: FreelancerResumeTemplateRoute,
   FresherResumeTemplateRoute: FresherResumeTemplateRoute,
+  GeneradorCartaRenunciaRoute: GeneradorCartaRenunciaRoute,
   GovernmentResumeTemplateRoute: GovernmentResumeTemplateRoute,
   GraphicDesignerResumeTemplateRoute: GraphicDesignerResumeTemplateRoute,
   HerramientasRoute: HerramientasRoute,
@@ -2010,6 +2093,7 @@ const rootRouteChildren: RootRouteChildren = {
   SalesExecutiveResultsTemplateRoute: SalesExecutiveResultsTemplateRoute,
   SalesExecutiveResumeTemplateRoute: SalesExecutiveResumeTemplateRoute,
   SeniorProfessionalResumeTemplateRoute: SeniorProfessionalResumeTemplateRoute,
+  SimuladorEntrevistaRoute: SimuladorEntrevistaRoute,
   SobreNosotrosRoute: SobreNosotrosRoute,
   SoftwareEngineerResumeTemplateRoute: SoftwareEngineerResumeTemplateRoute,
   StudentResumeTemplateRoute: StudentResumeTemplateRoute,
