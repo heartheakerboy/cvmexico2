@@ -272,7 +272,8 @@ type ContentBlock =
   | { kind: "ol"; items: string[] }
   | { kind: "quote"; text: string }
   | { kind: "example"; text: string }
-  | { kind: "conclusion"; text: string };
+  | { kind: "conclusion"; text: string }
+  | { kind: "img"; alt: string; src: string };
 
 type TocEntry = { num: number; text: string; id: string };
 
@@ -325,6 +326,12 @@ function parseArticleBlocks(content: string): {
     }
     if (p.startsWith("> ")) {
       blocks.push({ kind: "quote", text: p.replace(/^>\s+/, "") });
+      expectExample = false;
+      continue;
+    }
+    const imgMatch = p.match(/^!\[(.*?)\]\((.*?)\)$/);
+    if (imgMatch) {
+      blocks.push({ kind: "img", alt: imgMatch[1], src: imgMatch[2] });
       expectExample = false;
       continue;
     }
@@ -527,6 +534,26 @@ function ArticleBlocks({ blocks }: { blocks: ContentBlock[] }) {
                 &ldquo;{renderInline(b.text)}&rdquo;
               </p>
             </div>
+          );
+        }
+        if (b.kind === "img") {
+          return (
+            <figure
+              key={idx}
+              className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            >
+              <img
+                src={b.src}
+                alt={b.alt}
+                loading="lazy"
+                className="h-auto w-full"
+              />
+              {b.alt && (
+                <figcaption className="border-t border-border/40 px-4 py-2.5 text-center text-xs text-muted-foreground">
+                  {b.alt}
+                </figcaption>
+              )}
+            </figure>
           );
         }
         return null;
