@@ -5,7 +5,7 @@ import {
   ChevronRight, HelpCircle, Lightbulb, Bookmark, ArrowRight, Briefcase,
   GraduationCap, Laptop, TrendingUp, Palette, Calculator, Users, Award,
   Loader2, FileCheck, CheckSquare, Layers, AlertTriangle, ShieldCheck,
-  Cpu, Database, Search,
+  Cpu, Database, Search, ListOrdered, Quote,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -260,6 +260,304 @@ type DbPost = {
   published_at: string | null;
 };
 
+/* ------------------------------------------------------------------ */
+/*  Dynamic article rendering: markdown-lite blocks -> styled sections  */
+/* ------------------------------------------------------------------ */
+
+type ContentBlock =
+  | { kind: "h2"; text: string; num: number }
+  | { kind: "h3"; text: string }
+  | { kind: "p"; text: string; first: boolean }
+  | { kind: "ul"; items: string[]; tone: "check" | "cross" }
+  | { kind: "ol"; items: string[] }
+  | { kind: "quote"; text: string }
+  | { kind: "example"; text: string }
+  | { kind: "conclusion"; text: string };
+
+type TocEntry = { num: number; text: string; id: string };
+
+function parseArticleBlocks(content: string): {
+  blocks: ContentBlock[];
+  toc: TocEntry[];
+  readingMinutes: number;
+} {
+  const paras = content
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const blocks: ContentBlock[] = [];
+  const toc: TocEntry[] = [];
+  let h2Num = 0;
+  let tone: "check" | "cross" = "check";
+  let inConclusion = false;
+  let expectExample = false;
+  let firstParaDone = false;
+  let wordCount = 0;
+
+  for (const p of paras) {
+    if (p.startsWith("# ")) {
+      const text = p.replace(/^#\s+/, "");
+      const low = text.toLowerCase();
+      tone = /error|evit|no hagas|nunca /.test(low) ? "cross" : "check";
+      if (/conclus/.test(low)) {
+        inConclusion = true;
+        continue;
+      }
+      inConclusion = false;
+      h2Num += 1;
+      const id = `seccion-${h2Num}`;
+      toc.push({ num: h2Num, text, id });
+      blocks.push({ kind: "h2", text, num: h2Num });
+      expectExample = false;
+      continue;
+    }
+    if (p.startsWith("## ")) {
+      const text = p.replace(/^##\s+/, "");
+      blocks.push({ kind: "h3", text });
+      expectExample = /^para\s/i.test(text);
+      continue;
+    }
+    if (p.startsWith("### ")) {
+      blocks.push({ kind: "h3", text: p.replace(/^###\s+/, "") });
+      expectExample = false;
+      continue;
+    }
+    if (p.startsWith("> ")) {
+      blocks.push({ kind: "quote", text: p.replace(/^>\s+/, "") });
+      expectExample = false;
+      continue;
+    }
+    const lines = p.split("\n").map((l) => l.trim());
+    if (lines.some((l) => /^[-*]\s+/.test(l))) {
+      const items = lines
+        .filter((l) => /^[-*]\s+/.test(l))
+        .map((l) => l.replace(/^[-*]\s+/, "").trim());
+      wordCount += items.join(" ").split(/\s+/).length;
+      blocks.push({ kind: "ul", items, tone });
+      expectExample = false;
+      continue;
+    }
+    if (lines.some((l) => /^\d+\.\s+/.test(l))) {
+      const items = lines
+        .filter((l) => /^\d+\.\s+/.test(l))
+        .map((l) => l.replace(/^\d+\.\s+/, "").trim());
+      wordCount += items.join(" ").split(/\s+/).length;
+      blocks.push({ kind: "ol", items });
+      expectExample = false;
+      continue;
+    }
+    wordCount += p.split(/\s+/).length;
+    if (inConclusion) {
+      blocks.push({ kind: "conclusion", text: p });
+    } else if (expectExample) {
+      blocks.push({ kind: "example", text: p });
+      expectExample = false;
+    } else {
+      blocks.push({ kind: "p", text: p, first: !firstParaDone });
+      firstParaDone = true;
+    }
+  }
+
+  return {
+    blocks,
+    toc,
+    readingMinutes: Math.max(1, Math.round(wordCount / 200)),
+  };
+}
+
+/** Renders **bold** inline markers. */
+function renderInline(text: string) {
+  const parts = text.split(/(\*\*[^*]+?\*\*)/g);
+  return parts.map((part, i) =>
+    part.length > 4 && part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={i} className="font-semibold text-foreground">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
+/** Bolds the lead-in before the first colon in list items. */
+function renderListItem(item: string) {
+  const colonIdx = item.indexOf(":");
+  if (colonIdx > 3 && colonIdx < 70) {
+    return (
+      <>
+        <strong className="font-semibold text-foreground">
+          {item.slice(0, colonIdx)}
+        </strong>
+        {renderInline(item.slice(colonIdx))}
+      </>
+    );
+  }
+  return renderInline(item);
+}
+
+function ReadingProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const total = el.scrollHeight - el.clientHeight;
+      setProgress(total > 0 ? Math.min(100, (el.scrollTop / total) * 100) : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div
+      className="fixed top-0 left-0 z-50 h-1 bg-primary transition-[width] duration-150"
+      style={{ width: `${progress}%` }}
+    />
+  );
+}
+
+function ArticleBlocks({ blocks }: { blocks: ContentBlock[] }) {
+  const conclusionParas = blocks.filter((b) => b.kind === "conclusion");
+  const body = blocks.filter((b) => b.kind !== "conclusion");
+
+  return (
+    <>
+      {body.map((b, idx) => {
+        if (b.kind === "h2") {
+          return (
+            <div key={idx} id={`seccion-${b.num}`} className="scroll-mt-28 pt-2">
+              <div className="mt-10 mb-5 flex items-center gap-3">
+                <span className="font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm">
+                  {String(b.num).padStart(2, "0")}
+                </span>
+                <h2 className="font-display text-2xl font-bold leading-snug text-foreground sm:text-[1.7rem]">
+                  {renderInline(b.text)}
+                </h2>
+              </div>
+            </div>
+          );
+        }
+        if (b.kind === "h3") {
+          return (
+            <h3
+              key={idx}
+              className="font-display mt-8 mb-3 flex items-center gap-2.5 text-lg font-bold text-foreground sm:text-xl"
+            >
+              <span className="h-6 w-1 shrink-0 rounded-full bg-primary/70" />
+              {renderInline(b.text)}
+            </h3>
+          );
+        }
+        if (b.kind === "p") {
+          return (
+            <p
+              key={idx}
+              className={
+                b.first
+                  ? "text-[15px] leading-[1.9] text-foreground/90 first-letter:float-left first-letter:mr-3 first-letter:mt-1.5 first-letter:font-display first-letter:text-[3.4rem] first-letter:font-bold first-letter:leading-[0.8] first-letter:text-primary sm:text-base"
+                  : "text-[15px] leading-[1.9] text-muted-foreground sm:text-base"
+              }
+            >
+              {renderInline(b.text)}
+            </p>
+          );
+        }
+        if (b.kind === "ul") {
+          return (
+            <ul key={idx} className="my-2 space-y-3">
+              {b.items.map((item, i) => (
+                <li
+                  key={i}
+                  className="flex gap-3 rounded-2xl border border-border/60 bg-card/70 px-4 py-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                >
+                  {b.tone === "check" ? (
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+                  ) : (
+                    <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-500" />
+                  )}
+                  <span className="text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+                    {renderListItem(item)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        if (b.kind === "ol") {
+          return (
+            <ol key={idx} className="my-2 space-y-3">
+              {b.items.map((item, i) => (
+                <li key={i} className="flex gap-3 items-start">
+                  <span className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm leading-relaxed text-muted-foreground sm:text-[15px]">
+                    {renderListItem(item)}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          );
+        }
+        if (b.kind === "quote") {
+          return (
+            <blockquote
+              key={idx}
+              className="relative rounded-2xl border-l-4 border-primary bg-primary/5 px-5 py-4 pl-12"
+            >
+              <Quote className="absolute left-4 top-4 h-5 w-5 text-primary/60" />
+              <p className="text-[15px] italic leading-relaxed text-foreground/90">
+                {renderInline(b.text)}
+              </p>
+            </blockquote>
+          );
+        }
+        if (b.kind === "example") {
+          return (
+            <div
+              key={idx}
+              className="rounded-2xl border border-amber-200/80 bg-amber-50/70 p-5 dark:border-amber-900/40 dark:bg-amber-950/20"
+            >
+              <div className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                <Sparkles className="h-3.5 w-3.5" /> Ejemplo
+              </div>
+              <p className="text-sm italic leading-relaxed text-foreground/90 sm:text-[15px]">
+                &ldquo;{renderInline(b.text)}&rdquo;
+              </p>
+            </div>
+          );
+        }
+        return null;
+      })}
+
+      {conclusionParas.length > 0 && (
+        <div className="mt-12 rounded-3xl border border-emerald-200/70 bg-gradient-to-br from-emerald-50 to-teal-50/60 p-6 dark:border-emerald-900/40 dark:from-emerald-950/30 dark:to-teal-950/20 sm:p-8">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-sm">
+              <Check className="h-4.5 w-4.5" />
+            </span>
+            <h2 className="font-display text-xl font-bold text-foreground">
+              Conclusión
+            </h2>
+          </div>
+          <div className="space-y-4">
+            {conclusionParas.map((b, i) => (
+              <p
+                key={i}
+                className="text-[15px] leading-[1.9] text-foreground/85 sm:text-base"
+              >
+                {renderInline(b.kind === "conclusion" ? b.text : "")}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function BlogPostDetail() {
   const { slug } = Route.useParams();
   const [copied, setCopied] = useState(false);
@@ -381,13 +679,11 @@ function DynamicArticleView({
   copyLink: () => void;
   copied: boolean;
 }) {
-  const paragraphs = (post.content ?? "")
-    .split(/\n\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  const { blocks, toc, readingMinutes } = parseArticleBlocks(post.content ?? "");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ReadingProgress />
       <SiteHeader />
 
       <div className="border-b border-border/40 bg-secondary/20">
@@ -420,6 +716,10 @@ function DynamicArticleView({
                 })}
               </span>
             )}
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              {readingMinutes} min de lectura
+            </span>
           </div>
 
           <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl leading-tight">
@@ -453,45 +753,8 @@ function DynamicArticleView({
 
       <main className="mx-auto max-w-4xl px-4 py-12">
         <div className="grid gap-12 lg:grid-cols-12">
-          <article className="lg:col-span-8 space-y-6 text-foreground/90 leading-relaxed text-sm sm:text-base">
-            {paragraphs.map((p, idx) => {
-              if (p.startsWith("# ")) {
-                return (
-                  <h2 key={idx} className="font-display text-2xl sm:text-3xl font-bold text-foreground mt-8 mb-4">
-                    {p.replace(/^#\s+/, "")}
-                  </h2>
-                );
-              }
-              if (p.startsWith("## ")) {
-                return (
-                  <h3 key={idx} className="font-display text-xl sm:text-2xl font-bold text-foreground mt-6 mb-3">
-                    {p.replace(/^##\s+/, "")}
-                  </h3>
-                );
-              }
-              if (p.startsWith("### ")) {
-                return (
-                  <h4 key={idx} className="font-display text-lg font-semibold text-foreground mt-4 mb-2">
-                    {p.replace(/^###\s+/, "")}
-                  </h4>
-                );
-              }
-              if (p.startsWith("- ") || p.startsWith("* ")) {
-                const items = p.split("\n").filter((l) => l.trim().startsWith("- ") || l.trim().startsWith("* "));
-                return (
-                  <ul key={idx} className="list-disc pl-5 space-y-1.5 text-muted-foreground">
-                    {items.map((it, i) => (
-                      <li key={i}>{it.replace(/^[-*]\s+/, "")}</li>
-                    ))}
-                  </ul>
-                );
-              }
-              return (
-                <p key={idx} className="text-muted-foreground leading-relaxed">
-                  {p}
-                </p>
-              );
-            })}
+          <article className="lg:col-span-8 space-y-6 text-foreground/90 leading-relaxed">
+            <ArticleBlocks blocks={blocks} />
 
             <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 sm:p-8 space-y-4 text-center mt-12">
               <h3 className="font-display text-xl font-bold text-foreground">
@@ -514,6 +777,27 @@ function DynamicArticleView({
           </article>
 
           <aside className="lg:col-span-4 space-y-6">
+            {toc.length > 0 && (
+              <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <ListOrdered className="h-3.5 w-3.5 text-primary" /> En este artículo
+                </h3>
+                <nav className="space-y-0.5">
+                  {toc.map((t) => (
+                    <a
+                      key={t.id}
+                      href={`#${t.id}`}
+                      className="flex items-start gap-2.5 rounded-lg px-2 py-1.5 text-[13px] leading-snug text-muted-foreground transition-colors hover:bg-primary/5 hover:text-primary"
+                    >
+                      <span className="mt-0.5 text-xs font-bold text-primary/70">
+                        {String(t.num).padStart(2, "0")}
+                      </span>
+                      <span>{t.text}</span>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            )}
             <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Bookmark className="h-3.5 w-3.5 text-primary" /> Recursos recomendados
