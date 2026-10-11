@@ -283,6 +283,7 @@ function parseArticleBlocks(content: string): {
   readingMinutes: number;
 } {
   const paras = content
+    .replace(/\r\n/g, "\n")
     .split(/\n\n+/)
     .map((p) => p.trim())
     .filter(Boolean);
