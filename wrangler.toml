@@ -18,6 +18,12 @@ directory = ".output/public"
 type = "ESModule"
 globs = ["**/*.mjs", "**/*.js"]
 
+# D1 database (Phase 2) — app code will use env.DB
+[[d1_databases]]
+binding = "DB"
+database_name = "cvai-db"
+database_id = "dce002b1-e335-4e68-8887-bf2d951b265f"
+
 [vars]
 SUPABASE_URL = "https://nwotwmfvavpllppguurd.supabase.co"
 SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h5nPNMVR5Ry086cxSzC0FQ_QArFhfDD"
