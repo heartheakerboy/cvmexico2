@@ -50,6 +50,8 @@ import { getStaticCities } from "@/lib/cities-data";
 import { TEMPLATES } from "@/lib/resume/registry";
 import { getTemplateUrl } from "@/lib/resume/template-routes";
 import { submitToIndexNow, INDEXNOW_KEY } from "@/lib/indexnow";
+import { runWithEnv } from "@/lib/d1.server";
+import { handleAuthRequest } from "@/lib/auth-d1/routes.server";
 
 async function serveSitemap(): Promise<Response> {
   const base = "https://www.cvai.com.mx";
@@ -377,8 +379,15 @@ export default {
         return await handleLemonSqueezyWebhook(request);
       }
 
+      // Phase 3 (parallel build): custom D1 auth endpoints. Old Supabase auth untouched.
+      if (url.pathname.startsWith("/api/auth/")) {
+        const authRes = await runWithEnv(env, () => handleAuthRequest(request));
+        if (authRes) return authRes;
+      }
+
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      // Stash Worker env (D1 binding etc.) for server functions via AsyncLocalStorage.
+      const response = await runWithEnv(env, () => handler.fetch(request, env, ctx));
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);
