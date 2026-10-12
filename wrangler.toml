@@ -1,0 +1,26 @@
+# Cloudflare Workers deploy config for cvai.com.mx
+# Deploys the TanStack Start (nitro cloudflare-module) build in .output/
+# Second Cloudflare account (custom.cloudflare-cvai credential).
+# NOTE: public vars only — secrets (SUPABASE_SERVICE_ROLE_KEY, etc.)
+# must be added via `wrangler secret put` or the Cloudflare dashboard.
+
+name = "cvai"
+main = ".output/server/index.mjs"
+compatibility_date = "2026-10-11"
+compatibility_flags = ["nodejs_compat"]
+no_bundle = true
+
+[assets]
+binding = "ASSETS"
+directory = ".output/public"
+
+[[rules]]
+type = "ESModule"
+globs = ["**/*.mjs", "**/*.js"]
+
+[vars]
+SUPABASE_URL = "https://nwotwmfvavpllppguurd.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h5nPNMVR5Ry086cxSzC0FQ_QArFhfDD"
+VITE_SUPABASE_URL = "https://nwotwmfvavpllppguurd.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h5nPNMVR5Ry086cxSzC0FQ_QArFhfDD"
+VITE_SITE_URL = "https://www.cvai.com.mx"
