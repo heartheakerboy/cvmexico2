@@ -1,7 +1,7 @@
 // Session management on D1 (server-only).
 // Opaque tokens: raw token goes to the cookie, SHA-256 hash is stored in DB.
 
-import { getDB } from "@/lib/d1.server";
+import type { D1Database } from "@/lib/d1.server";
 import { randomToken, sha256Hex, newUserId } from "./crypto.server";
 
 export const SESSION_COOKIE = "cvai_session";
@@ -21,10 +21,10 @@ function utcNowPlus(ms: number): string {
 
 /** Create a session row, return the raw token for the cookie. */
 export async function createSession(
+  db: D1Database,
   userId: string,
   opts?: { ip?: string; ua?: string }
 ): Promise<string> {
-  const db = getDB();
   const token = randomToken();
   const tokenHash = await sha256Hex(token);
   await db
@@ -49,9 +49,8 @@ export async function createSession(
 }
 
 /** Validate a raw session token -> user (with admin flag). Null if invalid/expired. */
-export async function getSessionUser(rawToken: string | null | undefined): Promise<SessionUser | null> {
+export async function getSessionUser(db: D1Database, rawToken: string | null | undefined): Promise<SessionUser | null> {
   if (!rawToken) return null;
-  const db = getDB();
   const tokenHash = await sha256Hex(rawToken);
   const row = await db
     .prepare(
@@ -86,15 +85,13 @@ export async function getSessionUser(rawToken: string | null | undefined): Promi
 }
 
 /** Revoke one session by raw token. */
-export async function revokeSession(rawToken: string): Promise<void> {
-  const db = getDB();
+export async function revokeSession(db: D1Database, rawToken: string): Promise<void> {
   const tokenHash = await sha256Hex(rawToken);
   await db.prepare(`DELETE FROM sessions WHERE token_hash = ?`).bind(tokenHash).run();
 }
 
 /** Revoke all sessions for a user (e.g. after password change). */
-export async function revokeAllSessions(userId: string): Promise<void> {
-  const db = getDB();
+export async function revokeAllSessions(db: D1Database, userId: string): Promise<void> {
   await db.prepare(`DELETE FROM sessions WHERE user_id = ?`).bind(userId).run();
 }
 

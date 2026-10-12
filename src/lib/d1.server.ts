@@ -1,8 +1,6 @@
-// D1 access for server functions on Cloudflare Workers.
-// The Worker env (with the DB binding) is stashed per-request via
-// AsyncLocalStorage in src/server.ts. Server-only: never import from client code.
-
-import { AsyncLocalStorage } from "node:async_hooks";
+// D1 access for server functions on Cloudflare Workers (server-only).
+// The Worker env (with the DB binding) is passed explicitly from src/server.ts
+// fetch -> handleAuthRequest(request, env). No globals, no AsyncLocalStorage.
 
 /** Minimal D1 binding surface (avoids @cloudflare/workers-types dep). */
 export interface D1Result<T = Record<string, unknown>> {
@@ -24,27 +22,14 @@ export interface D1Database {
   exec(query: string): Promise<unknown>;
 }
 
-type CFEnv = { DB?: D1Database; [key: string]: unknown };
+export type CFEnv = { DB?: D1Database; [key: string]: unknown };
 
-const envStorage = new AsyncLocalStorage<CFEnv>();
-
-/** Run `fn` with the Worker env available to getDB(). Called in server.ts fetch. */
-export function runWithEnv<T>(env: unknown, fn: () => T): T {
-  return envStorage.run((env ?? {}) as CFEnv, fn);
-}
-
-/** Get the D1 database binding for the current request. Throws outside Workers. */
-export function getDB(): D1Database {
-  const db = envStorage.getStore()?.DB;
-  if (!db) {
-    throw new Error(
-      "D1 binding 'DB' is not available. Are you running on Cloudflare Workers?"
-    );
-  }
-  return db;
-}
-
-/** True when running inside the Cloudflare Worker (D1 bound). */
-export function hasDB(): boolean {
-  return !!envStorage.getStore()?.DB;
+/** Extract the D1 binding. Nitro stashes the real Worker env on globalThis.__env__;
+ *  the env param passed to custom fetch handlers may not include bindings. */
+export function getDBFromEnv(env: unknown): D1Database {
+  const fromParam = (env as CFEnv | undefined)?.DB;
+  if (fromParam && typeof fromParam.prepare === "function") return fromParam;
+  const fromGlobal = (globalThis as { __env__?: CFEnv }).__env__?.DB;
+  if (fromGlobal && typeof fromGlobal.prepare === "function") return fromGlobal;
+  throw new Error("D1 binding 'DB' is not available in Worker env");
 }

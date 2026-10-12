@@ -2,7 +2,7 @@
 // Mirrors the old Supabase behavior: signup creates users + profiles + user_roles rows
 // (replaces the handle_new_user() trigger).
 
-import { getDB } from "@/lib/d1.server";
+import type { D1Database } from "@/lib/d1.server";
 import { hashPassword, verifyPassword, randomToken, sha256Hex, newUserId } from "./crypto.server";
 import { createSession } from "./session.server";
 
@@ -18,6 +18,7 @@ function utcNow(): string {
 
 /** Sign up with email+password. Creates users, profiles, user_roles rows. */
 export async function signUpWithPassword(
+  db: D1Database,
   email: string,
   password: string,
   opts?: { fullName?: string; ip?: string; ua?: string }
@@ -26,7 +27,6 @@ export async function signUpWithPassword(
   if (!EMAIL_RE.test(cleanEmail)) return { ok: false, error: "invalid_email" };
   if (password.length < 6) return { ok: false, error: "weak_password" };
 
-  const db = getDB();
   const existing = await db
     .prepare(`SELECT id FROM users WHERE email = ?`)
     .bind(cleanEmail)
@@ -57,18 +57,18 @@ export async function signUpWithPassword(
   ];
   await db.batch(stmts);
 
-  const sessionToken = await createSession(userId, { ip: opts?.ip, ua: opts?.ua });
+  const sessionToken = await createSession(db, userId, { ip: opts?.ip, ua: opts?.ua });
   return { ok: true, userId, sessionToken };
 }
 
 /** Log in with email+password. */
 export async function signInWithPassword(
+  db: D1Database,
   email: string,
   password: string,
   opts?: { ip?: string; ua?: string }
 ): Promise<AuthResult> {
   const cleanEmail = email.trim().toLowerCase();
-  const db = getDB();
   const row = await db
     .prepare(`SELECT id, password_hash FROM users WHERE email = ?`)
     .bind(cleanEmail)
@@ -76,14 +76,13 @@ export async function signInWithPassword(
   if (!row || !row.password_hash) return { ok: false, error: "invalid_credentials" };
   const valid = await verifyPassword(password, row.password_hash);
   if (!valid) return { ok: false, error: "invalid_credentials" };
-  const sessionToken = await createSession(row.id, { ip: opts?.ip, ua: opts?.ua });
+  const sessionToken = await createSession(db, row.id, { ip: opts?.ip, ua: opts?.ua });
   return { ok: true, userId: row.id, sessionToken };
 }
 
 /** Request a password reset: creates a token row, returns the raw token (caller emails it). */
-export async function createPasswordResetToken(email: string): Promise<{ ok: boolean; token?: string; userId?: string }> {
+export async function createPasswordResetToken(db: D1Database, email: string): Promise<{ ok: boolean; token?: string; userId?: string }> {
   const cleanEmail = email.trim().toLowerCase();
-  const db = getDB();
   const row = await db
     .prepare(`SELECT id FROM users WHERE email = ?`)
     .bind(cleanEmail)
@@ -104,11 +103,11 @@ export async function createPasswordResetToken(email: string): Promise<{ ok: boo
 
 /** Consume a reset token and set a new password. Revokes all sessions. */
 export async function resetPasswordWithToken(
+  db: D1Database,
   rawToken: string,
   newPassword: string
 ): Promise<{ ok: boolean; error?: string }> {
   if (newPassword.length < 6) return { ok: false, error: "weak_password" };
-  const db = getDB();
   const tokenHash = await sha256Hex(rawToken);
   const row = await db
     .prepare(

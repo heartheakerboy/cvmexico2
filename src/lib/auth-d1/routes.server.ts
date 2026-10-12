@@ -1,6 +1,7 @@
 // HTTP handlers for /api/auth/* (server-only).
 // Wired in src/server.ts fetch. Parallel build: old Supabase auth untouched.
 
+import { getDBFromEnv } from "@/lib/d1.server";
 import {
   signUpWithPassword,
   signInWithPassword,
@@ -39,10 +40,16 @@ async function readJson(request: Request): Promise<Record<string, unknown>> {
   }
 }
 
-export async function handleAuthRequest(request: Request): Promise<Response | null> {
+export async function handleAuthRequest(request: Request, env: unknown): Promise<Response | null> {
   const url = new URL(request.url);
   const path = url.pathname;
   if (!path.startsWith("/api/auth/")) return null;
+  let db;
+  try {
+    db = getDBFromEnv(env);
+  } catch {
+    return json({ ok: false, error: "d1_unavailable" }, 500);
+  }
 
   const ua = request.headers.get("user-agent") ?? undefined;
   const ip = clientIp(request);
@@ -51,6 +58,7 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
   if (path === "/api/auth/signup" && request.method === "POST") {
     const body = await readJson(request);
     const res = await signUpWithPassword(
+      db,
       String(body.email ?? ""),
       String(body.password ?? ""),
       { fullName: body.fullName ? String(body.fullName) : undefined, ip, ua }
@@ -62,7 +70,7 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
   // POST /api/auth/login
   if (path === "/api/auth/login" && request.method === "POST") {
     const body = await readJson(request);
-    const res = await signInWithPassword(String(body.email ?? ""), String(body.password ?? ""), { ip, ua });
+    const res = await signInWithPassword(db, String(body.email ?? ""), String(body.password ?? ""), { ip, ua });
     if (!res.ok) return json({ ok: false, error: res.error }, 401);
     return json({ ok: true, userId: res.userId }, 200, sessionCookieHeader(res.sessionToken));
   }
@@ -70,14 +78,14 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
   // POST /api/auth/logout
   if (path === "/api/auth/logout" && request.method === "POST") {
     const token = readSessionCookie(request.headers.get("cookie"));
-    if (token) await revokeSession(token).catch(() => {});
+    if (token) await revokeSession(db, token).catch(() => {});
     return json({ ok: true }, 200, clearSessionCookieHeader());
   }
 
   // GET /api/auth/me
   if (path === "/api/auth/me" && request.method === "GET") {
     const token = readSessionCookie(request.headers.get("cookie"));
-    const user = await getSessionUser(token);
+    const user = await getSessionUser(db, token);
     if (!user) return json({ ok: false, user: null }, 401);
     return json({ ok: true, user });
   }
@@ -94,7 +102,7 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
 
   // GET /api/auth/google/callback
   if (path === "/api/auth/google/callback" && request.method === "GET") {
-    const { response } = await googleCallback(request);
+    const { response } = await googleCallback(db, request);
     return response;
   }
 
@@ -102,17 +110,21 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
   if (path === "/api/auth/reset-request" && request.method === "POST") {
     const body = await readJson(request);
     const email = String(body.email ?? "").trim();
-    const res = await createPasswordResetToken(email);
+    const res = await createPasswordResetToken(db, email);
     if (res.ok && res.token) {
       const resetUrl = `${url.origin}/actualizar-password?token=${encodeURIComponent(res.token)}`;
       // Best-effort email; never leak whether the address exists.
-      await sendTemplateEmail({
-        to: email,
-        templateSlug: "password-reset",
-        variables: { reset_url: resetUrl, email },
-        fallbackSubject: "Recupera tu contraseña — CVAI",
-        fallbackHtml: `<p>Hola,</p><p>Recibimos una solicitud para restablecer tu contraseña en CVAI.</p><p><a href="${resetUrl}">Haz clic aquí para crear una nueva contraseña</a></p><p>Este enlace vence en 1 hora. Si no fuiste tú, ignora este mensaje.</p>`,
-      }).catch((e) => console.error("[auth] reset email failed", e));
+      try {
+        await sendTemplateEmail({
+          to: email,
+          templateSlug: "password-reset",
+          variables: { reset_url: resetUrl, email },
+          fallbackSubject: "Recupera tu contraseña — CVAI",
+          fallbackHtml: `<p>Hola,</p><p>Recibimos una solicitud para restablecer tu contraseña en CVAI.</p><p><a href="${resetUrl}">Haz clic aquí para crear una nueva contraseña</a></p><p>Este enlace vence en 1 hora. Si no fuiste tú, ignora este mensaje.</p>`,
+        });
+      } catch (e) {
+        console.error("[auth] reset email failed", e);
+      }
     }
     return json({ ok: true });
   }
@@ -120,7 +132,7 @@ export async function handleAuthRequest(request: Request): Promise<Response | nu
   // POST /api/auth/reset-confirm
   if (path === "/api/auth/reset-confirm" && request.method === "POST") {
     const body = await readJson(request);
-    const res = await resetPasswordWithToken(String(body.token ?? ""), String(body.password ?? ""));
+    const res = await resetPasswordWithToken(db, String(body.token ?? ""), String(body.password ?? ""));
     if (!res.ok) return json({ ok: false, error: res.error }, 400);
     return json({ ok: true });
   }

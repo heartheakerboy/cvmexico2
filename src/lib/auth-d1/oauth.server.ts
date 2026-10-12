@@ -4,7 +4,7 @@
 //   https://www.cvai.com.mx/api/auth/google/callback
 //   (+ https://cvai.heartheakerboy072.workers.dev/api/auth/google/callback for testing)
 
-import { getDB } from "@/lib/d1.server";
+import type { D1Database } from "@/lib/d1.server";
 import { randomToken, sha256Hex, newUserId } from "./crypto.server";
 import { createSession } from "./session.server";
 
@@ -58,6 +58,7 @@ type GoogleUserInfo = {
 
 /** Step 2: callback — validate state, exchange code, find-or-create user, session. */
 export async function googleCallback(
+  db: D1Database,
   request: Request
 ): Promise<{ response: Response; ok: boolean; error?: string }> {
   const url = new URL(request.url);
@@ -98,7 +99,6 @@ export async function googleCallback(
     const info = (await meRes.json()) as GoogleUserInfo;
     if (!info.email) return { response: fail("oauth_no_email"), ok: false, error: "oauth_no_email" };
 
-    const db = getDB();
     const email = info.email.toLowerCase();
     const now = new Date().toISOString();
 
@@ -138,7 +138,7 @@ export async function googleCallback(
         .run();
     }
 
-    const sessionToken = await createSession(userId, {
+    const sessionToken = await createSession(db, userId, {
       ua: request.headers.get("user-agent") ?? undefined,
     });
 
