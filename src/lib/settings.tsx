@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { toast } from "sonner";
 import esDict from "@/lib/i18n/locales/es";
 import {

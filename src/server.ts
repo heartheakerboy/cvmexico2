@@ -45,12 +45,13 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { getStaticCities } from "@/lib/cities-data";
 import { TEMPLATES } from "@/lib/resume/registry";
 import { getTemplateUrl } from "@/lib/resume/template-routes";
 import { submitToIndexNow, INDEXNOW_KEY } from "@/lib/indexnow";
 import { handleAuthRequest } from "@/lib/auth-d1/routes.server";
+import { handleDbRequest } from "@/lib/db/routes.server";
 
 async function serveSitemap(): Promise<Response> {
   const base = "https://www.cvai.com.mx";
@@ -382,6 +383,11 @@ export default {
       if (url.pathname.startsWith("/api/auth/")) {
         const authRes = await handleAuthRequest(request, env);
         if (authRes) return authRes;
+      }
+
+      // Phase 4: D1 data endpoint (browser data client -> D1 engine).
+      if (url.pathname === "/api/db" && request.method === "POST") {
+        return await handleDbRequest(request, env);
       }
 
       const handler = await getServerEntry();

@@ -4,7 +4,7 @@ import {
   Calendar, Clock, Search, Sparkles, ArrowRight, BookOpen, Filter,
   FileText, CheckCircle2,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { PageShell } from "@/components/page-shell";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

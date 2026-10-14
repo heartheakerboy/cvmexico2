@@ -3,7 +3,7 @@ import { useState } from "react";
 import { LegalPageLayout } from "@/components/legal-page-layout";
 import { useSettings } from "@/lib/settings";
 import { useCompanyLegalConfig } from "@/lib/legal-config";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
