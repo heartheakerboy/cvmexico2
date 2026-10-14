@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireD1Auth as requireSupabaseAuth, getServiceDb } from "@/lib/db/server-db.server";
+const supabaseAdmin = getServiceDb();
 
 // Verify admin role helper
 async function checkAdmin(userId: string) {

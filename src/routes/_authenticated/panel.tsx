@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { useState } from "react";
 import { LogOut, Menu, Moon, Sun, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { useTheme } from "@/hooks/use-theme";
 import { PanelSidebar } from "@/components/panel/panel-sidebar";
 import { Button } from "@/components/ui/button";

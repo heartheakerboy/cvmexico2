@@ -5,7 +5,7 @@ import {
   LayoutTemplate, Palette, ListOrdered, FileText, Upload, X, GripVertical, FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { getUploadUrl, confirmUpload } from "@/lib/storage.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";

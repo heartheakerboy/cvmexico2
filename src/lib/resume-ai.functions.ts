@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth } from "@/lib/db/server-db.server";
 import { generateText } from "ai";
 import { z } from "zod";
 import { getAiProvider } from "./ai-gateway.server";

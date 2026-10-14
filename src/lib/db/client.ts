@@ -72,7 +72,7 @@ function toAuthUser(u: MeUser): AuthUser {
   };
 }
 
-type Session = { user: AuthUser; access_token: string; token_type: string; expires_at: number };
+export type Session = { user: AuthUser; access_token: string; token_type: string; expires_at: number };
 type AuthCb = (event: string, session: Session | null) => void;
 
 const subscribers = new Set<AuthCb>();

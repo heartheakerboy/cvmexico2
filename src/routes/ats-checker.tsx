@@ -10,7 +10,7 @@ import {
   CheckSquare, Ban,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { analyzePublicAts, sendAtsReportEmail, type PublicAtsResponse } from "@/lib/ats.functions";
 import { extractTextFromPdf } from "@/lib/pdf-parser";
 import { extractTextFromDocx } from "@/lib/docx-parser";

@@ -13,7 +13,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/panel/")({

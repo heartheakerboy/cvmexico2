@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth, getServiceDb } from "@/lib/db/server-db.server";
 
 type Point = { date: string; value: number };
 export type AdminAnalytics = {
@@ -37,7 +37,7 @@ export const getAdminAnalytics = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     const [profilesRes, resumesRes, coversRes, appsRes, downloadsRes, invoicesRes] =
       await Promise.all([

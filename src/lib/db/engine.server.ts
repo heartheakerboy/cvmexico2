@@ -315,7 +315,8 @@ async function runInsert(
     const values = cols.map((c) => toStored(spec.table, c, row[c]));
     let sql = `INSERT INTO ${ident(spec.table)} (${cols.map(ident).join(", ")}) VALUES (${cols.map(() => "?").join(", ")})`;
     if (upsert) {
-      const conflictCols = (spec.onConflict ?? "id").split(",").map((s) => s.trim()).filter(Boolean);
+      const PK_MAP: Record<string, string> = { ai_user_limits: "user_id" };
+      const conflictCols = (spec.onConflict ?? PK_MAP[spec.table] ?? "id").split(",").map((s) => s.trim()).filter(Boolean);
       const updateCols = cols.filter((c) => !conflictCols.includes(c) && c !== "created_at");
       if (updateCols.length) {
         sql += ` ON CONFLICT(${conflictCols.map(ident).join(", ")}) DO UPDATE SET ${updateCols.map((c) => `${ident(c)} = excluded.${ident(c)}`).join(", ")}`;

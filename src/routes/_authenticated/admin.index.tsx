@@ -23,7 +23,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/admin/")({

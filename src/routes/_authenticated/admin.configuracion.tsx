@@ -4,7 +4,7 @@ import {
   Settings, Palette, Globe, DollarSign, Flag, Wrench, Loader2, Save, Scale,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { DEFAULT_LEGAL_CONFIG, type CompanyLegalConfig } from "@/lib/legal-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

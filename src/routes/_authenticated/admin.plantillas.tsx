@@ -4,7 +4,7 @@ import {
   LayoutTemplate, Plus, Trash2, Loader2, Copy, Star, Crown, Gauge, Shapes,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { TEMPLATES } from "@/lib/resume/registry";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

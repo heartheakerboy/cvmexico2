@@ -5,7 +5,7 @@ import {
   AlertTriangle, FileCode, Gauge, Copy, Check, Send, Zap, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

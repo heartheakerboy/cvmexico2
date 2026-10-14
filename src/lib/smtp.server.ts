@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getServiceDb } from "@/lib/db/server-db.server";
+const supabaseAdmin = getServiceDb();
 
 export type SmtpSettings = {
   enabled: boolean;

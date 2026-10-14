@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth, getServiceDb } from "@/lib/db/server-db.server";
 import { z } from "zod";
 
 type Log = {
@@ -68,7 +68,7 @@ export const getAiUsageOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AiUsageOverview> => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     const { data: rows } = await supabaseAdmin
       .from("ai_usage_logs")
@@ -250,7 +250,7 @@ export const getAiUserUsage = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AiUserRow[]> => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     const [{ data: profs }, { data: logs }, { data: limits }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id, full_name, email, plan, created_at"),
@@ -336,7 +336,7 @@ export const getAiRequestHistory = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => HistoryInput.parse(d))
   .handler(async ({ data, context }): Promise<{ rows: AiHistoryRow[]; total: number }> => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     let q = supabaseAdmin.from("ai_usage_logs").select("*", { count: "exact" });
     if (data.feature) q = q.eq("feature", data.feature);
@@ -402,7 +402,7 @@ export const manageAiCredit = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => CreditInput.parse(d))
   .handler(async ({ data, context }): Promise<{ ok: true }> => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     const { data: existing } = await supabaseAdmin
       .from("ai_user_limits")
@@ -474,7 +474,7 @@ export const getUserCreditHistory = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ userId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
     const { data: rows } = await supabaseAdmin
       .from("ai_credit_events")
       .select("*")

@@ -18,15 +18,17 @@ export function workerDb(): D1Database {
 
 /** A supabase-shaped client bound to a fixed DbCtx, executing on D1 directly. */
 export function createDbClient(ctx: DbCtx, db?: D1Database) {
-  const database = db ?? workerDb();
-  const executor = (spec: QuerySpec): Promise<QueryResult> => executeQuery(database, spec, ctx);
+  // Resolve the binding lazily per query: globalThis.__env__ only exists
+  // while a request is being handled, not at module load.
+  const executor = (spec: QuerySpec): Promise<QueryResult> =>
+    executeQuery(db ?? workerDb(), spec, ctx);
   return {
     from(table: string) {
       return new QueryBuilder(executor, table);
     },
     async rpc(fn: string, args: Record<string, unknown>): Promise<QueryResult> {
       if (fn === "has_role") {
-        const data = await hasRole(database, String(args._user_id ?? ""), String(args._role ?? ""));
+        const data = await hasRole(db ?? workerDb(), String(args._user_id ?? ""), String(args._role ?? ""));
         return { data, error: null };
       }
       return { data: null, error: { message: `unknown rpc: ${fn}` } };

@@ -1,11 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth, workerDb } from "@/lib/db/server-db.server";
+import { deleteUserCompletely } from "@/lib/auth-d1/users.server";
 
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-    if (error) throw error;
+    await deleteUserCompletely(workerDb(), context.userId);
     return { ok: true };
   });

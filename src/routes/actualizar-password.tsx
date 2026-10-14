@@ -12,7 +12,7 @@ import {
   KeyRound,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { d1ResetPassword } from "@/lib/auth-d1/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,58 +41,21 @@ function ActualizarPasswordPage() {
   const [checking, setChecking] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const [token, setToken] = useState<string | null>(null);
+
   useEffect(() => {
-    const hash = window.location.hash;
+    // D1 reset flow: the email link carries ?token=... (single-use, 1h).
     const urlParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(hash.replace(/^#/, ""));
-
-    const error = hashParams.get("error") || urlParams.get("error");
-    const errorDescription =
-      hashParams.get("error_description") || urlParams.get("error_description");
-
-    if (error) {
+    const tkn = urlParams.get("token");
+    if (!tkn) {
       setErrorMsg(
-        errorDescription?.replace(/\+/g, " ") ||
-          t("auth.invalidRecoveryLink") ||
+        t("auth.invalidRecoveryLink") ||
           "El enlace de recuperación ha expirado o ya no es válido."
       );
-      setChecking(false);
-      return;
+    } else {
+      setToken(tkn);
     }
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "PASSWORD_RECOVERY" || session) {
-        setChecking(false);
-        setErrorMsg(null);
-      }
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setChecking(false);
-      } else {
-        setTimeout(() => {
-          supabase.auth.getSession().then(({ data: { session: retrySession } }) => {
-            if (!retrySession) {
-              const hasRecoveryData =
-                hash.includes("access_token") ||
-                hash.includes("type=recovery") ||
-                urlParams.has("code");
-              if (!hasRecoveryData) {
-                setErrorMsg(t("auth.invalidRecoveryLink"));
-              }
-            }
-            setChecking(false);
-          });
-        }, 1200);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    setChecking(false);
   }, [t]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -110,17 +73,22 @@ function ActualizarPasswordPage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password,
-      });
-
-      if (error) throw error;
+      if (!token) throw new Error(t("auth.invalidRecoveryLink"));
+      const res = (await d1ResetPassword(token, password)) as { ok?: boolean; error?: string };
+      if (!res?.ok) {
+        throw new Error(
+          res?.error === "expired_token" || res?.error === "invalid_token"
+            ? t("auth.invalidRecoveryLink")
+            : res?.error || "Error al actualizar la contraseña"
+        );
+      }
 
       setSuccess(true);
       toast.success(t("auth.resetPasswordSuccess"));
 
+      // All sessions were revoked on reset: send the user to log in again.
       setTimeout(() => {
-        navigate({ to: "/panel" });
+        navigate({ to: "/auth" });
       }, 2500);
     } catch (err: any) {
       const msg = err?.message || "Error al actualizar la contraseña";
@@ -162,9 +130,9 @@ function ActualizarPasswordPage() {
             <div className="pt-2">
               <Button
                 className="w-full gap-2"
-                onClick={() => navigate({ to: "/panel" })}
+                onClick={() => navigate({ to: "/auth" })}
               >
-                Ir al Panel de control
+                Ir a iniciar sesión
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>

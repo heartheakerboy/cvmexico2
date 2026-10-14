@@ -5,7 +5,7 @@ import {
   HardDrive, FileImage, Layers, Check, Replace as ReplaceIcon, FileCode,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { getUploadUrl, confirmUpload, deleteFile, getSignedDownloadUrl } from "@/lib/storage.functions";
 import { Button } from "@/components/ui/button";
 import { useServerFn } from "@tanstack/react-start";

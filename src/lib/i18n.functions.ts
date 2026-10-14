@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth } from "@/lib/db/server-db.server";
 import * as fs from "fs";
 import * as path from "path";
 import esDict from "@/lib/i18n/locales/es";

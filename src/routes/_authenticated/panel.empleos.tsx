@@ -14,7 +14,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/lib/settings";
 import { Button } from "@/components/ui/button";

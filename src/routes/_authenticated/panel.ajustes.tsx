@@ -5,7 +5,7 @@ import {
   Sun, Moon, Loader2, Languages,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { useSettings, type Lang } from "@/lib/settings";
 import { ENABLED_LOCALES } from "@/lib/i18n/config";
 import { Button } from "@/components/ui/button";

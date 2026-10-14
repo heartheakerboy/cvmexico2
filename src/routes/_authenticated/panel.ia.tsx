@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, Loader2, Wand2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { generateResume } from "@/lib/ia.functions";
 import { useSettings } from "@/lib/settings";
 import { Button } from "@/components/ui/button";

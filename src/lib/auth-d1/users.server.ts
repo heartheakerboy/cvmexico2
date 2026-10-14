@@ -47,10 +47,10 @@ export async function signUpWithPassword(
     // handle_new_user() equivalent
     db
       .prepare(
-        `INSERT INTO profiles (id, full_name, created_at, updated_at)
-         VALUES (?, ?, ?, ?)`
+        `INSERT INTO profiles (id, email, full_name, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?)`
       )
-      .bind(userId, opts?.fullName ?? null, now, now),
+      .bind(userId, email, opts?.fullName ?? null, now, now),
     db
       .prepare(`INSERT OR IGNORE INTO user_roles (user_id, role) VALUES (?, 'user')`)
       .bind(userId),
@@ -126,4 +126,34 @@ export async function resetPasswordWithToken(
     db.prepare(`DELETE FROM sessions WHERE user_id = ?`).bind(row.user_id),
   ]);
   return { ok: true };
+}
+
+/** Delete a user and all their data (replaces supabaseAdmin.auth.admin.deleteUser). */
+export async function deleteUserCompletely(db: D1Database, userId: string): Promise<void> {
+  const ownedTables = [
+    "resumes",
+    "cover_letters",
+    "downloads",
+    "invoices",
+    "billing_details",
+    "coupon_redemptions",
+    "job_applications",
+    "job_events",
+    "ai_usage_logs",
+    "ai_credit_events",
+    "ai_user_limits",
+    "support_tickets",
+    "email_preferences",
+    "user_roles",
+    "sessions",
+    "oauth_accounts",
+    "password_reset_tokens",
+  ];
+  const stmts = ownedTables.map((t) =>
+    db.prepare(`DELETE FROM ${t} WHERE user_id = ?`).bind(userId)
+  );
+  stmts.push(db.prepare(`DELETE FROM storage_files WHERE owner_id = ?`).bind(userId));
+  stmts.push(db.prepare(`DELETE FROM profiles WHERE id = ?`).bind(userId));
+  stmts.push(db.prepare(`DELETE FROM users WHERE id = ?`).bind(userId));
+  await db.batch(stmts);
 }

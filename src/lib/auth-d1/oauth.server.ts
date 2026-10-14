@@ -125,8 +125,8 @@ export async function googleCallback(
             `INSERT INTO users (id, email, password_hash, full_name, avatar_url, email_verified, created_at, updated_at)
              VALUES (?, ?, NULL, ?, ?, 1, ?, ?)`
           ).bind(userId, email, info.name ?? null, info.picture ?? null, now, now),
-          db.prepare(`INSERT INTO profiles (id, full_name, avatar_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`)
-            .bind(userId, info.name ?? null, info.picture ?? null, now, now),
+          db.prepare(`INSERT INTO profiles (id, email, full_name, avatar_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`)
+            .bind(userId, info.email, info.name ?? null, info.picture ?? null, now, now),
           db.prepare(`INSERT OR IGNORE INTO user_roles (user_id, role) VALUES (?, 'user')`).bind(userId),
         ]);
       }

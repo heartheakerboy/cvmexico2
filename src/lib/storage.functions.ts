@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth, getServiceDb } from "@/lib/db/server-db.server";
 
 export type StorageFile = {
   id: string;
@@ -243,7 +243,7 @@ export const getAdminStorageAnalytics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await checkAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
 
     // Fetch all storage files (excluding deleted/uploading depending on metrics)
     const { data: allFiles, error } = await (supabaseAdmin as any)
@@ -335,7 +335,7 @@ export const cleanupStorage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await checkAdmin(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getServiceDb();
     const { r2Client, r2BucketName } = await import("./r2.server");
     const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
 

@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireD1Auth as requireSupabaseAuth, getServiceDb, workerDb } from "@/lib/db/server-db.server";
 import {
   getSmtpSettings,
   saveSmtpSettings,
@@ -7,7 +7,7 @@ import {
   sendTemplateEmail,
   type SmtpSettings,
 } from "./smtp.server";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+const supabaseAdmin = getServiceDb();
 
 export const getAdminSmtpConfig = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -195,39 +195,38 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
       data.redirectTo ||
       `${process.env.VITE_SITE_URL || "https://cvai.com.mx"}/actualizar-password`;
 
-    // 1. Generate secure recovery token with Supabase Admin SDK without sending Supabase's default email
-    const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
-      type: "recovery",
-      email,
-      options: {
-        redirectTo,
-      },
-    });
+    // 1. Create a D1 password-reset token (single-use, 1h) - replaces Supabase generateLink
+    const { createPasswordResetToken } = await import("@/lib/auth-d1/users.server");
+    const tokenRes = await createPasswordResetToken(workerDb(), email);
 
-    if (linkErr) {
-      // If user does not exist, return generic success to protect user privacy
-      if (linkErr.message?.toLowerCase().includes("not found")) {
-        return {
-          ok: true,
-          success: true,
-          message: "Si tu correo está registrado, recibirás un enlace de recuperación en breve.",
-        };
+    if (!tokenRes.token) {
+      // User does not exist: generic success to protect user privacy
+      return {
+        ok: true,
+        success: true,
+        message: "Si tu correo está registrado, recibirás un enlace de recuperación en breve.",
+      };
+    }
+
+    const origin = (() => {
+      try {
+        return new URL(redirectTo).origin;
+      } catch {
+        return "https://www.cvai.com.mx";
       }
-      throw new Error(linkErr.message || "Error al procesar la solicitud de recuperación.");
-    }
-
-    const recoveryLink = linkData?.properties?.action_link;
-    if (!recoveryLink) {
-      throw new Error("No se pudo generar el enlace de restablecimiento.");
-    }
+    })();
+    const recoveryLink = `${origin}/actualizar-password?token=${encodeURIComponent(tokenRes.token)}`;
 
     // 2. Extract user's display name or email prefix
+    const { data: userRow } = await supabaseAdmin
+      .from("users")
+      .select("full_name")
+      .eq("email", email)
+      .maybeSingle();
     const userName =
-      linkData?.user?.user_metadata?.full_name ||
-      linkData?.user?.user_metadata?.name ||
-      email.split("@")[0];
+      (userRow as { full_name?: string } | null)?.full_name || email.split("@")[0];
 
-    const appUrl = redirectTo ? new URL(redirectTo).origin : "https://cvai.com.mx";
+    const appUrl = origin;
 
     // 3. Send email using our custom SMTP and the 'password-reset' template from database
     try {

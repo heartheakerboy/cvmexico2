@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Mail, Loader2, Plus, Wand2, Trash2, Save, Copy, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db/client";
 import { generateCoverLetter } from "@/lib/cartas.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
