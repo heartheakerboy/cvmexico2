@@ -170,6 +170,10 @@ async function verifyLemonSqueezySignature(
 }
 
 async function handleLemonSqueezyWebhook(request: Request): Promise<Response> {
+  // Trusted server-side handler: use the service-context D1 client (the
+  // isomorphic client above runs anon and cannot write owner/admin tables).
+  const { getServiceDb } = await import("@/lib/db/server-db.server");
+  const supabase = getServiceDb();
   const signature = request.headers.get("x-signature") || request.headers.get("X-Signature") || "";
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || "";
   const bodyText = await request.text();
